@@ -5,6 +5,21 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Guru;
 use App\Http\Controllers\Murid;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+// ── Landing Page (Public / Tanpa Login) ────────
+Route::get('/', function () {
+    // Karena file berada di resources/views/index.blade.php
+    return view('index'); 
+})->name('home');
+
+
+// Rute Login Manual
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])
+                ->name('login');
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+});
 
 // ── Auth (disediakan Breeze, tambahkan redirect role) ────────
 Route::get('/dashboard', [AuthController::class, 'redirectAfterLogin'])
@@ -57,3 +72,4 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::post('/spp/{spp}/bukti', [Murid\SppController::class, 'uploadBukti'])->name('spp.bukti');
 });
 
+require __DIR__.'/auth.php';
