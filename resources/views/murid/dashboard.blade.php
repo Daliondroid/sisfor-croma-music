@@ -4,8 +4,15 @@
 
 @section('sidebar-menu')
     <div class="nav-section-label">Menu</div>
-    <a href="{{ route('murid.dashboard') }}" class="nav-item active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('murid.spp.index') }}" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
+    <a href="{{ route('murid.dashboard') }}" class="nav-item {{ request()->routeIs('murid.dashboard') ? 'active' : '' }}">
+        <i class="fa-solid fa-gauge"></i> Dashboard
+    </a>
+    <a href="{{ route('murid.spp.index') }}" class="nav-item {{ request()->routeIs('murid.spp*') ? 'active' : '' }}">
+        <i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya
+    </a>
+    <a href="{{ route('murid.profil.edit') }}" class="nav-item {{ request()->routeIs('murid.profil*') ? 'active' : '' }}">
+        <i class="fa-solid fa-user-pen"></i> Profil Saya
+    </a>
 @endsection
 
 @section('content')

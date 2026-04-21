@@ -5,6 +5,7 @@
     <div class="nav-section-label">Menu</div>
     <a href="{{ route('murid.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
     <a href="{{ route('murid.spp.index') }}" class="nav-item active"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
+    <a href="{{ route('murid.profil.edit') }}" class="nav-item"><i class="fa-solid fa-user-pen"></i> Profil Saya</a>
 @endsection
 
 @section('content')
@@ -35,6 +36,13 @@
             <div style="font-weight:600;font-size:.85rem;margin-bottom:12px;color:#92400e">
                 <i class="fa-solid fa-upload" style="margin-right:6px"></i>Upload Bukti Transfer
             </div>
+            @if($spp->transaksi && !$spp->sudahBayar())
+                <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:6px;padding:10px 14px;font-size:.8rem;margin-bottom:12px">
+                    <i class="fa-solid fa-circle-info" style="color:#0ea5e9;margin-right:6px"></i>
+                    Bukti sudah dikirim, menunggu konfirmasi admin.
+                    <a href="{{ asset('storage/'.$spp->transaksi->file_bukti_transfer) }}" target="_blank" style="margin-left:6px;font-weight:600">Lihat bukti →</a>
+                </div>
+            @endif
             <form method="POST" action="{{ route('murid.spp.bukti', $spp) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="form-grid">
@@ -52,7 +60,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-yellow btn-sm">
-                    <i class="fa-solid fa-paper-plane"></i> Kirim Bukti
+                    <i class="fa-solid fa-paper-plane"></i> {{ $spp->transaksi ? 'Kirim Ulang' : 'Kirim Bukti' }}
                 </button>
             </form>
         </div>
@@ -65,7 +73,8 @@
     </div>
     @empty
         <div style="text-align:center;padding:40px;color:var(--text-light)">
-            Belum ada tagihan SPP.
+            <i class="fa-solid fa-receipt" style="font-size:2rem;opacity:.3;margin-bottom:12px"></i>
+            <p>Belum ada tagihan SPP.</p>
         </div>
     @endforelse
     @if($spps->hasPages())<div style="padding:16px 24px">{{ $spps->links() }}</div>@endif

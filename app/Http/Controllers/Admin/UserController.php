@@ -12,26 +12,30 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // Daftar semua murid
-    public function indexMurid()
+    // ── MURID ────────────────────────────────────────────────
+    public function indexMurid(Request $request)
     {
-        $murids = Murid::with('user')->latest()->paginate(20);
+        $murids = Murid::with('user')
+            ->when($request->search, fn($q) => $q->where('nama_murid', 'like', "%{$request->search}%")
+                ->orWhereHas('user', fn($u) => $u->where('email', 'like', "%{$request->search}%")))
+            ->when($request->tipe,   fn($q) => $q->where('tipe_les', $request->tipe))
+            ->when($request->status !== null && $request->status !== '',
+                fn($q) => $q->where('status_aktif', $request->status))
+            ->latest()->paginate(20);
         return view('admin.murids.index', compact('murids'));
     }
 
-    // Form tambah murid
     public function createMurid()
     {
         return view('admin.murids.create');
     }
 
-    // Simpan murid baru
     public function storeMurid(Request $request)
     {
         $request->validate([
             'username'      => 'required|unique:users',
             'email'         => 'required|email|unique:users',
-            'password'      => 'required|min:8',
+            'password'      => 'required|min:8|confirmed',
             'nama_murid'    => 'required|string',
             'tipe_les'      => 'required|in:onsite,home_private',
             'tanggal_lahir' => 'nullable|date',
@@ -41,47 +45,79 @@ class UserController extends Controller
         DB::transaction(function () use ($request) {
             $user = User::create([
                 'username'  => $request->username,
+                'name'      => $request->nama_murid,
                 'email'     => $request->email,
                 'password'  => Hash::make($request->password),
                 'role'      => 'murid',
                 'is_active' => true,
             ]);
-
             Murid::create([
-                'id_user'       => $user->id_user,
-                'nama_murid'    => $request->nama_murid,
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'alamat'        => $request->alamat,
-                'nomor_hp'      => $request->nomor_hp,
-                'nama_orang_tua'=> $request->nama_orang_tua,
-                'tipe_les'      => $request->tipe_les,
+                'id_user'        => $user->id_user,
+                'nama_murid'     => $request->nama_murid,
+                'tanggal_lahir'  => $request->tanggal_lahir,
+                'alamat'         => $request->alamat,
+                'nomor_hp'       => $request->nomor_hp,
+                'nama_orang_tua' => $request->nama_orang_tua,
+                'tipe_les'       => $request->tipe_les,
             ]);
         });
 
         return redirect()->route('admin.murids.index')->with('success', 'Murid berhasil ditambahkan.');
     }
 
-    // Nonaktifkan akun
-    public function toggleAktif(User $user)
+    public function editMurid(Murid $murid)
     {
-        $user->update(['is_active' => !$user->is_active]);
-        return back()->with('success', 'Status akun berhasil diubah.');
+        $murid->load('user');
+        return view('admin.murids.edit', compact('murid'));
     }
 
-    // Daftar semua guru
-    public function indexGuru()
+    public function updateMurid(Request $request, Murid $murid)
     {
-        $gurus = Guru::with('user')->latest()->paginate(20);
+        $request->validate([
+            'nama_murid'    => 'required|string',
+            'tipe_les'      => 'required|in:onsite,home_private',
+            'tanggal_lahir' => 'nullable|date',
+            'nomor_hp'      => 'nullable|string|max:20',
+            'email'         => 'required|email|unique:users,email,'.$murid->id_user.',id_user',
+        ]);
+
+        DB::transaction(function () use ($request, $murid) {
+            $murid->user->update(['email' => $request->email, 'name' => $request->nama_murid]);
+            $murid->update($request->only([
+                'nama_murid', 'tanggal_lahir', 'alamat', 'nomor_hp', 'nama_orang_tua', 'tipe_les'
+            ]));
+            // Ganti password jika diisi
+            if ($request->filled('password')) {
+                $request->validate(['password' => 'min:8|confirmed']);
+                $murid->user->update(['password' => Hash::make($request->password)]);
+            }
+        });
+
+        return redirect()->route('admin.murids.index')->with('success', 'Data murid berhasil diperbarui.');
+    }
+
+    // ── GURU ─────────────────────────────────────────────────
+    public function indexGuru(Request $request)
+    {
+        $gurus = Guru::with('user')
+            ->when($request->search, fn($q) => $q->where('nama_guru', 'like', "%{$request->search}%"))
+            ->when($request->status !== null && $request->status !== '',
+                fn($q) => $q->where('status_aktif', $request->status))
+            ->latest()->paginate(20);
         return view('admin.gurus.index', compact('gurus'));
     }
 
-    // Simpan guru baru
+    public function createGuru()
+    {
+        return view('admin.gurus.create');
+    }
+
     public function storeGuru(Request $request)
     {
         $request->validate([
             'username'    => 'required|unique:users',
             'email'       => 'required|email|unique:users',
-            'password'    => 'required|min:8',
+            'password'    => 'required|min:8|confirmed',
             'nama_guru'   => 'required|string',
             'spesialisasi'=> 'nullable|string',
             'nomor_hp'    => 'nullable|string|max:20',
@@ -90,12 +126,12 @@ class UserController extends Controller
         DB::transaction(function () use ($request) {
             $user = User::create([
                 'username'  => $request->username,
+                'name'      => $request->nama_guru,
                 'email'     => $request->email,
                 'password'  => Hash::make($request->password),
                 'role'      => 'guru',
                 'is_active' => true,
             ]);
-
             Guru::create([
                 'id_user'     => $user->id_user,
                 'nama_guru'   => $request->nama_guru,
@@ -105,6 +141,42 @@ class UserController extends Controller
         });
 
         return redirect()->route('admin.gurus.index')->with('success', 'Guru berhasil ditambahkan.');
+    }
+
+    public function editGuru(Guru $guru)
+    {
+        $guru->load('user');
+        return view('admin.gurus.edit', compact('guru'));
+    }
+
+    public function updateGuru(Request $request, Guru $guru)
+    {
+        $request->validate([
+            'nama_guru'   => 'required|string',
+            'spesialisasi'=> 'nullable|string',
+            'nomor_hp'    => 'nullable|string|max:20',
+            'email'       => 'required|email|unique:users,email,'.$guru->id_user.',id_user',
+        ]);
+
+        DB::transaction(function () use ($request, $guru) {
+            $guru->user->update(['email' => $request->email, 'name' => $request->nama_guru]);
+            $guru->update($request->only(['nama_guru', 'spesialisasi', 'nomor_hp']));
+            if ($request->filled('password')) {
+                $request->validate(['password' => 'min:8|confirmed']);
+                $guru->user->update(['password' => Hash::make($request->password)]);
+            }
+        });
+
+        return redirect()->route('admin.gurus.index')->with('success', 'Data guru berhasil diperbarui.');
+    }
+
+    public function toggleAktif(User $user)
+    {
+        $user->update(['is_active' => !$user->is_active]);
+        // Sync ke tabel murid/guru juga
+        if ($user->murid) $user->murid->update(['status_aktif' => $user->is_active]);
+        if ($user->guru)  $user->guru->update(['status_aktif'  => $user->is_active]);
+        return back()->with('success', 'Status akun berhasil diubah.');
     }
 }
 
