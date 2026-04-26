@@ -86,7 +86,6 @@ class UserController extends Controller
             $murid->update($request->only([
                 'nama_murid', 'tanggal_lahir', 'alamat', 'nomor_hp', 'nama_orang_tua', 'tipe_les'
             ]));
-            // Ganti password jika diisi
             if ($request->filled('password')) {
                 $request->validate(['password' => 'min:8|confirmed']);
                 $murid->user->update(['password' => Hash::make($request->password)]);
@@ -173,10 +172,35 @@ class UserController extends Controller
     public function toggleAktif(User $user)
     {
         $user->update(['is_active' => !$user->is_active]);
-        // Sync ke tabel murid/guru juga
         if ($user->murid) $user->murid->update(['status_aktif' => $user->is_active]);
         if ($user->guru)  $user->guru->update(['status_aktif'  => $user->is_active]);
         return back()->with('success', 'Status akun berhasil diubah.');
     }
-}
 
+    public function destroyMurid(Murid $murid)
+    {
+        $nama = $murid->nama_murid;
+        DB::transaction(function () use ($murid) {
+            $user = $murid->user;
+            $murid->delete();
+            $user?->delete();
+        });
+        return redirect()->route('admin.murids.index')
+            ->with('success', "Akun murid \"{$nama}\" berhasil dihapus.");
+    }
+
+    /**
+     * Hapus akun guru beserta user-nya (hanya admin).
+     */
+    public function destroyGuru(Guru $guru)
+    {
+        $nama = $guru->nama_guru;
+        DB::transaction(function () use ($guru) {
+            $user = $guru->user;
+            $guru->delete();
+            $user?->delete();
+        });
+        return redirect()->route('admin.gurus.index')
+            ->with('success', "Akun guru \"{$nama}\" berhasil dihapus.");
+    }
+}

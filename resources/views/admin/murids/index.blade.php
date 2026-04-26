@@ -107,6 +107,17 @@
                                     <i class="fa-solid {{ $m->status_aktif ? 'fa-ban' : 'fa-check' }}"></i>
                                 </button>
                             </form>
+                            {{-- Tombol hapus akun --}}
+                            <button
+                                class="btn btn-sm btn-danger"
+                                title="Hapus Akun"
+                                onclick="openDeleteModal(
+                                    '{{ route('admin.murids.destroy', $m) }}',
+                                    '{{ addslashes($m->nama_murid) }}'
+                                )"
+                            >
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -117,9 +128,46 @@
         </table>
     </div>
     @if($murids->hasPages())
-        <div style="padding:16px 24px;border-top:1px solid #f0f0f0">
+        <div style="padding:16px 24px;border-top:1px solid var(--topbar-border)">
             {{ $murids->withQueryString()->links() }}
         </div>
     @endif
 </div>
+
+{{-- Delete Confirmation Modal --}}
+<div class="delete-modal-backdrop" id="delete-modal-backdrop">
+    <div class="delete-modal">
+        <div class="delete-modal-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3>Hapus Akun Murid?</h3>
+        <p id="delete-modal-text">Aksi ini akan menghapus akun <strong id="delete-modal-name"></strong> secara permanen beserta semua data terkait. Tindakan ini tidak dapat dibatalkan.</p>
+        <div class="delete-modal-actions">
+            <button class="btn btn-outline" onclick="closeDeleteModal()">Batal</button>
+            <form id="delete-modal-form" method="POST" style="display:inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-trash"></i> Ya, Hapus
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+function openDeleteModal(actionUrl, nama) {
+    document.getElementById('delete-modal-form').action = actionUrl;
+    document.getElementById('delete-modal-name').textContent = nama;
+    document.getElementById('delete-modal-backdrop').classList.add('open');
+}
+function closeDeleteModal() {
+    document.getElementById('delete-modal-backdrop').classList.remove('open');
+}
+document.getElementById('delete-modal-backdrop').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+});
+</script>
+@endpush

@@ -36,6 +36,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/murids',              [Admin\UserController::class, 'storeMurid'])->name('murids.store');
     Route::get('/murids/{murid}/edit',  [Admin\UserController::class, 'editMurid'])->name('murids.edit');
     Route::put('/murids/{murid}',       [Admin\UserController::class, 'updateMurid'])->name('murids.update');
+    Route::delete('/murids/{murid}',    [Admin\UserController::class, 'destroyMurid'])->name('murids.destroy');
 
     // Guru
     Route::get('/gurus',                [Admin\UserController::class, 'indexGuru'])->name('gurus.index');
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/gurus',               [Admin\UserController::class, 'storeGuru'])->name('gurus.store');
     Route::get('/gurus/{guru}/edit',    [Admin\UserController::class, 'editGuru'])->name('gurus.edit');
     Route::put('/gurus/{guru}',         [Admin\UserController::class, 'updateGuru'])->name('gurus.update');
+    Route::delete('/gurus/{guru}',      [Admin\UserController::class, 'destroyGuru'])->name('gurus.destroy');
 
     // Toggle aktif/nonaktif user
     Route::patch('/users/{user}/toggle', [Admin\UserController::class, 'toggleAktif'])->name('users.toggle');
