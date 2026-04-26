@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Guru;
 use App\Http\Controllers\Murid;
+use App\Http\Controllers\NotifikasiController;
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 // ── Landing Page ─────────────────────────────────────────────
@@ -62,6 +64,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Monthly Report
     Route::post('/monthly-report/generate',       [Admin\MonthlyReportController::class, 'generate'])->name('report.generate');
     Route::get('/monthly-report/{murid}/{bulan}', [Admin\MonthlyReportController::class, 'show'])->name('report.show');
+
+    // Program Kursus
+    Route::resource('program-kursus', Admin\ProgramKursusController::class)
+        ->names('program-kursus');
+
+    // Kelas
+    Route::resource('kelas', Admin\KelasController::class)
+        ->only(['index','create','store','edit','update','destroy']);
 });
 
 // ── GURU ─────────────────────────────────────────────────────
@@ -82,5 +92,10 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('/profil',            [Murid\ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil',            [Murid\ProfilController::class, 'update'])->name('profil.update');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+});
+
 
 require __DIR__.'/auth.php';
