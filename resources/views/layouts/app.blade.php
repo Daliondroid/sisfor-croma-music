@@ -382,13 +382,6 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('notifikasi.index') }}" class="dropdown-item">
-                        <i class="fa-regular fa-bell"></i> Notifikasi
-                        @if($unread)
-                            <span style="margin-left:auto;background:#ef4444;color:#fff;border-radius:50px;padding:1px 7px;font-size:.65rem;font-weight:700">{{ $unread }}</span>
-                        @endif
-                    </a>
-
                     {{-- Dark/Light Theme Toggle --}}
                     <div class="dropdown-theme-row">
                         <div class="dropdown-theme-row-left">

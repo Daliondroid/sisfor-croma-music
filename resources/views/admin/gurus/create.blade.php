@@ -40,7 +40,7 @@
                 <div class="form-group">
                     <label class="form-label">Nomor HP</label>
                     <input type="text" name="nomor_hp" class="form-control" 
-                        value="{{ old('nomor_hp', $m->nomor_hp ?? '') }}" 
+                        value="{{ old('nomor_hp') }}"
                         placeholder="08xx-xxxx-xxxx" 
                         maxlength="15" 
                         oninput="formatPhoneNumber(this)">
@@ -55,10 +55,13 @@
                 <label class="form-label">Spesialisasi Instrumen <span style="color:red">*</span></label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
                     @foreach($spesialisasis as $s)
-                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer;">
-                            <input type="checkbox" name="spesialisasi_ids[]" value="{{ $s->id_spesialisasi }}"
-                                {{ (isset($guru) && $guru->spesialisasis->contains($s->id_spesialisasi)) ? 'checked' : '' }}>
-                            {{ $s->nama_spesialisasi }}
+                        <label title="{{ $s->nama_spesialisasi }}" style="display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; margin: 0; overflow: hidden; white-space: nowrap;">
+                            <input type="checkbox" name="spesialisasi_ids[]" value="{{ $s->id_spesialisasi }}" 
+                                {{ collect(old('spesialisasi_ids'))->contains($s->id_spesialisasi) ? 'checked' : '' }}
+                                style="flex-shrink: 0;"> 
+                            <span style="overflow: hidden; text-overflow: ellipsis;">
+                                {{ \Illuminate\Support\Str::limit($s->nama_spesialisasi, 18) }}
+                            </span>
                         </label>
                     @endforeach
                 </div>
