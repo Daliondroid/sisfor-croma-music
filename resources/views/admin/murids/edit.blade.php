@@ -17,7 +17,7 @@
 <div class="card" style="max-width:780px">
     <div class="card-header"><h3>{{ $murid->nama_murid }}</h3></div>
     <div class="card-body">
-        <form method="POST" action="{{ route('admin.murids.update', $murid) }}">
+        <form method="POST" action="{{ route('admin.murids.update', $murid) }}" enctype="multipart/form-data">
             @csrf @method('PUT')
             @if($errors->any())
                 <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
@@ -43,6 +43,11 @@
                 <div class="form-group">
                     <label class="form-label">Konfirmasi Password</label>
                     <input type="password" name="password_confirmation" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Foto Profil</label>
+                    <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
                 </div>
             </div>
 

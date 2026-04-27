@@ -67,7 +67,13 @@ class LaporanController extends Controller
         $bulan = $request->bulan ?? now()->format('Y-m');
         $data  = match($jenis) {
             'keuangan' => Spp::with('murid')->where('bulan_tagihan', $bulan)->get(),
-            'absensi'  => Murid::where('status_aktif', true)->with(['presensis'])->get(),
+            'absensi'  => Murid::where('status_aktif', true)->get()->map(function ($murid) use ($bulan) {
+                $presensis = $murid->presensis()->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulan])->get();
+                $murid->total_hadir = $presensis->where('status_murid', 'hadir')->count();
+                $murid->total_alpa  = $presensis->where('status_murid', 'alpa')->count();
+                $murid->total_izin  = $presensis->where('status_murid', 'izin')->count();
+                return $murid;
+            }),
             default    => collect(),
         };
 

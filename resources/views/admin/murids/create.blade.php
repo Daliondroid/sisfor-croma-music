@@ -17,7 +17,7 @@
 <div class="card" style="max-width:780px">
     <div class="card-header"><h3>Data Akun & Profil</h3></div>
     <div class="card-body">
-        <form method="POST" action="{{ route('admin.murids.store') }}">
+        <form method="POST" action="{{ route('admin.murids.store') }}" enctype="multipart/form-data">
             @csrf
             @if($errors->any())
                 <div class="alert alert-danger">
@@ -46,6 +46,11 @@
                     <label class="form-label">Konfirmasi Password <span style="color:red">*</span></label>
                     <input type="password" name="password_confirmation" class="form-control" required/>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Foto Profil</label>
+                    <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
+                </div>
             </div>
 
             <hr style="border:none;border-top:1px solid #f0f0f0;margin:20px 0"/>
@@ -68,14 +73,6 @@
                 <div class="form-group">
                     <label class="form-label">Nomor HP</label>
                     <input type="text" name="nomor_hp" class="form-control" value="{{ old('nomor_hp') }}"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Tipe Les <span style="color:red">*</span></label>
-                    <select name="tipe_les" class="form-control" required>
-                        <option value="">Pilih tipe les</option>
-                        <option value="onsite" {{ old('tipe_les')=='onsite'?'selected':'' }}>Onsite</option>
-                        <option value="home_private" {{ old('tipe_les')=='home_private'?'selected':'' }}>Home Private</option>
-                    </select>
                 </div>
             </div>
             <div class="form-group">

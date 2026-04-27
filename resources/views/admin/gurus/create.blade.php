@@ -11,7 +11,7 @@
 <div class="card" style="max-width:680px">
     <div class="card-header"><h3>Data Akun & Profil Guru</h3></div>
     <div class="card-body">
-        <form method="POST" action="{{ route('admin.gurus.store') }}">
+        <form method="POST" action="{{ route('admin.gurus.store') }}" enctype="multipart/form-data">
             @csrf
             @if($errors->any())
                 <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
@@ -39,12 +39,30 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nomor HP</label>
-                    <input type="text" name="nomor_hp" class="form-control" value="{{ old('nomor_hp') }}"/>
+                    <input type="text" name="nomor_hp" class="form-control" 
+                        value="{{ old('nomor_hp', $m->nomor_hp ?? '') }}" 
+                        placeholder="08xx-xxxx-xxxx" 
+                        maxlength="15" 
+                        oninput="formatPhoneNumber(this)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Foto Profil</label>
+                    <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Spesialisasi</label>
-                <input type="text" name="spesialisasi" class="form-control" value="{{ old('spesialisasi') }}" placeholder="Contoh: Piano, Gitar, Drum"/>
+                <label class="form-label">Spesialisasi Instrumen <span style="color:red">*</span></label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                    @foreach($spesialisasis as $s)
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer;">
+                            <input type="checkbox" name="spesialisasi_ids[]" value="{{ $s->id_spesialisasi }}"
+                                {{ (isset($guru) && $guru->spesialisasis->contains($s->id_spesialisasi)) ? 'checked' : '' }}>
+                            {{ $s->nama_spesialisasi }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('spesialisasi_ids') <small style="color:red">{{ $message }}</small> @enderror
             </div>
             <div style="display:flex;gap:12px;margin-top:8px">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
@@ -53,4 +71,23 @@
         </form>
     </div>
 </div>
+
+<script>
+    function formatPhoneNumber(input) {
+        // 1. Hapus semua karakter yang bukan angka
+        let numbers = input.value.replace(/\D/g, '');
+        
+        // 2. Format grup per 4 angka (contoh: 0812-3456-7890)
+        let formatted = '';
+        for (let i = 0; i < numbers.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formatted += '-';
+            }
+            formatted += numbers[i];
+        }
+        
+        // 3. Tampilkan kembali ke input
+        input.value = formatted;
+    }
+</script>
 @endsection

@@ -10,7 +10,7 @@ class Murid extends Model
 
     protected $fillable = [
         'id_user', 'nama_murid', 'tanggal_lahir', 'alamat',
-        'nomor_hp', 'nama_orang_tua', 'tipe_les', 'status_aktif',
+        'nomor_hp', 'nama_orang_tua', 'status_aktif',
     ];
 
     protected $casts = [

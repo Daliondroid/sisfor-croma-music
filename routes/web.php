@@ -37,6 +37,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/murids/{murid}/edit',  [Admin\UserController::class, 'editMurid'])->name('murids.edit');
     Route::put('/murids/{murid}',       [Admin\UserController::class, 'updateMurid'])->name('murids.update');
     Route::delete('/murids/{murid}',    [Admin\UserController::class, 'destroyMurid'])->name('murids.destroy');
+    Route::resource('spesialisasi', Admin\SpesialisasiController::class)->except('show');
 
     // Guru
     Route::get('/gurus',                [Admin\UserController::class, 'indexGuru'])->name('gurus.index');

@@ -26,14 +26,6 @@
                 <input type="text" name="search" class="form-control" placeholder="Nama atau email..." value="{{ request('search') }}"/>
             </div>
             <div class="form-group" style="margin:0">
-                <label class="form-label">Tipe Les</label>
-                <select name="tipe" class="form-control">
-                    <option value="">Semua</option>
-                    <option value="onsite" {{ request('tipe')=='onsite'?'selected':'' }}>Onsite</option>
-                    <option value="home_private" {{ request('tipe')=='home_private'?'selected':'' }}>Home Private</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin:0">
                 <label class="form-label">Status</label>
                 <select name="status" class="form-control">
                     <option value="">Semua</option>
@@ -56,7 +48,6 @@
                     <th>#</th>
                     <th>Nama Murid</th>
                     <th>Email / Username</th>
-                    <th>Tipe Les</th>
                     <th>Orang Tua</th>
                     <th>No. HP</th>
                     <th>Status</th>
@@ -69,8 +60,12 @@
                     <td style="color:var(--text-light)">{{ $murids->firstItem() + $i }}</td>
                     <td>
                         <div style="display:flex;align-items:center;gap:10px">
-                            <div class="avatar" style="width:34px;height:34px;font-size:.75rem;flex-shrink:0">
-                                {{ strtoupper(substr($m->nama_murid,0,1)) }}
+                            <div class="avatar" style="width:34px;height:34px;overflow:hidden;border-radius:50%">
+                                @if($m->user->foto_profil)
+                                    <img src="{{ asset('storage/' . $m->user->foto_profil) }}" style="width:100%;height:100%;object-fit:cover">
+                                @else
+                                    {{ strtoupper(substr($m->nama_murid,0,1)) }}
+                                @endif
                             </div>
                             <div>
                                 <div style="font-weight:600">{{ $m->nama_murid }}</div>
@@ -82,12 +77,7 @@
                     </td>
                     <td>
                         <div>{{ $m->user->email }}</div>
-                        <div style="font-size:.72rem;color:var(--text-light)">@{{ $m->user->username }}</div>
-                    </td>
-                    <td>
-                        <span class="badge {{ $m->tipe_les=='onsite' ? 'badge-info' : 'badge-warning' }}">
-                            {{ $m->tipe_les=='onsite' ? 'Onsite' : 'Home Private' }}
-                        </span>
+                        <div style="font-size:.72rem;color:var(--text-light)">{{ '@' . $m->user->username }}</div>                    
                     </td>
                     <td>{{ $m->nama_orang_tua ?? '-' }}</td>
                     <td>{{ $m->nomor_hp ?? '-' }}</td>
