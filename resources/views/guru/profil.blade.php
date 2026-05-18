@@ -5,7 +5,6 @@
     <div class="nav-section-label">Menu</div>
     <a href="{{ route('guru.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
     <a href="{{ route('guru.presensi.index') }}" class="nav-item"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
-    <a href="{{ route('guru.profil.edit') }}" class="nav-item active"><i class="fa-solid fa-user-pen"></i> Profil Saya</a>
 @endsection
 
 @section('content')

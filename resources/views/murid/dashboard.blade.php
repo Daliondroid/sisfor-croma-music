@@ -10,9 +10,6 @@
     <a href="{{ route('murid.spp.index') }}" class="nav-item {{ request()->routeIs('murid.spp*') ? 'active' : '' }}">
         <i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya
     </a>
-    <a href="{{ route('murid.profil.edit') }}" class="nav-item {{ request()->routeIs('murid.profil*') ? 'active' : '' }}">
-        <i class="fa-solid fa-user-pen"></i> Profil Saya
-    </a>
 @endsection
 
 @section('content')

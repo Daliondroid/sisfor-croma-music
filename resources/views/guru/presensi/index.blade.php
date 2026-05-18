@@ -9,9 +9,6 @@
     <a href="{{ route('guru.presensi.index') }}" class="nav-item {{ request()->routeIs('guru.presensi*') ? 'active' : '' }}">
         <i class="fa-solid fa-clipboard-check"></i> Input Presensi
     </a>
-    <a href="{{ route('guru.profil.edit') }}" class="nav-item {{ request()->routeIs('guru.profil*') ? 'active' : '' }}">
-        <i class="fa-solid fa-user-pen"></i> Profil Saya
-    </a>
 @endsection
 
 @section('content')
