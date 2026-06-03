@@ -3,24 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaksi extends Model
 {
-    protected $table      = 'transaksis';
+    protected $table = 'transaksis';
     protected $primaryKey = 'id_transaksi';
 
     protected $fillable = [
-        'id_spp', 'id_murid', 'id_admin', 'file_bukti_transfer',
-        'nominal_bayar', 'tanggal_bayar', 'tanggal_konfirmasi', 'catatan_admin',
+        'id_spp', 'id_admin', 'file_bukti_transfer', 'nominal_bayar', 
+        'tanggal_bayar', 'tanggal_konfirmasi', 'catatan_admin'
     ];
 
-    protected $casts = [
-        'tanggal_bayar'      => 'date',
-        'tanggal_konfirmasi' => 'date',
-    ];
+    public function spp(): BelongsTo
+    {
+        return $this->belongsTo(Spp::class, 'id_spp');
+    }
 
-    public function spp()   { return $this->belongsTo(Spp::class, 'id_spp'); }
-    public function murid() { return $this->belongsTo(Murid::class, 'id_murid'); }
-    public function admin() { return $this->belongsTo(Admin::class, 'id_admin'); }
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'id_admin');
+    }
 }
-
