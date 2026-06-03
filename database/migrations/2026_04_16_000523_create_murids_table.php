@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('nomor_hp', 20)->nullable();
             $table->string('nama_orang_tua')->nullable();
-            $table->enum('tipe_les', ['onsite', 'home_private']);
             $table->boolean('status_aktif')->default(true);
             $table->timestamps();
         });

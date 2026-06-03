@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id('id_guru');
             $table->foreignId('id_user')->constrained('users', 'id_user')->cascadeOnDelete();
             $table->string('nama_guru');
-            $table->string('spesialisasi')->nullable();
             $table->string('nomor_hp', 20)->nullable();
             $table->boolean('status_aktif')->default(true);
             $table->timestamps();

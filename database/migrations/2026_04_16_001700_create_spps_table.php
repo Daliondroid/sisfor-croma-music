@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('spps', function (Blueprint $table) {
             $table->id('id_spp');
             $table->foreignId('id_murid')->constrained('murids', 'id_murid')->cascadeOnDelete();
-            $table->string('bulan_tagihan', 7); // format: 2024-01
-            $table->decimal('nominal_tagihan', 12, 2);
+            $table->foreignId('id_program')->constrained('program_kursus', 'id_program');
+            $table->date('periode_tagihan');
+            $table->decimal('nominal_tagihan', 15, 2);
             $table->date('tanggal_jatuh_tempo');
-            $table->enum('status_bayar', ['belum_bayar', 'sudah_bayar'])->default('belum_bayar');
+            $table->enum('tipe_les', ['Onsite', 'Home Private']);
+            $table->enum('status_bayar', ['Lunas', 'Belum Lunas'])->default('Belum Lunas');
             $table->timestamps();
-
-            $table->unique(['id_murid', 'bulan_tagihan']); // satu tagihan per murid per bulan
         });
     }
 

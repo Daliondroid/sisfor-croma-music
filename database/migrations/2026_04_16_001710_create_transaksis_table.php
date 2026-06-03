@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id('id_transaksi');
-            $table->foreignId('id_spp')->constrained('spps', 'id_spp');
-            $table->foreignId('id_murid')->constrained('murids', 'id_murid');
-            $table->foreignId('id_admin')->constrained('admins', 'id_admin');
-            $table->string('file_bukti_transfer'); // path file
-            $table->decimal('nominal_bayar', 12, 2);
+            $table->foreignId('id_spp')->constrained('spps', 'id_spp')->cascadeOnDelete();
+            $table->foreignId('id_admin')->nullable()->constrained('admins', 'id_admin');
+            $table->string('file_bukti_transfer');
+            $table->decimal('nominal_bayar', 15, 2);
             $table->date('tanggal_bayar');
             $table->date('tanggal_konfirmasi')->nullable();
             $table->text('catatan_admin')->nullable();

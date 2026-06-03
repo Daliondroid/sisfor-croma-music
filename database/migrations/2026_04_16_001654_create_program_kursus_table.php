@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama_program');
             $table->text('deskripsi')->nullable();
             $table->enum('tipe_les', ['onsite', 'home_private', 'keduanya'])->default('keduanya');
+            $table->decimal('biaya_kursus', 15, 2); // TAMBAHAN BARU
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
