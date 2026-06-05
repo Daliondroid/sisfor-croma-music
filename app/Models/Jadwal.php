@@ -13,10 +13,18 @@ class Jadwal extends Model
 
     protected $fillable = [
         'id_admin', 'id_guru', 'id_spp', 'id_honor', 'id_report',
-        'tanggal', 'jam_mulai', 'jam_selesai', 'sesi_ke', 'status_jadwal',
-        'status_kehadiran_murid', 'status_kehadiran_guru', 'waktu_presensi_diisi', 
-        'presensi_diisi_oleh', 'is_active'
+        'tanggal', 'jam_mulai', 'jam_selesai', 'sesi_ke',
+        'status_jadwal', 'status_kehadiran_murid', 'status_kehadiran_guru',
+        'waktu_presensi_diisi', 'presensi_diisi_oleh', 'is_active',
     ];
+
+    protected $casts = [
+        'tanggal'              => 'date',
+        'waktu_presensi_diisi' => 'datetime',
+        'is_active'            => 'boolean',
+    ];
+
+    // ── Relasi ─────────────────────────────────────────────────
 
     public function admin(): BelongsTo
     {
@@ -28,6 +36,10 @@ class Jadwal extends Model
         return $this->belongsTo(Guru::class, 'id_guru');
     }
 
+    /**
+     * SPP yang mencakup sesi ini.
+     * Lewat SPP inilah bisa diakses murid: $jadwal->spp->murid
+     */
     public function spp(): BelongsTo
     {
         return $this->belongsTo(Spp::class, 'id_spp');
@@ -47,4 +59,15 @@ class Jadwal extends Model
     {
         return $this->hasOne(ProgresMurid::class, 'id_jadwal');
     }
-}   
+
+    // ── Helper accessor ────────────────────────────────────────
+
+    /**
+     * Akses murid dari jadwal lewat SPP.
+     * Contoh: $jadwal->murid  (menggantikan relasi langsung yang tidak ada di ERD v12)
+     */
+    public function getMuridAttribute(): ?Murid
+    {
+        return $this->spp?->murid;
+    }
+}

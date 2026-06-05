@@ -9,7 +9,12 @@ class GuruSpesialisasi extends Model
 {
     protected $table = 'guru_spesialisasis';
 
-    protected $fillable = ['id_guru', 'nama_spesialisasi'];
+    protected $fillable = [
+        'id_guru',
+        'nama_spesialisasi',
+    ];
+
+    // ── Relasi ─────────────────────────────────────────────────
 
     public function guru(): BelongsTo
     {
