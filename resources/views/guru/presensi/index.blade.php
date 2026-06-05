@@ -24,9 +24,9 @@
             @forelse($jadwals as $j)
                 <a href="{{ route('guru.presensi.index') }}?jadwal={{ $j->id_jadwal }}"
                    style="display:block;padding:16px 20px;border-bottom:1px solid #f0f0f0;transition:.15s;{{ request('jadwal')==$j->id_jadwal ? 'background:#eff6ff;border-left:3px solid var(--primary-blue)' : '' }}">
-                    <div style="font-weight:600">{{ $j->murid->nama_murid }}</div>
-                    <div style="font-size:.78rem;color:var(--text-light)">{{ $j->hari }} · {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}</div>
-                </a>
+                    <div style="font-weight:600">{{ $j->spp->murid->nama_murid ?? '-' }}</div>
+                    <div>{{ \Carbon\Carbon::parse($j->tanggal)->translatedFormat('l') }} · 
+                        {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}</div>                </a>
             @empty
                 <div style="padding:24px;text-align:center;color:var(--text-light)">Tidak ada jadwal aktif.</div>
             @endforelse
@@ -41,10 +41,12 @@
                 @php $selected = $jadwals->firstWhere('id_jadwal', request('jadwal')); @endphp
                 @if($selected)
                 <div style="background:#f8faff;border:1px solid #dbeafe;border-radius:8px;padding:14px;margin-bottom:20px">
-                    <strong>{{ $selected->murid->nama_murid }}</strong> —
-                    {{ $selected->kelas->nama_kelas ?? '' }} ·
-                    {{ $selected->hari }}, {{ substr($selected->jam_mulai,0,5) }}–{{ substr($selected->jam_selesai,0,5) }}
-                    @if($selected->lokasi) · {{ $selected->lokasi }} @endif
+                    <strong>{{ $selected->spp->murid->nama_murid ?? '-' }}</strong> —
+                    {{ $selected->spp->programKursus->nama_program ?? '-' }} ·
+                    {{ $selected->spp->tipe_les ?? '' }} ·
+                    {{ \Carbon\Carbon::parse($selected->tanggal)->translatedFormat('l, d M Y') }},
+                    {{ substr($selected->jam_mulai,0,5) }}–{{ substr($selected->jam_selesai,0,5) }}
+                    {{-- @if($selected->lokasi) · {{ $selected->lokasi }} @endif --}}
                 </div>
                 <form method="POST" action="{{ route('guru.presensi.store') }}">
                     @csrf
@@ -61,10 +63,14 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Status Kehadiran <span style="color:red">*</span></label>
-                            <select name="status_murid" class="form-control" id="status-select" required>
-                                <option value="hadir">✅ Hadir</option>
-                                <option value="izin">🟡 Izin</option>
-                                <option value="alpa">❌ Alpa</option>
+                            <select name="status_kehadiran_murid" class="form-control" required>
+                                <option value="Hadir">✅ Hadir</option>
+                                <option value="Tidak Hadir">❌ Tidak Hadir</option>
+                            </select>
+
+                            <select name="status_kehadiran_guru" class="form-control" required>
+                                <option value="Hadir">✅ Guru Hadir</option>
+                                <option value="Tidak Hadir">❌ Guru Tidak Hadir</option>
                             </select>
                         </div>
                     </div>
