@@ -10,7 +10,6 @@ use App\Models\GuruSpesialisasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -52,23 +51,16 @@ class UserController extends Controller
             'nomor_hp'      => 'nullable|string|max:20',
             'alamat'        => 'nullable|string',
             'nama_orang_tua'=> 'nullable|string',
-            'foto_profil'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         DB::transaction(function () use ($request) {
-            $path = null;
-            if ($request->hasFile('foto_profil')) {
-                $path = $request->file('foto_profil')->store('foto-profil', 'public');
-            }
-
             $user = User::create([
-                'username'    => $request->username,
-                'name'        => $request->nama_murid,
-                'email'       => $request->email,
-                'password'    => Hash::make($request->password),
-                'role'        => 'murid',
-                'is_active'   => true,
-                'foto_profil' => $path,
+                'username'  => $request->username,
+                'name'      => $request->nama_murid,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'role'      => 'murid',
+                'is_active' => true,
             ]);
 
             Murid::create([
@@ -101,20 +93,10 @@ class UserController extends Controller
             'alamat'        => 'nullable|string',
             'nama_orang_tua'=> 'nullable|string',
             'email'         => 'required|email|unique:users,email,' . $murid->id_user . ',id_user',
-            'foto_profil'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         DB::transaction(function () use ($request, $murid) {
             $userData = ['email' => $request->email, 'name' => $request->nama_murid];
-
-            if ($request->hasFile('foto_profil')) {
-                if ($murid->user->foto_profil
-                    && Storage::disk('public')->exists($murid->user->foto_profil)) {
-                    Storage::disk('public')->delete($murid->user->foto_profil);
-                }
-                $userData['foto_profil'] = $request->file('foto_profil')
-                    ->store('foto-profil', 'public');
-            }
 
             if ($request->filled('password')) {
                 $request->validate(['password' => 'min:8|confirmed']);
@@ -138,7 +120,6 @@ class UserController extends Controller
 
         DB::transaction(function () use ($murid) {
             $user = $murid->user;
-            // Soft-delete: nonaktifkan saja, jangan cascade hapus jadwal/transaksi
             $murid->update(['status_aktif' => false]);
             $user?->update(['is_active' => false]);
         });
@@ -176,53 +157,42 @@ class UserController extends Controller
 
     /**
      * Simpan akun guru baru.
-     * Spesialisasi: admin bisa pilih lebih dari 1; disimpan sebagai
-     * baris terpisah di guru_spesialisasis (HasMany, bukan pivot).
+     * Spesialisasi: teks bebas dipisah koma, disimpan sebagai baris terpisah
+     * di guru_spesialisasis (HasMany, nama_spesialisasi langsung sebagai string).
      */
     public function storeGuru(Request $request)
     {
         $request->validate([
-            'username'         => 'required|unique:users',
-            'email'            => 'required|email|unique:users',
-            'password'         => 'required|min:8|confirmed',
-            'nama_guru'        => 'required|string',
-            'nomor_hp'         => 'nullable|string|max:20',
-            'spesialisasi'     => 'required|array|min:1',
-            'spesialisasi.*'   => 'required|string|max:100',
-            'foto_profil'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'username'     => 'required|unique:users',
+            'email'        => 'required|email|unique:users',
+            'password'     => 'required|min:8|confirmed',
+            'nama_guru'    => 'required|string',
+            'nomor_hp'     => 'nullable|string|max:20',
+            'spesialisasi' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request) {
-            $path = null;
-            if ($request->hasFile('foto_profil')) {
-                $path = $request->file('foto_profil')->store('foto-profil', 'public');
-            }
-
             $user = User::create([
-                'username'    => $request->username,
-                'name'        => $request->nama_guru,
-                'email'       => $request->email,
-                'password'    => Hash::make($request->password),
-                'role'        => 'guru',
-                'is_active'   => true,
-                'foto_profil' => $path,
+                'username'  => $request->username,
+                'name'      => $request->nama_guru,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'role'      => 'guru',
+                'is_active' => true,
             ]);
 
             $guru = Guru::create([
-                'id_user'     => $user->id_user,
-                'nama_guru'   => $request->nama_guru,
-                'nomor_hp'    => $request->nomor_hp,
-                'status_aktif'=> true,
+                'id_user'      => $user->id_user,
+                'nama_guru'    => $request->nama_guru,
+                'nomor_hp'     => $request->nomor_hp,
+                'status_aktif' => true,
             ]);
 
-            // Simpan setiap spesialisasi sebagai baris baru
-            foreach ($request->spesialisasi as $nama) {
-                if (trim($nama) === '') {
-                    continue;
-                }
+            // Spesialisasi: string dipisah koma
+            foreach ($this->parseSpesialisasi($request->spesialisasi) as $nama) {
                 GuruSpesialisasi::create([
                     'id_guru'           => $guru->id_guru,
-                    'nama_spesialisasi' => trim($nama),
+                    'nama_spesialisasi' => $nama,
                 ]);
             }
         });
@@ -239,31 +209,19 @@ class UserController extends Controller
 
     /**
      * Update data guru.
-     * Spesialisasi: hapus semua yang lama, lalu insert ulang daftar baru.
-     * Ini memungkinkan admin menambah / menghapus / mengubah spesialisasi secara bebas.
+     * Spesialisasi: hapus semua lama, insert ulang dari input teks.
      */
     public function updateGuru(Request $request, Guru $guru)
     {
         $request->validate([
-            'nama_guru'        => 'required|string',
-            'nomor_hp'         => 'nullable|string|max:20',
-            'email'            => 'required|email|unique:users,email,' . $guru->id_user . ',id_user',
-            'spesialisasi'     => 'required|array|min:1',
-            'spesialisasi.*'   => 'required|string|max:100',
-            'foto_profil'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nama_guru'    => 'required|string',
+            'nomor_hp'     => 'nullable|string|max:20',
+            'email'        => 'required|email|unique:users,email,' . $guru->id_user . ',id_user',
+            'spesialisasi' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request, $guru) {
             $userData = ['email' => $request->email, 'name' => $request->nama_guru];
-
-            if ($request->hasFile('foto_profil')) {
-                if ($guru->user->foto_profil
-                    && Storage::disk('public')->exists($guru->user->foto_profil)) {
-                    Storage::disk('public')->delete($guru->user->foto_profil);
-                }
-                $userData['foto_profil'] = $request->file('foto_profil')
-                    ->store('foto-profil', 'public');
-            }
 
             if ($request->filled('password')) {
                 $request->validate(['password' => 'min:8|confirmed']);
@@ -276,13 +234,10 @@ class UserController extends Controller
             // Sync spesialisasi: hapus lama, insert baru
             GuruSpesialisasi::where('id_guru', $guru->id_guru)->delete();
 
-            foreach ($request->spesialisasi as $nama) {
-                if (trim($nama) === '') {
-                    continue;
-                }
+            foreach ($this->parseSpesialisasi($request->spesialisasi) as $nama) {
                 GuruSpesialisasi::create([
                     'id_guru'           => $guru->id_guru,
-                    'nama_spesialisasi' => trim($nama),
+                    'nama_spesialisasi' => $nama,
                 ]);
             }
         });
@@ -297,7 +252,6 @@ class UserController extends Controller
 
         DB::transaction(function () use ($guru) {
             $user = $guru->user;
-            // Soft-delete: nonaktifkan saja, pertahankan historis jadwal/honor
             $guru->update(['status_aktif' => false]);
             $user?->update(['is_active' => false]);
         });
@@ -310,9 +264,6 @@ class UserController extends Controller
     //  TOGGLE AKTIF
     // ══════════════════════════════════════════════════════════════
 
-    /**
-     * Toggle is_active pada user dan flag status_aktif pada murid/guru terkait.
-     */
     public function toggleAktif(User $user)
     {
         $newStatus = ! $user->is_active;
@@ -330,5 +281,25 @@ class UserController extends Controller
         $label = $newStatus ? 'diaktifkan' : 'dinonaktifkan';
 
         return back()->with('success', "Status akun berhasil {$label}.");
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  HELPER
+    // ══════════════════════════════════════════════════════════════
+
+    /**
+     * Parse string spesialisasi dipisah koma/newline jadi array bersih.
+     */
+    private function parseSpesialisasi(?string $input): array
+    {
+        if (empty($input)) {
+            return [];
+        }
+
+        return collect(preg_split('/[\n,]+/', $input))
+            ->map(fn($s) => trim($s))
+            ->filter()
+            ->values()
+            ->all();
     }
 }
