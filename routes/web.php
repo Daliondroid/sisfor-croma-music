@@ -51,6 +51,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/users/{user}/toggle', [Admin\UserController::class, 'toggleAktif'])->name('users.toggle');
 
     // Jadwal
+    Route::get('/jadwals/cek-sesi', [\App\Http\Controllers\Admin\JadwalController::class, 'cekSesi'])->name('admin.jadwals.cekSesi');
     Route::resource('jadwals', Admin\JadwalController::class)->only(['index','create','store','destroy']);
 
     // SPP
