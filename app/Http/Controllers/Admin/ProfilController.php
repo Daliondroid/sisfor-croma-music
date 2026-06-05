@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,7 @@ class ProfilController extends Controller
 {
     public function edit()
     {
+        /** @var User $user */ // Bagian ini ditambahkan
         $user  = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 
@@ -21,6 +23,7 @@ class ProfilController extends Controller
 
     public function update(Request $request)
     {
+        /** @var User $user */ // Bagian ini ditambahkan
         $user  = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 

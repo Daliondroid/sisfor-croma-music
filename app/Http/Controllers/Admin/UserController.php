@@ -19,7 +19,7 @@ class UserController extends Controller
 
     public function indexMurid(Request $request)
     {
-        $murids = Murid::with('user')
+        $murids = Murid::with(['user', 'spps'])  // tambah 'spps'
             ->when(
                 $request->search,
                 fn($q) => $q->where('nama_murid', 'like', "%{$request->search}%")
@@ -134,7 +134,7 @@ class UserController extends Controller
 
     public function indexGuru(Request $request)
     {
-        $gurus = Guru::with(['user', 'spesialisasis'])
+        $gurus = Guru::with(['user', 'spesialisasis', 'jadwals'])  // tambah 'jadwals'
             ->when(
                 $request->search,
                 fn($q) => $q->where('nama_guru', 'like', "%{$request->search}%")
@@ -147,7 +147,6 @@ class UserController extends Controller
             ->latest()
             ->paginate(20);
 
-        // Ambil semua nama spesialisasi unik dari tabel guru_spesialisasis
         $spesialisasis = \App\Models\GuruSpesialisasi::select('nama_spesialisasi')
             ->distinct()
             ->orderBy('nama_spesialisasi')
