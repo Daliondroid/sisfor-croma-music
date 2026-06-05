@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Spp;
 use App\Models\Transaksi;
+use App\Models\Notifikasi;
 use App\Models\Murid;
 use App\Models\Admin;
 use App\Models\ProgramKursus;
@@ -149,5 +150,40 @@ class SppController extends Controller
         $transaksi->delete();
 
         return back()->with('success', 'Bukti transfer ditolak dan dihapus. Murid dapat mengunggah ulang.');
+    }
+
+    /**
+     * Kirim notifikasi pengingat pembayaran SPP ke murid tertentu.
+     * Notifikasi disimpan ke tabel notifikasis milik user murid tersebut.
+     */
+    public function kirimNotifikasi(Request $request, Spp $spp)
+    {
+        // Pastikan SPP belum lunas — tidak perlu notifikasi kalau sudah bayar
+        if ($spp->status_bayar === 'Lunas') {
+            return back()->with('error', 'SPP ini sudah lunas, notifikasi tidak perlu dikirim.');
+        }
+ 
+        $murid = $spp->murid;
+ 
+        if (!$murid || !$murid->id_user) {
+            return back()->with('error', 'Data murid tidak ditemukan.');
+        }
+ 
+        $periode  = \Carbon\Carbon::parse($spp->periode_tagihan)->translatedFormat('F Y');
+        $nominal  = 'Rp ' . number_format($spp->nominal_tagihan, 0, ',', '.');
+        $jatuhTempo = $spp->tanggal_jatuh_tempo->format('d/m/Y');
+ 
+        $pesanDefault = "Halo {$murid->nama_murid}, mohon segera melunasi tagihan SPP bulan {$periode} sebesar {$nominal} sebelum {$jatuhTempo}.";
+        $pesan = $request->filled('pesan') ? $request->pesan : $pesanDefault;
+ 
+        Notifikasi::create([
+            'id_user'          => $murid->id_user,
+            'jenis_notifikasi' => 'tagihan_spp',
+            'pesan'            => $pesan,
+            'status_baca'      => 'belum_dibaca',
+            'id_referensi'     => $spp->id_spp,
+        ]);
+ 
+        return back()->with('success', "Notifikasi berhasil dikirim ke {$murid->nama_murid}.");
     }
 }

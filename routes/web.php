@@ -57,13 +57,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/spp',                     [Admin\SppController::class, 'index'])->name('spp.index');
     Route::post('/spp/generate',           [Admin\SppController::class, 'generateBulanan'])->name('spp.generate');
     Route::patch('/spp/{spp}/validasi',    [Admin\SppController::class, 'validasi'])->name('spp.validasi');
-
+    Route::post('/spp/{spp}/notifikasi', [Admin\SppController::class, 'kirimNotifikasi'])->name('spp.notifikasi');
+    
     // Laporan Gaji
-    // Mengarahkan halaman utama gaji guru ke HonorGuruController
     Route::get('/honor-guru', [Admin\HonorGuruController::class, 'index'])->name('honor-guru.index');
     Route::get('/honor-guru/{honorGuru}/edit', [Admin\HonorGuruController::class, 'edit'])->name('honor-guru.edit');
     Route::put('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'update'])->name('honor-guru.update');
     Route::delete('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'destroy'])->name('honor-guru.destroy');
+    
+    // Laporan
+    Route::get('/laporan/keuangan', [Admin\LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+    Route::get('/laporan/keuangan',          [Admin\LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+    Route::get('/laporan/absensi',           [Admin\LaporanController::class, 'absensi'])->name('laporan.absensi');
+    Route::get('/laporan/gaji',              [Admin\LaporanController::class, 'gajiGuru'])->name('laporan.gaji');
+ 
+    // FR-26: Ekspor PDF & XLSX
+    Route::get('/laporan/export/pdf/{jenis}',  [Admin\LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
+    Route::get('/laporan/export/xlsx/{jenis}', [Admin\LaporanController::class, 'exportXlsx'])->name('laporan.export.xlsx');
 
     // Monthly Report
     Route::post('/monthly-report/generate',       [Admin\MonthlyReportController::class, 'generate'])->name('report.generate');
