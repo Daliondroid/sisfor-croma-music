@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Jadwal;
 use App\Models\Murid;
+use App\Models\HonorGuru;
 use App\Models\Guru;
 use App\Models\ProgramKursus;
 use App\Models\Spp;
@@ -42,7 +43,7 @@ class JadwalController extends Controller
         }
 
         // Paginate dengan menyertakan seluruh query string agar paginasi tidak mereset filter
-        $jadwals = $query->latest('tanggal')->paginate(20)->withQueryString();
+        $jadwals = $query->latest('tanggal')->paginate(100)->withQueryString();
 
         $gurus = Guru::where('status_aktif', true)->get();
 
@@ -70,7 +71,7 @@ class JadwalController extends Controller
      * Simpan jadwal baru.
      * Sistem validasi time-clash: guru / murid tidak boleh dobel pada slot yang sama.
      */
-public function store(Request $request)
+    public function store(Request $request)
     {
         // 1. Validasi Input
         $rules = [
@@ -78,7 +79,7 @@ public function store(Request $request)
             'id_program'    => 'required|exists:program_kursus,id_program',
             'id_guru'       => 'required|exists:gurus,id_guru',
             'total_sesi'    => 'required|integer|in:4,8,12,16,20,24',
-            'tipe_les'      => 'required|in:Onsite,Home Private', // Hanya dua ini
+            'tipe_les'      => 'required|in:Onsite,Home Private',
             'tipe_jadwal'   => 'required|in:tetap,pola,manual',
             'tanggal_mulai' => 'required|date',
         ];
@@ -161,40 +162,47 @@ public function store(Request $request)
                 ];
             }
 
-            // 4. Proses Pembuatan SPP dan Jadwal secara Siklus (Per 4 Pertemuan)
-            // Mengelompokkan array jadwal menjadi beberapa sub-array berkapasitas 4
+            // 4. Proses Pembuatan SPP, Draft Honor, dan Jadwal (Per 4 Pertemuan)
             $chunks = array_chunk($generatedSessions, 4);
 
             foreach ($chunks as $chunk) {
-                // Mengambil tanggal dari pertemuan pertama di setiap paket 4 sesi ini
                 $firstSessionDate = Carbon::parse($chunk[0]['tanggal']);
 
-                // Generate SPP untuk siklus 4 pertemuan ini
+                // Generate SPP (Tagihan Murid)
                 $spp = Spp::create([
                     'id_murid'            => $request->id_murid,
                     'id_program'          => $request->id_program,
-                    // Periode tagihan diset ke awal bulan dari pertemuan pertama
                     'periode_tagihan'     => $firstSessionDate->copy()->startOfMonth()->format('Y-m-d'),
-                    // Nominal otomatis mengikuti data Master Program Kursus
                     'nominal_tagihan'     => $program->biaya_kursus ?? 0,
-                    // Jatuh tempo diatur pada hari H pertemuan pertama di paket siklus ini
                     'tanggal_jatuh_tempo' => $firstSessionDate->format('Y-m-d'),
                     'status_bayar'        => 'Belum Lunas'
                 ]);
 
-                // Mengikat 4 jadwal dalam iterasi ini ke SPP yang baru saja dibuat
+                // Generate Draft Honor Guru (Gaji Guru)
+                $honor = HonorGuru::create([
+                    'id_guru'          => $request->id_guru,
+                    // Karena di-generate otomatis saat belum gajian, id_admin biarkan kosong sementara
+                    'id_admin'         => $idAdmin, 
+                    'tanggal_pencairan'=> null,
+                    'jumlah_pertemuan' => count($chunk), // Dinamis, normalnya 4
+                    'jumlah_honor'     => 0, // Di-set 0 (Admin akan input manual nanti)
+                    'status_bayar'     => 'Belum Lunas', // Status bawaan ERD
+                    'catatan'          => null
+                ]);
+
+                // Mengikat 4 jadwal dalam iterasi ini ke SPP dan Honor Guru
                 $jadwalsToInsert = [];
                 foreach ($chunk as $session) {
                     $jadwalsToInsert[] = [
                         'id_admin'      => $idAdmin,
                         'id_guru'       => $request->id_guru,
-                        'id_spp'        => $spp->id_spp, // Menggunakan Primary Key dari SPP
+                        'id_spp'        => $spp->id_spp, 
+                        'id_honor'      => $honor->id_honor, // <-- Tautkan ID Honor Guru
                         'tanggal'       => $session['tanggal'],
                         'jam_mulai'     => $session['jam_mulai'],
                         'jam_selesai'   => $session['jam_selesai'],
-                        // Baris lokasi SUDAH DIHAPUS TOTAL dari sini
                         'sesi_ke'       => $session['sesi_ke'], 
-                        'status_jadwal' => 'Sesuai Jadwal', // Sudah disesuaikan dengan database
+                        'status_jadwal' => 'Sesuai Jadwal', 
                         'is_active'     => true,
                         'created_at'    => now(),
                         'updated_at'    => now(),
@@ -208,7 +216,7 @@ public function store(Request $request)
             DB::commit();
 
             return redirect()->route('admin.jadwals.index')
-                             ->with('success', 'Berhasil menjadwalkan ' . $request->total_sesi . ' pertemuan KBM dan mengotomatisasi pembuatan tagihan SPP.');
+                             ->with('success', 'Berhasil menjadwalkan ' . $request->total_sesi . ' pertemuan KBM. Sistem juga telah membuat Tagihan SPP otomatis dan Draft Gaji Guru.');
 
         } catch (\Exception $e) {
             DB::rollBack();

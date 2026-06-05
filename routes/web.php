@@ -58,11 +58,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/spp/generate',           [Admin\SppController::class, 'generateBulanan'])->name('spp.generate');
     Route::patch('/spp/{spp}/validasi',    [Admin\SppController::class, 'validasi'])->name('spp.validasi');
 
-    // Laporan
-    Route::get('/laporan/keuangan',        [Admin\LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-    Route::get('/laporan/gaji',            [Admin\LaporanController::class, 'gajiGuru'])->name('laporan.gaji');
-    Route::get('/laporan/absensi',         [Admin\LaporanController::class, 'absensi'])->name('laporan.absensi');
-    Route::get('/laporan/export/{jenis}',  [Admin\LaporanController::class, 'exportPdf'])->name('laporan.export');
+    // Laporan Gaji
+    // Mengarahkan halaman utama gaji guru ke HonorGuruController
+    Route::get('/honor-guru', [Admin\HonorGuruController::class, 'index'])->name('honor-guru.index');
+    Route::get('/honor-guru/{honorGuru}/edit', [Admin\HonorGuruController::class, 'edit'])->name('honor-guru.edit');
+    Route::put('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'update'])->name('honor-guru.update');
+    Route::delete('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'destroy'])->name('honor-guru.destroy');
 
     // Monthly Report
     Route::post('/monthly-report/generate',       [Admin\MonthlyReportController::class, 'generate'])->name('report.generate');
