@@ -7,39 +7,73 @@ use App\Models\Murid;
 use App\Models\Guru;
 use App\Models\Spp;
 use App\Models\Jadwal;
+use App\Models\HonorGuru;
+use App\Models\Transaksi;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $hariIni = now()->locale('id')->dayName; // Senin, Selasa, dst
+        $bulanIni = now()->format('Y-m');
 
-        $totalMurid  = Murid::where('status_aktif', true)->count();
-        $totalGuru   = Guru::where('status_aktif', true)->count();
-        $belumBayar  = Spp::where('status_bayar', 'belum_bayar')
-                          ->where('bulan_tagihan', now()->format('Y-m'))
-                          ->count();
+        // ── Statistik utama ────────────────────────────────────────
+        $totalMurid = Murid::where('status_aktif', true)->count();
+        $totalGuru  = Guru::where('status_aktif', true)->count();
 
-        $totalPemasukanBulanIni = Spp::where('status_bayar', 'sudah_bayar')
-                          ->where('bulan_tagihan', now()->format('Y-m'))
-                          ->sum('nominal_tagihan');
+        // SPP belum lunas bulan ini
+        $belumBayar = Spp::where('status_bayar', 'Belum Lunas')
+            ->whereYear('periode_tagihan', now()->year)
+            ->whereMonth('periode_tagihan', now()->month)
+            ->count();
 
+        // Total pemasukan bulan ini (SPP yang sudah lunas)
+        $totalPemasukanBulanIni = Spp::where('status_bayar', 'Lunas')
+            ->whereYear('periode_tagihan', now()->year)
+            ->whereMonth('periode_tagihan', now()->month)
+            ->sum('nominal_tagihan');
+
+        // ── 5 tagihan SPP belum bayar (terlama) ───────────────────
         $sppBelumBayar = Spp::with('murid')
-                          ->where('status_bayar', 'belum_bayar')
-                          ->where('bulan_tagihan', now()->format('Y-m'))
-                          ->orderBy('tanggal_jatuh_tempo')
-                          ->take(5)
-                          ->get();
+            ->where('status_bayar', 'Belum Lunas')
+            ->whereYear('periode_tagihan', now()->year)
+            ->whereMonth('periode_tagihan', now()->month)
+            ->orderBy('tanggal_jatuh_tempo')
+            ->take(5)
+            ->get();
 
-        $jadwalHariIni = Jadwal::with(['murid', 'guru', 'kelas'])
-                          ->where('hari', $hariIni)
-                          ->where('is_active', true)
-                          ->get();
+        // ── Jadwal hari ini ────────────────────────────────────────
+        $jadwalHariIni = Jadwal::with(['guru', 'spp.murid'])
+            ->whereDate('tanggal', today())
+            ->where('is_active', true)
+            ->whereIn('status_jadwal', ['Sesuai Jadwal', 'Reschedule'])
+            ->orderBy('jam_mulai')
+            ->get();
+
+        // ── Bukti transfer menunggu validasi ──────────────────────
+        $menantiValidasi = Transaksi::with(['spp.murid'])
+            ->whereNull('tanggal_konfirmasi')
+            ->whereHas('spp', fn($q) => $q->where('status_bayar', 'Belum Lunas'))
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // ── Honor guru siap dibayar ────────────────────────────────
+        $honorSiapDibayar = HonorGuru::with('guru')
+            ->where('status_bayar', 'Siap Dibayar')
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('admin.dashboard', compact(
-            'totalMurid', 'totalGuru', 'belumBayar',
-            'totalPemasukanBulanIni', 'sppBelumBayar', 'jadwalHariIni'
+            'totalMurid',
+            'totalGuru',
+            'belumBayar',
+            'totalPemasukanBulanIni',
+            'sppBelumBayar',
+            'jadwalHariIni',
+            'menantiValidasi',
+            'honorSiapDibayar',
         ));
     }
 }
