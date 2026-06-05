@@ -147,7 +147,13 @@ class UserController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('admin.gurus.index', compact('gurus'));
+        // Ambil semua nama spesialisasi unik dari tabel guru_spesialisasis
+        $spesialisasis = \App\Models\GuruSpesialisasi::select('nama_spesialisasi')
+            ->distinct()
+            ->orderBy('nama_spesialisasi')
+            ->get();
+
+        return view('admin.gurus.index', compact('gurus', 'spesialisasis'));
     }
 
     public function createGuru()

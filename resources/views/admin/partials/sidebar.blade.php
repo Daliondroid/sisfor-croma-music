@@ -13,9 +13,9 @@
 <a href="{{ route('admin.jadwals.index') }}" class="nav-item {{ request()->routeIs('admin.jadwals*') ? 'active' : '' }}">
     <i class="fa-solid fa-calendar-days"></i> Jadwal KBM
 </a>
-<a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
+{{-- <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
     <i class="fa-solid fa-door-open"></i> Data Kelas
-</a>
+</a> --}}
 <a href="{{ route('admin.program-kursus.index') }}" class="nav-item {{ request()->routeIs('admin.program-kursus*') ? 'active' : '' }}">
     <i class="fa-solid fa-layer-group"></i> Program Kursus
 </a>

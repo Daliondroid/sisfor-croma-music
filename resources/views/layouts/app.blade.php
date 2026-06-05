@@ -369,7 +369,7 @@
 
                     {{-- Data Akun (menggantikan Dashboard) --}}
                     @if(auth()->user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
+                        <a href="{{ route('admin.profil.edit') }}" class="dropdown-item">
                             <i class="fa-solid fa-id-card"></i> Data Akun
                         </a>
                     @elseif(auth()->user()->role === 'guru')

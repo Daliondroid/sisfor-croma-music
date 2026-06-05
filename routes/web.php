@@ -37,7 +37,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/murids/{murid}/edit',  [Admin\UserController::class, 'editMurid'])->name('murids.edit');
     Route::put('/murids/{murid}',       [Admin\UserController::class, 'updateMurid'])->name('murids.update');
     Route::delete('/murids/{murid}',    [Admin\UserController::class, 'destroyMurid'])->name('murids.destroy');
-    Route::resource('spesialisasi', Admin\SpesialisasiController::class)->except('show');
+    // Route::resource('spesialisasi', Admin\SpesialisasiController::class)->except('show');
 
     // Guru
     Route::get('/gurus',                [Admin\UserController::class, 'indexGuru'])->name('gurus.index');
@@ -72,9 +72,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('program-kursus', Admin\ProgramKursusController::class)
         ->names('program-kursus');
 
-    // Kelas
-    Route::resource('kelas', Admin\KelasController::class)
-        ->only(['index','create','store','edit','update','destroy']);
+    // Profil Admin
+    Route::get('/profil',  [Admin\ProfilController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil',  [Admin\ProfilController::class, 'update'])->name('profil.update');
 });
 
 // ── GURU ─────────────────────────────────────────────────────

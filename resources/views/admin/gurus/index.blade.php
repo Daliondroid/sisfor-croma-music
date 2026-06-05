@@ -140,54 +140,21 @@
 <div class="delete-modal-backdrop" id="spesialisasi-modal-backdrop">
     <div class="delete-modal" style="width: 500px; max-width: 90%; text-align: left; padding: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="margin: 0; font-size: 18px;">Daftar Instrumen</h3>
+            <h3 style="margin: 0; font-size: 18px;">Daftar Instrumen Terdaftar</h3>
             <button type="button" onclick="closeSpesialisasiModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); line-height: 1;">&times;</button>
         </div>
-        
-        <form action="{{ route('admin.spesialisasi.store') }}" method="POST" style="margin-bottom: 20px;">
-            @csrf
-            <div style="display: flex; gap: 8px;">
-                <input type="text" name="nama_spesialisasi" class="form-control" placeholder="Contoh: Piano" required style="flex: 1;">
-                <button type="submit" class="btn btn-primary">Tambah</button>
-            </div>
-        </form>
 
-        <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
+        <p style="font-size: .8rem; color: var(--text-light); margin-bottom: 16px;">
+            Instrumen dikelola per-guru melalui tombol <strong>Edit</strong>. Daftar ini menampilkan semua instrumen yang pernah didaftarkan.
+        </p>
 
-        <ul style="list-style: none; padding: 0; margin: 0; max-height: 300px; overflow-y: auto;">
+        <ul style="list-style: none; padding: 0; margin: 0; max-height: 350px; overflow-y: auto;">
             @forelse($spesialisasis as $s)
-                <li style="padding: 12px 0; border-bottom: 1px solid #f9f9f9;">
-                    <div id="view-instrumen-{{ $s->id_spesialisasi }}" style="display: flex; justify-content: space-between; align-items: center;">
-                        {{-- <span style="font-weight: 500;" title="{{ $s->nama_spesialisasi }}">{{ \Illuminate\Support\Str::limit($s->nama_spesialisasi, 35) }}</span> --}}
-                        <span style="font-weight: 500; word-break: break-word; padding-right: 15px; line-height: 1.4;">
-                            {{ $s->nama_spesialisasi }}
-                        </span>
-                        <div style="display: flex; gap: 10px;">
-                            <button type="button" onclick="editInstrumen({{ $s->id_spesialisasi }})" style="color: var(--primary-blue); border: none; background: none; cursor: pointer; padding: 4px;" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <form action="{{ route('admin.spesialisasi.destroy', $s) }}" method="POST" onsubmit="return confirm('Hapus instrumen {{ $s->nama_spesialisasi }}?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" style="color: #dc3545; border: none; background: none; cursor: pointer; padding: 4px;" title="Hapus">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div id="edit-instrumen-{{ $s->id_spesialisasi }}" style="display: none;">
-                        <form action="{{ route('admin.spesialisasi.update', $s) }}" method="POST">
-                            @csrf @method('PUT')
-                            <div style="display: flex; gap: 8px;">
-                                <input type="text" name="nama_spesialisasi" class="form-control" value="{{ $s->nama_spesialisasi }}" required style="flex: 1; height: 32px; font-size: 13px;">
-                                <button type="submit" class="btn btn-primary" style="padding: 0 12px; height: 32px; font-size: 12px;">Simpan</button>
-                                <button type="button" onclick="cancelEdit({{ $s->id_spesialisasi }})" class="btn btn-outline" style="padding: 0 12px; height: 32px; font-size: 12px;">Batal</button>
-                            </div>
-                        </form>
-                    </div>
+                <li style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: .875rem;">
+                    {{ $s->nama_spesialisasi }}
                 </li>
             @empty
-                <li style="color: var(--text-light); font-size: 13px; text-align: center; padding: 20px 0;">Belum ada instrumen.</li>
+                <li style="color: var(--text-light); font-size: 13px; text-align: center; padding: 20px 0;">Belum ada instrumen terdaftar.</li>
             @endforelse
         </ul>
     </div>
