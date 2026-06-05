@@ -232,6 +232,18 @@ public function store(Request $request)
         return response()->json(['last_sesi' => 0]);
     }
 
+
+/**
+     * Tampilkan detail jadwal spesifik.
+     */
+    public function show(Jadwal $jadwal)
+    {
+        // Ubah spp.program menjadi spp.programKursus
+        $jadwal->load(['guru', 'spp.murid', 'spp.programKursus']);
+
+        return view('admin.jadwals.show', compact('jadwal'));
+    }
+
     /**
      * Form edit / reschedule jadwal.
      */
@@ -246,9 +258,9 @@ public function store(Request $request)
         return view('admin.jadwals.edit', compact('jadwal', 'gurus', 'spps'));
     }
 
-    /**
+/**
      * Update jadwal.
-     * ↳ Jika tanggal/jam/guru/murid berubah → status_jadwal = 'Reschedule'.
+     * Jika tanggal/jam/guru berubah → status = 'Reschedule' & reset presensi.
      */
     public function update(Request $request, Jadwal $jadwal)
     {
@@ -264,7 +276,6 @@ public function store(Request $request)
         // ── Deteksi perubahan parameter penjadwalan ────────────────
         $adaPerubahan =
             $jadwal->id_guru     != $request->id_guru    ||
-            $jadwal->id_spp      != $request->id_spp     ||
             $jadwal->tanggal->toDateString() != $request->tanggal ||
             substr($jadwal->jam_mulai, 0, 5)  != $request->jam_mulai  ||
             substr($jadwal->jam_selesai, 0, 5) != $request->jam_selesai;
@@ -307,19 +318,29 @@ public function store(Request $request)
                 ->withErrors(['jam_mulai' => 'Murid sudah memiliki jadwal pada slot waktu tersebut.']);
         }
 
-        $jadwal->update([
+        // ── Siapkan Data Update ────────────────────────────────────
+        $dataUpdate = [
             'id_guru'      => $request->id_guru,
             'id_spp'       => $request->id_spp,
             'tanggal'      => $request->tanggal,
             'jam_mulai'    => $request->jam_mulai,
             'jam_selesai'  => $request->jam_selesai,
             'sesi_ke'      => $request->sesi_ke,
-            // Jika ada perubahan parameter jadwal → otomatis Reschedule
-            'status_jadwal' => $adaPerubahan ? 'Reschedule' : $jadwal->status_jadwal,
-        ]);
+        ];
+
+        // Jika jadwal berubah, ubah status dan bersihkan data presensi
+        if ($adaPerubahan) {
+            $dataUpdate['status_jadwal'] = 'Reschedule';
+            $dataUpdate['status_kehadiran_murid'] = null;
+            $dataUpdate['status_kehadiran_guru'] = null;
+            $dataUpdate['waktu_presensi_diisi'] = null;
+            $dataUpdate['presensi_diisi_oleh'] = null;
+        }
+
+        $jadwal->update($dataUpdate);
 
         $pesan = $adaPerubahan
-            ? 'Jadwal berhasil diperbarui dan ditandai sebagai Reschedule.'
+            ? 'Jadwal berhasil diperbarui. Status menjadi Reschedule dan data presensi sebelumnya telah direset.'
             : 'Jadwal berhasil diperbarui.';
 
         return redirect()->route('admin.jadwals.index')->with('success', $pesan);

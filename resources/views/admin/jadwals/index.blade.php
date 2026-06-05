@@ -115,7 +115,7 @@
                         </div>
 
                         <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px dashed #cbd5e1; text-align: center;">
-                            <a href="#" class="btn btn-sm btn-outline-primary" style="width: 100%; font-size: 0.75rem; padding: 0.35rem 0.5rem; background-color: #fff;">
+                            <a href="{{ route('admin.jadwals.show', $j->id_jadwal) }}" class="btn btn-sm btn-outline-primary" style="width: 100%; font-size: 0.75rem; padding: 0.35rem 0.5rem; background-color: #fff;">
                                 <i class="fa-solid fa-circle-info"></i> Detail Jadwal
                             </a>
                         </div>
