@@ -3,57 +3,25 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jadwal;
 use App\Models\Guru;
+use App\Models\Jadwal;
 use App\Models\Spp;
-use App\Models\ProgresMurid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
-class PresensiController extends Controller
+class AbsensiController extends Controller
 {
     /**
-     * Daftar jadwal guru — bisa filter tanggal.
-     * FR-16: Guru membaca status kehadiran murid (via index).
-     * FR-18: Guru mencatat kehadiran mengajar.
+     * FR-16: Melihat Data Absensi.
+     * FR-17: Memverifikasi Absensi Murid (konfirmasi kehadiran yang diisi murid).
      */
     public function index(Request $request)
     {
-        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
-
-        $tanggal = $request->tanggal ?? today()->format('Y-m-d');
-
-        $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
-            ->where('id_guru', $guru->id_guru)
-            ->where('is_active', true)
-            ->whereDate('tanggal', $tanggal)
-            ->orderBy('jam_mulai')
-            ->get();
-
-        $selectedJadwal = null;
-        if ($request->filled('jadwal')) {
-            $selectedJadwal = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
-                ->where('id_jadwal', $request->jadwal)
-                ->where('id_guru', $guru->id_guru)
-                ->first();
-        }
-
-        return view('guru.presensi.index', compact('guru', 'jadwals', 'tanggal', 'selectedJadwal'));
-    }
-
-    /**
-     * FR-16: Rekap / laporan data absensi murid per bulan.
-     * Guru melihat kehadiran semua murid yang diajarnya.
-     */
-    public function rekap(Request $request)
-    {
         $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
-
         [$tahun, $bln] = explode('-', $bulan);
 
-        // Semua id_spp yang diajar guru di bulan ini
+        // Ambil semua SPP (murid) yang diajar guru ini bulan ini
         $sppIds = Jadwal::where('id_guru', $guru->id_guru)
             ->whereYear('tanggal', $tahun)
             ->whereMonth('tanggal', $bln)
@@ -61,7 +29,6 @@ class PresensiController extends Controller
             ->pluck('id_spp')
             ->unique();
 
-        // Rekap per murid
         $rekapAbsensi = Spp::with(['murid', 'programKursus'])
             ->whereIn('id_spp', $sppIds)
             ->get()
@@ -71,13 +38,16 @@ class PresensiController extends Controller
                     ->whereYear('tanggal', $tahun)
                     ->whereMonth('tanggal', $bln)
                     ->where('is_active', true)
-                    ->orderBy('tanggal')
                     ->get();
 
                 $total       = $jadwals->count();
                 $hadir       = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
                 $tidakHadir  = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
                 $belumDiisi  = $jadwals->whereNull('status_kehadiran_murid')->count();
+                // Menunggu verifikasi: diisi murid tapi belum dikonfirmasi guru
+                $menunggu    = $jadwals->where('presensi_diisi_oleh', 'Murid')
+                                       ->whereNull('verified_at')
+                                       ->count();
 
                 return (object) [
                     'spp'          => $spp,
@@ -88,13 +58,21 @@ class PresensiController extends Controller
                     'hadir'        => $hadir,
                     'tidak_hadir'  => $tidakHadir,
                     'belum_diisi'  => $belumDiisi,
+                    'menunggu'     => $menunggu,
                     'persen_hadir' => $total > 0 ? round(($hadir / $total) * 100) : 0,
                 ];
             })
             ->sortBy('murid.nama_murid')
             ->values();
 
-        // Detail per sesi jika ada filter murid
+        // Statistik keseluruhan
+        $totalSesiAll  = $rekapAbsensi->sum('total_sesi');
+        $totalHadirAll = $rekapAbsensi->sum('hadir');
+        $totalAbsenAll = $rekapAbsensi->sum('tidak_hadir');
+        $totalBelumAll = $rekapAbsensi->sum('belum_diisi');
+        $totalMenunggu = $rekapAbsensi->sum('menunggu');
+
+        // Detail per murid jika ada filter
         $detailJadwals = collect();
         $selectedSpp   = null;
 
@@ -113,41 +91,33 @@ class PresensiController extends Controller
             }
         }
 
-        return view('guru.presensi.rekap', compact(
-            'guru', 'bulan', 'rekapAbsensi', 'detailJadwals', 'selectedSpp'
+        return view('guru.absensi.index', compact(
+            'guru', 'bulan', 'rekapAbsensi', 'detailJadwals', 'selectedSpp',
+            'totalSesiAll', 'totalHadirAll', 'totalAbsenAll', 'totalBelumAll', 'totalMenunggu'
         ));
     }
 
     /**
-     * Simpan presensi.
-     * Immutable setelah waktu_presensi_diisi terisi.
+     * FR-17: Verifikasi absensi murid.
+     * Guru mengkonfirmasi kehadiran yang sudah diisi oleh murid.
      */
-    public function store(Request $request)
+    public function verifikasi(Request $request, int $id)
     {
-        $request->validate([
-            'id_jadwal'              => 'required|exists:jadwals,id_jadwal',
-            'status_kehadiran_murid' => 'required|in:Hadir,Tidak Hadir',
-            'status_kehadiran_guru'  => 'required|in:Hadir,Tidak Hadir',
-        ]);
-
         $guru   = Guru::where('id_user', Auth::id())->firstOrFail();
-        $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
+        $jadwal = Jadwal::where('id_jadwal', $id)
             ->where('id_guru', $guru->id_guru)
             ->firstOrFail();
 
-        if ($jadwal->waktu_presensi_diisi !== null) {
-            return back()->with('error', 'Presensi jadwal ini sudah diisi dan tidak dapat diubah lagi.');
+        // Hanya bisa verifikasi jika diisi oleh murid
+        if ($jadwal->presensi_diisi_oleh !== 'Murid') {
+            return back()->with('error', 'Absensi ini tidak perlu diverifikasi.');
         }
 
         $jadwal->update([
-            'status_kehadiran_murid' => $request->status_kehadiran_murid,
-            'status_kehadiran_guru'  => $request->status_kehadiran_guru,
-            'waktu_presensi_diisi'   => now(),
-            'presensi_diisi_oleh'    => 'Guru',
+            'verified_at'    => now(),
+            'verified_by'    => Auth::id(),
         ]);
 
-        return redirect()
-            ->route('guru.presensi.index', ['tanggal' => $jadwal->tanggal->format('Y-m-d')])
-            ->with('success', 'Presensi berhasil dicatat.');
+        return back()->with('success', 'Absensi murid berhasil diverifikasi.');
     }
 }

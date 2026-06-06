@@ -16,8 +16,7 @@ class ProgresMuridController extends Controller
      * Daftar semua progres murid yang pernah diinput guru ini.
      * Bisa difilter per murid (via id_spp) atau per bulan.
      *
-     * FR-19: Menginput Laporan KBM Harian
-     * UC-19: Dependensi UC-18 (Kehadiran Guru sudah diisi)
+     * Menginput Laporan KBM Harian
      */
     public function index(Request $request)
     {
@@ -81,7 +80,7 @@ class ProgresMuridController extends Controller
 
     /**
      * Simpan laporan KBM harian.
-     * FR-19: Sistem insert ke tabel PROGRES_MURID dengan FK ke JADWAL.
+     * Sistem insert ke tabel PROGRES_MURID dengan FK ke JADWAL.
      */
     public function store(Request $request)
     {
@@ -131,6 +130,10 @@ class ProgresMuridController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
 
+        if (!$progresMurid->jadwal) {
+            abort(404, 'Data jadwal untuk laporan KBM ini tidak ditemukan.');
+        }
+
         // Pastikan progres ini milik guru yang login
         abort_unless(
             $progresMurid->jadwal->id_guru === $guru->id_guru,
@@ -154,6 +157,11 @@ class ProgresMuridController extends Controller
         ]);
 
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
+
+        if (!$progresMurid->jadwal) {
+            abort(404, 'Data jadwal untuk laporan KBM ini tidak ditemukan.');
+        }
+
         abort_unless($progresMurid->jadwal->id_guru === $guru->id_guru, 403);
 
         $data = $request->only(['materi_diajarkan', 'catatan_perkembangan']);

@@ -17,7 +17,7 @@ class MonthlyReportController extends Controller
      * Daftar murid yang diajar guru ini + status monthly report per bulan.
      *
      * FR-28: Guru membuat laporan bulanan.
-     * UC-28: Record baru pada MONTHLY_REPORT terbentuk, mencakup evaluasi & url_video.
+     * Record baru pada MONTHLY_REPORT terbentuk, mencakup evaluasi & url_video.
      */
     public function index(Request $request)
     {
@@ -121,7 +121,7 @@ class MonthlyReportController extends Controller
 
     /**
      * Simpan atau update monthly report.
-     * UC-28: Guru mengisi field evaluasi teks dan URL video KBM bulanan.
+     * Guru mengisi field evaluasi teks dan URL video KBM bulanan.
      */
     public function store(Request $request)
     {
