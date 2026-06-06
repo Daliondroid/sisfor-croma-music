@@ -20,26 +20,29 @@ class PresensiController extends Controller
      */
     public function index(Request $request)
     {
-        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
-
-        $tanggal = $request->tanggal ?? today()->format('Y-m-d');
+        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $bulan = $request->bulan ?? now()->format('Y-m');
+        [$tahun, $bln] = explode('-', $bulan);
 
         $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
             ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
-            ->whereDate('tanggal', $tanggal)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bln)
+            ->orderBy('tanggal')
             ->orderBy('jam_mulai')
             ->get();
 
+        $jadwalGrouped = $jadwals->groupBy(fn($j) => $j->tanggal->format('Y-m-d'));
+
         $selectedJadwal = null;
         if ($request->filled('jadwal')) {
-            $selectedJadwal = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
-                ->where('id_jadwal', $request->jadwal)
-                ->where('id_guru', $guru->id_guru)
-                ->first();
+            $selectedJadwal = $jadwals->firstWhere('id_jadwal', $request->jadwal);
         }
 
-        return view('guru.presensi.index', compact('guru', 'jadwals', 'tanggal', 'selectedJadwal'));
+        return view('guru.presensi.index', compact(
+            'guru', 'bulan', 'jadwals', 'jadwalGrouped'
+        ));
     }
 
     /**
@@ -134,6 +137,18 @@ class PresensiController extends Controller
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
             ->where('id_guru', $guru->id_guru)
             ->firstOrFail();
+
+        // ── BARU: tolak jika jam mulai belum tiba ──────────────
+        $jadwalMulai = \Carbon\Carbon::parse(
+            $jadwal->tanggal->format('Y-m-d') . ' ' . $jadwal->jam_mulai
+        );
+        if (now()->lt($jadwalMulai)) {
+            return back()->with('error',
+                'Presensi belum bisa diisi sebelum jadwal dimulai pukul '
+                . substr($jadwal->jam_mulai, 0, 5) . '.'
+            );
+        }
+        // ───────────────────────────────────────────────────────
 
         if ($jadwal->waktu_presensi_diisi !== null) {
             return back()->with('error', 'Presensi jadwal ini sudah diisi dan tidak dapat diubah lagi.');

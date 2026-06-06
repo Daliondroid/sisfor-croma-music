@@ -239,7 +239,7 @@
 </div>
 
 {{-- Delete Modal --}}
-<div class="delete-modal-backdrop" id="delete-modal-backdrop">
+{{-- <div class="delete-modal-backdrop" id="delete-modal-backdrop">
     <div class="delete-modal">
         <div class="delete-modal-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <h3>Hapus Akun Guru?</h3>
@@ -252,7 +252,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> --}}
 
 <style>
 .gd-row {
