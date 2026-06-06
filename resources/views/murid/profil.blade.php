@@ -4,8 +4,9 @@
 @section('sidebar-menu')
     <div class="nav-section-label">Menu</div>
     <a href="{{ route('murid.dashboard') }}" class="nav-item {{ request()->routeIs('murid.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="{{ route('murid.jadwal.index') }}" class="nav-item {{ request()->routeIs('murid.jadwal*') ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
+    <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*') ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan Bulanan</a>
     <a href="{{ route('murid.spp.index') }}"  class="nav-item {{ request()->routeIs('murid.spp*')      ? 'active' : '' }}"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
-    <a href="{{ route('murid.profil.edit') }}" class="nav-item {{ request()->routeIs('murid.profil*')  ? 'active' : '' }}"><i class="fa-solid fa-id-card"></i> Profil Saya</a>
 @endsection
 
 @section('content')

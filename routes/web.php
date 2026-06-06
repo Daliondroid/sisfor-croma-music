@@ -108,9 +108,11 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::post('/spp/{spp}/bukti',  [Murid\SppController::class, 'uploadBukti'])->name('spp.bukti');
     Route::get('/profil',            [Murid\ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil',            [Murid\ProfilController::class, 'update'])->name('profil.update');
-    
-    // JALUR BARU: Halaman indeks jadwal untuk murid
-    Route::get('/jadwal', [App\Http\Controllers\Murid\JadwalController::class, 'index'])->name('jadwal.index');});
+    Route::get('/laporan',           [App\Http\Controllers\Murid\MonthlyReportController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/{report}',  [App\Http\Controllers\Murid\MonthlyReportController::class, 'show'])->name('laporan.show');
+    Route::get('/laporan/{report}/pdf', [App\Http\Controllers\Murid\MonthlyReportController::class, 'exportPdf'])->name('laporan.pdf'); // BARU
+    Route::get('/jadwal',            [App\Http\Controllers\Murid\JadwalController::class, 'index'])->name('jadwal.index');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');

@@ -3,49 +3,47 @@
 namespace App\Http\Controllers\Murid;
 
 use App\Http\Controllers\Controller;
-use App\Models\Presensi;
-use App\Models\Murid;
 use App\Models\Jadwal;
+use App\Models\Murid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PresensiController extends Controller
 {
+    /**
+     * FR-15: Murid mengajukan kehadiran untuk satu sesi jadwal.
+     * Mengupdate kolom status_kehadiran_murid, waktu_presensi_diisi,
+     * dan presensi_diisi_oleh langsung pada tabel jadwals.
+     */
     public function store(Request $request)
     {
         $request->validate([
             'id_jadwal' => 'required|exists:jadwals,id_jadwal',
-            'sesi_ke'   => 'required|integer|min:1',
         ]);
 
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
 
-        // Cek apakah jadwal memang milik murid ini
+        // Pastikan jadwal ini memang milik murid (lewat relasi SPP)
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
-            ->where('id_murid', $murid->id_murid)
+            ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
             ->firstOrFail();
 
-        // Cek belum pernah presensi di sesi yang sama
-        $sudahAda = Presensi::where('id_jadwal', $jadwal->id_jadwal)
-            ->where('id_murid', $murid->id_murid)
-            ->where('tanggal', today())
-            ->where('sesi_ke', $request->sesi_ke)
-            ->exists();
-
-        if ($sudahAda) {
-            return back()->with('error', 'Presensi untuk sesi ini sudah diinput.');
+        // Tolak jika sudah diisi
+        if ($jadwal->status_kehadiran_murid !== null) {
+            return back()->with('error', 'Kehadiran untuk sesi ini sudah pernah diajukan.');
         }
 
-        Presensi::create([
-            'id_jadwal'    => $jadwal->id_jadwal,
-            'id_guru'      => $jadwal->id_guru,
-            'id_murid'     => $murid->id_murid,
-            'tanggal'      => today(),
-            'sesi_ke'      => $request->sesi_ke,
-            'status_murid' => 'hadir',
-            'input_by'     => Auth::id(),
+        // Tolak jika jadwal bukan hari ini atau masa lalu
+        if ($jadwal->tanggal->isFuture()) {
+            return back()->with('error', 'Belum bisa mengajukan kehadiran untuk jadwal yang akan datang.');
+        }
+
+        $jadwal->update([
+            'status_kehadiran_murid' => 'Hadir',
+            'waktu_presensi_diisi'   => now(),
+            'presensi_diisi_oleh'    => 'Murid',
         ]);
 
-        return back()->with('success', 'Kehadiran berhasil dicatat.');
+        return back()->with('success', 'Kehadiran berhasil diajukan! Menunggu konfirmasi guru.');
     }
 }
