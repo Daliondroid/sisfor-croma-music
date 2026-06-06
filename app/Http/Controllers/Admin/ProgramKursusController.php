@@ -27,7 +27,7 @@ class ProgramKursusController extends Controller
         $request->validate([
             'nama_program' => 'required|string|max:100',
             'deskripsi'    => 'nullable|string',
-            'tipe_les'     => 'required|in:PRIVATE,GROUP',
+            'tipe_les'     => 'required|in:onsite,home_private,keduanya',
             'biaya_kursus' => 'required|numeric|min:0',
         ]);
 
@@ -53,7 +53,7 @@ class ProgramKursusController extends Controller
         $request->validate([
             'nama_program' => 'required|string|max:100',
             'deskripsi'    => 'nullable|string',
-            'tipe_les'     => 'required|in:PRIVATE,GROUP',
+            'tipe_les'     => 'required|in:onsite,home_private,keduanya',
             'biaya_kursus' => 'required|numeric|min:0',
         ]);
 

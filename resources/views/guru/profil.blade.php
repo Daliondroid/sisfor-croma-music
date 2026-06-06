@@ -1,11 +1,15 @@
 @extends('layouts.app')
 @section('title', 'Profil Saya')
 @section('page-title', 'Profil Saya')
+
 @section('sidebar-menu')
     <div class="nav-section-label">Menu</div>
-    <a href="{{ route('guru.dashboard') }}"  class="nav-item {{ request()->routeIs('guru.dashboard')  ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('guru.presensi.index') }}" class="nav-item {{ request()->routeIs('guru.presensi*') ? 'active' : '' }}"><i class="fa-solid fa-clipboard-check"></i> Presensi</a>
-    <a href="{{ route('guru.profil.edit') }}"    class="nav-item {{ request()->routeIs('guru.profil*')   ? 'active' : '' }}"><i class="fa-solid fa-id-card"></i> Profil Saya</a>
+    <a href="{{ route('guru.dashboard') }}"            class="nav-item {{ request()->routeIs('guru.dashboard')       ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="{{ route('guru.jadwal.index') }}"         class="nav-item {{ request()->routeIs('guru.jadwal*')         ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
+    <a href="{{ route('guru.absensi.index') }}"        class="nav-item {{ request()->routeIs('guru.absensi*')        ? 'active' : '' }}"><i class="fa-solid fa-chart-bar"></i> Data Absensi</a>
+    <a href="{{ route('guru.presensi.index') }}"       class="nav-item {{ request()->routeIs('guru.presensi*')       ? 'active' : '' }}"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
+    <a href="{{ route('guru.progres.index') }}"        class="nav-item {{ request()->routeIs('guru.progres*')        ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan KBM</a>
+    <a href="{{ route('guru.monthly-report.index') }}" class="nav-item {{ request()->routeIs('guru.monthly-report*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Laporan Bulanan</a>
 @endsection
 
 @section('content')
@@ -129,8 +133,8 @@
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.profil.update') }}" enctype="multipart/form-data">
                     @csrf @method('PUT')
-                    <input type="hidden" name="nama_guru"  value="{{ $guru->nama_guru }}"/>
-                    <input type="hidden" name="nomor_hp"   value="{{ $guru->nomor_hp }}"/>
+                    <input type="hidden" name="nama_guru"    value="{{ $guru->nama_guru }}"/>
+                    <input type="hidden" name="nomor_hp"     value="{{ $guru->nomor_hp }}"/>
                     <input type="hidden" name="spesialisasi" value="{{ $guru->spesialisasis->pluck('nama_spesialisasi')->implode(', ') }}"/>
                     <div class="form-grid">
                         <div class="form-group">

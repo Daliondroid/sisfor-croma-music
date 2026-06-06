@@ -16,9 +16,9 @@
 {{-- <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
     <i class="fa-solid fa-door-open"></i> Data Kelas
 </a> --}}
-{{-- <a href="{{ route('admin.program-kursus.index') }}" class="nav-item {{ request()->routeIs('admin.program-kursus*') ? 'active' : '' }}">
+<a href="{{ route('admin.program-kursus.index') }}" class="nav-item {{ request()->routeIs('admin.program-kursus*') ? 'active' : '' }}">
     <i class="fa-solid fa-layer-group"></i> Program Kursus
-</a> --}}
+</a>
 
 <div class="nav-section-label">Keuangan</div>
 <a href="{{ route('admin.spp.index') }}" class="nav-item {{ request()->routeIs('admin.spp*') ? 'active' : '' }}">

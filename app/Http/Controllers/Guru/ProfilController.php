@@ -15,7 +15,7 @@ class ProfilController extends Controller
 {
     /**
      * Form edit profil guru.
-     * FR-03: Melihat profil pribadi.
+     * Melihat profil pribadi.
      */
     public function edit()
     {
