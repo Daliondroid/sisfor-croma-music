@@ -16,7 +16,7 @@
 .video-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 */
+    padding-bottom: 56.25%;
     background: #000;
     border-radius: 0 0 var(--radius) var(--radius);
     overflow: hidden;
@@ -41,36 +41,14 @@
 }
 .video-placeholder i { font-size: 2.5rem; opacity: .4; }
 
-/* ── Info rows ── */
-.info-row {
-    display: flex;
-    gap: 8px;
-    padding: 11px 0;
-    border-bottom: 1px solid var(--topbar-border);
-    font-size: .875rem;
-    align-items: flex-start;
-}
-.info-row:last-child { border-bottom: none; }
-.info-label {
-    width: 140px;
-    flex-shrink: 0;
-    color: var(--text-light);
-    font-weight: 600;
-    font-size: .78rem;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    padding-top: 1px;
-}
-.info-value { flex: 1; color: var(--text-dark); line-height: 1.6; }
-
 /* ── Skor badge besar ── */
 .skor-big {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 56px; height: 56px;
-    border-radius: 14px;
-    font-size: 1.4rem;
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    font-size: 1.6rem;
     font-weight: 800;
     flex-shrink: 0;
 }
@@ -82,17 +60,6 @@
 [data-theme="dark"] .skor-B-plus,[data-theme="dark"] .skor-B,[data-theme="dark"] .skor-B-minus{ background:#1e3a5f;color:#60a5fa; }
 [data-theme="dark"] .skor-C-plus,[data-theme="dark"] .skor-C,[data-theme="dark"] .skor-C-minus{ background:#3d2e0a;color:#fbbf24; }
 
-/* ── Pertemuan table ── */
-.pertemuan-table { width:100%; border-collapse:collapse; font-size:.875rem; }
-.pertemuan-table th {
-    background: var(--th-bg); padding: 10px 14px;
-    text-align:left; font-size:.72rem; font-weight:600;
-    color:var(--text-light); text-transform:uppercase; letter-spacing:.5px;
-}
-.pertemuan-table td { padding:12px 14px; border-bottom:1px solid var(--topbar-border); color:var(--text-dark); }
-.pertemuan-table tr:last-child td { border-bottom:none; }
-.pertemuan-table tr:hover td { background:var(--table-hover); }
-
 /* ── Evaluasi box ── */
 .eval-box {
     background: var(--bg-light);
@@ -103,6 +70,18 @@
     line-height: 1.7;
     color: var(--text-dark);
 }
+
+/* ── Skor card ── */
+.skor-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+}
+.skor-card-info { flex: 1; }
+.skor-label { font-size: .72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+.skor-period { font-size: 1.05rem; font-weight: 700; }
+.skor-sub { font-size: .78rem; color: var(--text-light); margin-top: 2px; }
 </style>
 @endpush
 
@@ -111,9 +90,6 @@
 @php
     use Carbon\Carbon;
     $bulanLabel = Carbon::parse($report->periode_bulan)->translatedFormat('F Y');
-    $totalSesi  = $report->jadwals->count();
-    $hadirSesi  = $report->jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-    $pct        = $totalSesi > 0 ? round($hadirSesi / $totalSesi * 100) : 0;
 
     $skorClass = match($report->skor) {
         'A+' => 'skor-A-plus',  'A'  => 'skor-A',       'A-' => 'skor-A-minus',
@@ -122,15 +98,19 @@
         default => 'skor-none',
     };
 
-    // Parse YouTube embed URL
+    // Parse embed URL — support YouTube & Google Drive
     $videoEmbed = null;
     if ($report->url_video) {
         $url = $report->url_video;
         if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $m)) {
             $videoEmbed = 'https://www.youtube.com/embed/' . $m[1];
         } elseif (str_contains($url, 'drive.google.com')) {
-            // Google Drive: ubah ke embed
+            // Ubah /view atau /view?usp=... ke /preview agar bisa di-embed
             $videoEmbed = preg_replace('/\/view(\?.*)?$/', '/preview', $url);
+            // Kalau format /file/d/{id}/... belum punya /view, pastikan pakai /preview
+            if (!str_contains($videoEmbed, '/preview')) {
+                $videoEmbed = rtrim($videoEmbed, '/') . '/preview';
+            }
         } else {
             $videoEmbed = $url;
         }
@@ -145,165 +125,68 @@
             / <span>{{ $bulanLabel }}</span>
         </div>
     </div>
-    {{-- Tombol Download PDF --}}
-    <a href="{{ route('murid.laporan.pdf', $report) }}"
-       class="btn btn-primary" target="_blank">
+    <a href="{{ route('murid.laporan.pdf', $report) }}" class="btn btn-primary" target="_blank">
         <i class="fa-solid fa-file-pdf"></i> Download PDF
     </a>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:20px">
 
-    {{-- ── Kolom Kiri ── --}}
-    <div style="display:flex;flex-direction:column;gap:20px">
-
-        {{-- Video Pembelajaran --}}
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-film" style="color:var(--primary-blue);margin-right:8px"></i>Video Pembelajaran</h3>
-            </div>
-            <div class="video-container">
-                @if($videoEmbed)
-                    <iframe
-                        src="{{ $videoEmbed }}"
-                        title="Video Pembelajaran {{ $bulanLabel }}"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                    </iframe>
-                @else
-                    <div class="video-placeholder">
-                        <i class="fa-solid fa-circle-play"></i>
-                        <span>Video belum tersedia untuk bulan ini.</span>
-                    </div>
-                @endif
+    {{-- Skor --}}
+    <div class="card">
+        <div class="skor-card">
+            <div class="skor-big {{ $skorClass }}">{{ $report->skor ?? '—' }}</div>
+            <div class="skor-card-info">
+                <div class="skor-label">Skor Bulanan</div>
+                <div class="skor-period">{{ $bulanLabel }}</div>
+                <div class="skor-sub">
+                    {{ $report->spp?->programKursus?->nama_program ?? '-' }}
+                    @php $guruNama = $report->jadwals->first()?->guru?->nama_guru; @endphp
+                    @if($guruNama) · {{ $guruNama }} @endif
+                </div>
             </div>
         </div>
-
-        {{-- Tabel Pertemuan --}}
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:8px"></i>Detail Pertemuan</h3>
-            </div>
-            <div class="table-wrap">
-                <table class="pertemuan-table">
-                    <thead>
-                        <tr>
-                            <th style="width:50px">No</th>
-                            <th style="width:130px">Tanggal</th>
-                            <th>Materi Pembelajaran</th>
-                            <th style="width:100px;text-align:center">Kehadiran</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($report->jadwals->sortBy('tanggal') as $i => $j)
-                        <tr>
-                            <td style="text-align:center;color:var(--text-light);font-weight:600">{{ $i + 1 }}</td>
-                            <td>{{ $j->tanggal->translatedFormat('d M Y') }}</td>
-                            <td>
-                                {{ $j->progresMurid?->materi_diajarkan ?? '-' }}
-                                @if($j->progresMurid?->catatan_perkembangan)
-                                    <div style="font-size:.72rem;color:var(--text-light);margin-top:2px">
-                                        {{ $j->progresMurid->catatan_perkembangan }}
-                                    </div>
-                                @endif
-                            </td>
-                            <td style="text-align:center">
-                                @php $st = $j->status_kehadiran_murid; @endphp
-                                <span class="badge {{ match($st) {
-                                    'Hadir' => 'badge-success',
-                                    'Izin'  => 'badge-warning',
-                                    default => 'badge-danger',
-                                } }}">{{ $st ?? '—' }}</span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" style="text-align:center;color:var(--text-light);padding:20px">
-                                Belum ada data pertemuan.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {{-- Evaluasi --}}
-        @if($report->evaluasi_bulanan)
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-comment-dots" style="color:var(--primary-blue);margin-right:8px"></i>Kesimpulan Pembelajaran</h3>
-            </div>
-            <div class="card-body">
-                <div class="eval-box">{{ $report->evaluasi_bulanan }}</div>
-            </div>
-        </div>
-        @endif
-
     </div>
 
-    {{-- ── Kolom Kanan ── --}}
-    <div style="display:flex;flex-direction:column;gap:20px">
-
-        {{-- Ringkasan --}}
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fa-solid fa-chart-pie" style="color:var(--primary-blue);margin-right:8px"></i>Ringkasan</h3>
-            </div>
-            <div class="card-body" style="padding:20px">
-
-                {{-- Skor --}}
-                <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--topbar-border)">
-                    <div class="skor-big {{ $skorClass }}">{{ $report->skor ?? '—' }}</div>
-                    <div>
-                        <div style="font-size:.72rem;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Skor Bulanan</div>
-                        <div style="font-size:1rem;font-weight:700;margin-top:2px">{{ $bulanLabel }}</div>
-                    </div>
-                </div>
-
-                {{-- Stat rows --}}
-                <div class="info-row">
-                    <div class="info-label">Kehadiran</div>
-                    <div class="info-value">
-                        <span style="font-weight:700;font-size:1.1rem;color:{{ $pct >= 80 ? '#16a34a' : '#dc2626' }}">{{ $pct }}%</span>
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Total Hadir</div>
-                    <div class="info-value" style="font-weight:700">{{ $hadirSesi }} / {{ $totalSesi }} sesi</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Program</div>
-                    <div class="info-value">{{ $report->spp?->programKursus?->nama_program ?? '-' }}</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Guru</div>
-                    <div class="info-value">
-                        {{ $report->jadwals->first()?->guru?->nama_guru ?? '-' }}
-                    </div>
-                </div>
-                @if($report->url_video)
-                <div class="info-row">
-                    <div class="info-label">Video</div>
-                    <div class="info-value">
-                        <a href="{{ $report->url_video }}" target="_blank" style="color:var(--primary-blue);font-weight:600;font-size:.8rem">
-                            <i class="fa-solid fa-external-link-alt"></i> Buka di tab baru
-                        </a>
-                    </div>
-                </div>
-                @endif
-
-                {{-- Tombol Download ulang --}}
-                <div style="margin-top:20px">
-                    <a href="{{ route('murid.laporan.pdf', $report) }}"
-                       class="btn btn-primary" style="width:100%;justify-content:center" target="_blank">
-                        <i class="fa-solid fa-file-pdf"></i> Download PDF
-                    </a>
-                </div>
-            </div>
+    {{-- Video Pembelajaran --}}
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-film" style="color:var(--primary-blue);margin-right:8px"></i>Video Pembelajaran</h3>
+            @if($report->url_video)
+                <a href="{{ $report->url_video }}" target="_blank" class="btn btn-sm btn-outline">
+                    <i class="fa-solid fa-external-link-alt"></i> Buka di tab baru
+                </a>
+            @endif
         </div>
-
+        <div class="video-container">
+            @if($videoEmbed)
+                <iframe
+                    src="{{ $videoEmbed }}"
+                    title="Video Pembelajaran {{ $bulanLabel }}"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            @else
+                <div class="video-placeholder">
+                    <i class="fa-solid fa-circle-play"></i>
+                    <span>Video belum tersedia untuk bulan ini.</span>
+                </div>
+            @endif
+        </div>
     </div>
+
+    {{-- Kesimpulan / Evaluasi --}}
+    @if($report->evaluasi_bulanan)
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-comment-dots" style="color:var(--primary-blue);margin-right:8px"></i>Kesimpulan Pembelajaran</h3>
+        </div>
+        <div class="card-body">
+            <div class="eval-box">{{ $report->evaluasi_bulanan }}</div>
+        </div>
+    </div>
+    @endif
+
 </div>
 
 @endsection

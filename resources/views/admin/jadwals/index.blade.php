@@ -75,11 +75,11 @@
                         Kelas: {{ $listJadwal->first()->kelas->nama_kelas ?? '-' }}
                     </p>
                 </div>
-                <div>
+                {{-- <div>
                     <a href="#" class="btn btn-secondary btn-sm">
                         <i class="fa-solid fa-calendar-days"></i> Lihat Full Jadwal
                     </a>
-                </div>
+                </div> --}}
             </div>
 
             <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dark);">

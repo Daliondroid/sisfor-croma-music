@@ -127,9 +127,6 @@
 <div class="card">
     @forelse($reports as $r)
         @php
-            $totalSesi  = $r->jadwals->count();
-            $hadirSesi  = $r->jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-            $pct        = $totalSesi > 0 ? round(($hadirSesi / $totalSesi) * 100) : 0;
             $bulanLabel = Carbon::parse($r->periode_bulan)->translatedFormat('F Y');
         @endphp
         <a href="{{ route('murid.laporan.show', $r) }}" class="report-card">
@@ -148,13 +145,23 @@
                     @endif
                 </div>
                 <div class="report-card-meta">
-                    <span><i class="fa-solid fa-clipboard-check"></i> {{ $hadirSesi }}/{{ $totalSesi }} sesi hadir</span>
-                    <span><i class="fa-solid fa-percent"></i> {{ $pct }}% kehadiran</span>
                     @if($r->url_video)
                         <span style="color:var(--primary-blue)"><i class="fa-solid fa-film"></i> Ada video</span>
                     @endif
+                    @if($r->evaluasi_bulanan)
+                        <span><i class="fa-solid fa-comment-dots"></i> Ada evaluasi guru</span>
+                    @endif
                 </div>
-                @if($r->evaluasi_bulanan)
+                @php
+                    // catatan_perkembangan dari jadwal pertama yang punya progres
+                    $firstProgres = $r->jadwals->first(fn($j) => $j->progresMurid?->catatan_perkembangan);
+                @endphp
+                @if($firstProgres?->progresMurid?->catatan_perkembangan)
+                    <div class="report-card-eval">
+                        <span style="font-size:.68rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.4px">Catatan: </span>
+                        {{ $firstProgres->progresMurid->catatan_perkembangan }}
+                    </div>
+                @elseif($r->evaluasi_bulanan)
                     <div class="report-card-eval">{{ $r->evaluasi_bulanan }}</div>
                 @else
                     <div class="report-card-eval" style="font-style:italic">Belum ada evaluasi dari guru.</div>

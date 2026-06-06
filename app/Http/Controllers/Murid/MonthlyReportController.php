@@ -27,7 +27,7 @@ class MonthlyReportController extends Controller
     }
 
     /**
-     * Detail satu monthly report — video embed + tombol PDF.
+     * Detail satu monthly report.
      */
     public function show(MonthlyReport $report)
     {
@@ -40,10 +40,11 @@ class MonthlyReportController extends Controller
     }
 
     /**
-     * Generate dan stream PDF laporan bulanan.
-     * Dipanggil saat murid klik "Download PDF".
+     * Generate dan download PDF laporan bulanan menggunakan DomPDF.
+     * Pastikan package sudah diinstall:
+     *   composer require barryvdh/laravel-dompdf
      */
-    public function exportPdf(MonthlyReport $report): StreamedResponse
+    public function exportPdf(MonthlyReport $report)
     {
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
         abort_unless($report->spp?->id_murid === $murid->id_murid, 403);
@@ -54,8 +55,8 @@ class MonthlyReportController extends Controller
         $totalSesi  = $report->jadwals->count();
         $hadirSesi  = $report->jadwals->where('status_kehadiran_murid', 'Hadir')->count();
         $pct        = $totalSesi > 0 ? round($hadirSesi / $totalSesi * 100) : 0;
+        $guruNama   = $report->jadwals->first()?->guru?->nama_guru ?? '-';
 
-        // Susun data jadwal per pertemuan
         $jadwalsData = $report->jadwals
             ->sortBy('tanggal')
             ->values()
@@ -63,44 +64,28 @@ class MonthlyReportController extends Controller
                 'no'      => $i + 1,
                 'tanggal' => $j->tanggal->format('d/m/Y'),
                 'materi'  => $j->progresMurid?->materi_diajarkan ?? '-',
-            ])
-            ->toArray();
+                'catatan' => $j->progresMurid?->catatan_perkembangan ?? '',
+                'hadir'   => $j->status_kehadiran_murid ?? '—',
+            ]);
 
-        // Payload JSON untuk script Python
-        $payload = json_encode([
-            'nama_murid'        => $murid->nama_murid,
-            'nama_guru'         => $report->jadwals->first()?->guru?->nama_guru ?? '-',
-            'nama_program'      => $report->spp?->programKursus?->nama_program ?? '-',
-            'bulan_label'       => $bulanLabel,
-            'kota'              => 'Bekasi',          // sesuaikan kota sekolah
-            'skor'              => $report->skor ?? '—',
-            'pct_hadir'         => $pct,
-            'total_hadir'       => $hadirSesi,
-            'total_sesi'        => $totalSesi,
-            'evaluasi_bulanan'  => $report->evaluasi_bulanan ?? '',
-            'jadwals'           => $jadwalsData,
-        ], JSON_UNESCAPED_UNICODE);
+        $data = [
+            'murid'       => $murid,
+            'report'      => $report,
+            'bulanLabel'  => $bulanLabel,
+            'totalSesi'   => $totalSesi,
+            'hadirSesi'   => $hadirSesi,
+            'pct'         => $pct,
+            'guruNama'    => $guruNama,
+            'jadwalsData' => $jadwalsData,
+            'namaProgram' => $report->spp?->programKursus?->nama_program ?? '-',
+            'kota'        => 'Bekasi',
+        ];
 
-        // Jalankan script Python generator
-        $scriptPath = base_path('scripts/generate_laporan_pdf.py');
-        $tmpOut     = tempnam(sys_get_temp_dir(), 'laporan_') . '.pdf';
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('murid.laporan.pdf', $data)
+            ->setPaper('a4', 'portrait');
 
-        $escaped  = escapeshellarg($payload);
-        $cmd      = "python3 {$scriptPath} {$escaped} " . escapeshellarg($tmpOut) . " 2>&1";
-        exec($cmd, $output, $code);
+        $filename = 'laporan_' . str($murid->nama_murid)->slug('_') . '_' . Carbon::parse($report->periode_bulan)->format('Y-m') . '.pdf';
 
-        if ($code !== 0 || !file_exists($tmpOut)) {
-            abort(500, 'Gagal generate PDF: ' . implode("\n", $output));
-        }
-
-        $filename = 'laporan_' . $murid->nama_murid . '_' . Carbon::parse($report->periode_bulan)->format('Y-m') . '.pdf';
-
-        return response()->streamDownload(function () use ($tmpOut) {
-            echo file_get_contents($tmpOut);
-            @unlink($tmpOut);
-        }, $filename, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
+        return $pdf->download($filename);
     }
 }

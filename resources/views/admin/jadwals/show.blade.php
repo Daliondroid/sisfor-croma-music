@@ -91,12 +91,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="padding: 0.6rem 0; color: #64748b; border-bottom: 1px solid #f1f5f9;">Program Kursus</td>
-                    <td style="padding: 0.6rem 0; font-weight: 600; color: var(--text-dark); border-bottom: 1px solid #f1f5f9;">
-                        {{ $jadwal->spp->programKursus->nama_program ?? '-' }}
-                    </td>
-                </tr>
-                <tr>
                     <td style="padding: 0.6rem 0; color: #64748b;">Tipe Les</td>
                     <td style="padding: 0.6rem 0; font-weight: 600; color: var(--text-dark);">
                         <span class="badge badge-info">
