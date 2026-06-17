@@ -3,78 +3,166 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\Presensi;
-use App\Models\MateriKbm;
-use App\Models\VideoProgres;
 use App\Models\Jadwal;
 use App\Models\Guru;
+use App\Models\Spp;
+use App\Models\ProgresMurid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PresensiController extends Controller
 {
-    // Daftar jadwal guru hari ini
-    public function index()
+    /**
+     * Daftar jadwal guru — bisa filter tanggal.
+     * FR-16: Guru membaca status kehadiran murid (via index).
+     * FR-18: Guru mencatat kehadiran mengajar.
+     */
+    public function index(Request $request)
     {
-        $guru    = Guru::where('id_user', Auth::id())->firstOrFail();
-        $jadwals = Jadwal::where('id_guru', $guru->id_guru)
-            ->where('hari', now()->locale('id')->dayName) // sesuaikan locale
+        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $bulan = $request->bulan ?? now()->format('Y-m');
+        [$tahun, $bln] = explode('-', $bulan);
+
+        $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
+            ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
-            ->with('murid')
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bln)
+            ->orderBy('tanggal')
+            ->orderBy('jam_mulai')
             ->get();
 
-        return view('guru.presensi.index', compact('jadwals'));
+        $jadwalGrouped = $jadwals->groupBy(fn($j) => $j->tanggal->format('Y-m-d'));
+
+        $selectedJadwal = null;
+        if ($request->filled('jadwal')) {
+            $selectedJadwal = $jadwals->firstWhere('id_jadwal', $request->jadwal);
+        }
+
+        return view('guru.presensi.index', compact(
+            'guru', 'bulan', 'jadwals', 'jadwalGrouped'
+        ));
     }
 
-    // Simpan presensi + materi + video sekaligus
+    /**
+     * FR-16: Rekap / laporan data absensi murid per bulan.
+     * Guru melihat kehadiran semua murid yang diajarnya.
+     */
+    public function rekap(Request $request)
+    {
+        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $bulan = $request->bulan ?? now()->format('Y-m');
+
+        [$tahun, $bln] = explode('-', $bulan);
+
+        // Semua id_spp yang diajar guru di bulan ini
+        $sppIds = Jadwal::where('id_guru', $guru->id_guru)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bln)
+            ->where('is_active', true)
+            ->pluck('id_spp')
+            ->unique();
+
+        // Rekap per murid
+        $rekapAbsensi = Spp::with(['murid', 'programKursus'])
+            ->whereIn('id_spp', $sppIds)
+            ->get()
+            ->map(function (Spp $spp) use ($guru, $tahun, $bln) {
+                $jadwals = Jadwal::where('id_guru', $guru->id_guru)
+                    ->where('id_spp', $spp->id_spp)
+                    ->whereYear('tanggal', $tahun)
+                    ->whereMonth('tanggal', $bln)
+                    ->where('is_active', true)
+                    ->orderBy('tanggal')
+                    ->get();
+
+                $total       = $jadwals->count();
+                $hadir       = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+                $tidakHadir  = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
+                $belumDiisi  = $jadwals->whereNull('status_kehadiran_murid')->count();
+
+                return (object) [
+                    'spp'          => $spp,
+                    'murid'        => $spp->murid,
+                    'program'      => $spp->programKursus,
+                    'jadwals'      => $jadwals,
+                    'total_sesi'   => $total,
+                    'hadir'        => $hadir,
+                    'tidak_hadir'  => $tidakHadir,
+                    'belum_diisi'  => $belumDiisi,
+                    'persen_hadir' => $total > 0 ? round(($hadir / $total) * 100) : 0,
+                ];
+            })
+            ->sortBy('murid.nama_murid')
+            ->values();
+
+        // Detail per sesi jika ada filter murid
+        $detailJadwals = collect();
+        $selectedSpp   = null;
+
+        if ($request->filled('id_spp')) {
+            $selectedSpp = Spp::with(['murid', 'programKursus'])->find($request->id_spp);
+            if ($selectedSpp) {
+                $detailJadwals = Jadwal::with('progresMurid')
+                    ->where('id_guru', $guru->id_guru)
+                    ->where('id_spp', $request->id_spp)
+                    ->whereYear('tanggal', $tahun)
+                    ->whereMonth('tanggal', $bln)
+                    ->where('is_active', true)
+                    ->orderBy('tanggal')
+                    ->orderBy('jam_mulai')
+                    ->get();
+            }
+        }
+
+        return view('guru.presensi.rekap', compact(
+            'guru', 'bulan', 'rekapAbsensi', 'detailJadwals', 'selectedSpp'
+        ));
+    }
+
+    /**
+     * Simpan presensi.
+     * Immutable setelah waktu_presensi_diisi terisi.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'id_jadwal'             => 'required|exists:jadwals,id_jadwal',
-            'id_murid'              => 'required|exists:murids,id_murid',
-            'tanggal'               => 'required|date',
-            'sesi_ke'               => 'required|integer|min:1',
-            'status_murid'          => 'required|in:hadir,alpa,izin',
-            'materi_diajarkan'      => 'required_if:status_murid,hadir|string',
-            'catatan_perkembangan'  => 'nullable|string',
-            'tingkat_progres'       => 'nullable|integer|min:0|max:100',
-            'url_video'             => 'nullable|url',
-            'platform'              => 'nullable|in:google_drive,youtube_private,lainnya',
+            'id_jadwal'              => 'required|exists:jadwals,id_jadwal',
+            'status_kehadiran_murid' => 'required|in:Hadir,Tidak Hadir',
+            'status_kehadiran_guru'  => 'required|in:Hadir,Tidak Hadir',
         ]);
 
-        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru   = Guru::where('id_user', Auth::id())->firstOrFail();
+        $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
+            ->where('id_guru', $guru->id_guru)
+            ->firstOrFail();
 
-        $presensi = Presensi::create([
-            'id_jadwal'    => $request->id_jadwal,
-            'id_guru'      => $guru->id_guru,
-            'id_murid'     => $request->id_murid,
-            'tanggal'      => $request->tanggal,
-            'sesi_ke'      => $request->sesi_ke,
-            'status_murid' => $request->status_murid,
-            'input_by'     => Auth::id(),
+        // ── BARU: tolak jika jam mulai belum tiba ──────────────
+        $jadwalMulai = \Carbon\Carbon::parse(
+            $jadwal->tanggal->format('Y-m-d') . ' ' . $jadwal->jam_mulai
+        );
+        if (now()->lt($jadwalMulai)) {
+            return back()->with('error',
+                'Presensi belum bisa diisi sebelum jadwal dimulai pukul '
+                . substr($jadwal->jam_mulai, 0, 5) . '.'
+            );
+        }
+        // ───────────────────────────────────────────────────────
+
+        if ($jadwal->waktu_presensi_diisi !== null) {
+            return back()->with('error', 'Presensi jadwal ini sudah diisi dan tidak dapat diubah lagi.');
+        }
+
+        $jadwal->update([
+            'status_kehadiran_murid' => $request->status_kehadiran_murid,
+            'status_kehadiran_guru'  => $request->status_kehadiran_guru,
+            'waktu_presensi_diisi'   => now(),
+            'presensi_diisi_oleh'    => 'Guru',
         ]);
 
-        // Simpan materi jika murid hadir
-        if ($request->status_murid === 'hadir' && $request->materi_diajarkan) {
-            MateriKbm::create([
-                'id_presensi'          => $presensi->id_presensi,
-                'materi_diajarkan'     => $request->materi_diajarkan,
-                'catatan_perkembangan' => $request->catatan_perkembangan,
-                'tingkat_progres'      => $request->tingkat_progres ?? 0,
-            ]);
-        }
-
-        // Simpan video jika ada
-        if ($request->url_video) {
-            VideoProgres::create([
-                'id_presensi'    => $presensi->id_presensi,
-                'url_video'      => $request->url_video,
-                'platform'       => $request->platform ?? 'google_drive',
-                'deskripsi_video'=> $request->deskripsi_video,
-            ]);
-        }
-
-        return back()->with('success', 'Presensi dan materi berhasil disimpan.');
+        return redirect()
+            ->route('guru.presensi.index', ['tanggal' => $jadwal->tanggal->format('Y-m-d')])
+            ->with('success', 'Presensi berhasil dicatat.');
     }
 }
-

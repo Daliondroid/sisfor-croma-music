@@ -11,8 +11,18 @@
         <a href="{{ route('guru.presensi.index') }}" class="nav-item"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
     @else
         <div class="nav-section-label">Menu</div>
-        <a href="{{ route('murid.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-        <a href="{{ route('murid.spp.index') }}" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
+        <a href="{{ route('murid.dashboard') }}" class="nav-item {{ request()->routeIs('murid.dashboard') ? 'active' : '' }}">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+        <a href="{{ route('murid.jadwal.index') }}" class="nav-item {{ request()->routeIs('murid.jadwal*') ? 'active' : '' }}">
+            <i class="fa-solid fa-calendar-days"></i> Jadwal Kelas
+        </a>
+        <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*') ? 'active' : '' }}">
+            <i class="fa-solid fa-book-open"></i> Laporan Bulanan
+        </a>
+        <a href="{{ route('murid.spp.index') }}" class="nav-item {{ request()->routeIs('murid.spp*') ? 'active' : '' }}">
+            <i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya
+        </a>
     @endif
 @endsection
 

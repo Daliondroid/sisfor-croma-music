@@ -13,9 +13,9 @@
 <a href="{{ route('admin.jadwals.index') }}" class="nav-item {{ request()->routeIs('admin.jadwals*') ? 'active' : '' }}">
     <i class="fa-solid fa-calendar-days"></i> Jadwal KBM
 </a>
-<a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
+{{-- <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
     <i class="fa-solid fa-door-open"></i> Data Kelas
-</a>
+</a> --}}
 <a href="{{ route('admin.program-kursus.index') }}" class="nav-item {{ request()->routeIs('admin.program-kursus*') ? 'active' : '' }}">
     <i class="fa-solid fa-layer-group"></i> Program Kursus
 </a>
@@ -25,13 +25,11 @@
     <i class="fa-solid fa-file-invoice-dollar"></i> Tagihan SPP
 </a>
 
-<div class="nav-section-label">Laporan</div>
-<a href="{{ route('admin.laporan.absensi') }}" class="nav-item {{ request()->routeIs('admin.laporan.absensi') ? 'active' : '' }}">
-    <i class="fa-solid fa-clipboard-list"></i> Rekap Absensi
+<a href="{{ route('admin.laporan.keuangan') }}" class="nav-item">
+    <i class="fa-solid fa-chart-line"></i> Laporan Keuangan
 </a>
-<a href="{{ route('admin.laporan.keuangan') }}" class="nav-item {{ request()->routeIs('admin.laporan.keuangan') ? 'active' : '' }}">
-    <i class="fa-solid fa-chart-line"></i> Lap. Keuangan
-</a>
-<a href="{{ route('admin.laporan.gaji') }}" class="nav-item {{ request()->routeIs('admin.laporan.gaji') ? 'active' : '' }}">
-    <i class="fa-solid fa-money-bill-wave"></i> Gaji Guru
+
+<div class="nav-section-label">Gaji & Laporan</div>
+<a href="{{ route('admin.honor-guru.index') }}" class="nav-item {{ request()->routeIs('admin.honor-guru*') ? 'active' : '' }}">
+    <i class="fa-solid fa-file-invoice-dollar"></i> Manajemen Gaji Guru
 </a>

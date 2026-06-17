@@ -10,9 +10,6 @@
         <div class="breadcrumb">Admin / Akademik / <span>Program Kursus</span></div>
     </div>
     <div style="display:flex;gap:10px">
-        <a href="{{ route('admin.kelas.index') }}" class="btn btn-outline">
-            <i class="fa-solid fa-door-open"></i> Data Kelas
-        </a>
         <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Tambah Program
         </a>

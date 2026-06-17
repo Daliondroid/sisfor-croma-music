@@ -45,27 +45,20 @@
                         maxlength="15" 
                         oninput="formatPhoneNumber(this)">
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label class="form-label">Foto Profil</label>
                     <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
                     <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
-                </div>
+                </div> --}}
             </div>
             <div class="form-group">
-                <label class="form-label">Spesialisasi Instrumen <span style="color:red">*</span></label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
-                    @foreach($spesialisasis as $s)
-                        <label title="{{ $s->nama_spesialisasi }}" style="display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; margin: 0; overflow: hidden; white-space: nowrap;">
-                            <input type="checkbox" name="spesialisasi_ids[]" value="{{ $s->id_spesialisasi }}" 
-                                {{ collect(old('spesialisasi_ids'))->contains($s->id_spesialisasi) ? 'checked' : '' }}
-                                style="flex-shrink: 0;"> 
-                            <span style="overflow: hidden; text-overflow: ellipsis;">
-                                {{ \Illuminate\Support\Str::limit($s->nama_spesialisasi, 18) }}
-                            </span>
-                        </label>
-                    @endforeach
+                <label class="form-label">Spesialisasi Instrumen</label>
+                <input type="text" name="spesialisasi" class="form-control"
+                    value="{{ old('spesialisasi') }}"
+                    placeholder="Piano, Gitar, Vokal (pisahkan dengan koma)"/>
+                <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+                    Pisahkan beberapa instrumen dengan koma. Contoh: Piano, Gitar Akustik, Vokal
                 </div>
-                @error('spesialisasi_ids') <small style="color:red">{{ $message }}</small> @enderror
             </div>
             <div style="display:flex;gap:12px;margin-top:8px">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>

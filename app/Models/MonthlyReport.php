@@ -3,39 +3,50 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MonthlyReport extends Model
 {
-    protected $table      = 'monthly_reports';
+    protected $table = 'monthly_reports';
     protected $primaryKey = 'id_report';
 
     protected $fillable = [
-        'id_murid', 'bulan', 'total_hadir', 'total_alpa',
-        'total_izin', 'persentase_kehadiran', 'catatan_guru',
+        'id_spp', 'periode_bulan', 'url_video', 'skor', 'evaluasi_bulanan'
     ];
 
-    public function murid() { return $this->belongsTo(Murid::class, 'id_murid'); }
+    protected $casts = [
+        'periode_bulan' => 'date',
+    ];
 
-    // Generate/refresh data dari tabel presensi
-    public static function generateUntukMurid(int $idMurid, string $bulan): self
+    // ── Relasi ─────────────────────────────────────────────────
+
+    /**
+     * SPP yang dievaluasi oleh report ini.
+     * ERD v12: SPP ||--o| MONTHLY_REPORT
+     */
+    public function spp(): BelongsTo
     {
-        $presensis = Presensi::where('id_murid', $idMurid)
-            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulan])
-            ->get();
+        return $this->belongsTo(Spp::class, 'id_spp');
+    }
 
-        $hadir = $presensis->where('status_murid', 'hadir')->count();
-        $alpa  = $presensis->where('status_murid', 'alpa')->count();
-        $izin  = $presensis->where('status_murid', 'izin')->count();
-        $total = $presensis->count();
+    /**
+     * Jadwal-jadwal yang terangkum dalam report ini.
+     * ERD v12: MONTHLY_REPORT ||--o{ JADWAL (via id_report di jadwals)
+     */
+    public function jadwals(): HasMany
+    {
+        return $this->hasMany(Jadwal::class, 'id_report');
+    }
 
-        return self::updateOrCreate(
-            ['id_murid' => $idMurid, 'bulan' => $bulan],
-            [
-                'total_hadir'          => $hadir,
-                'total_alpa'           => $alpa,
-                'total_izin'           => $izin,
-                'persentase_kehadiran' => $total > 0 ? round(($hadir / $total) * 100, 2) : 0,
-            ]
-        );
+    // ── Helper accessor ────────────────────────────────────────
+
+    /**
+     * Akses murid dari monthly report lewat SPP.
+     * Contoh: $report->murid
+     */
+    public function getMuridAttribute(): ?Murid
+    {
+        return $this->spp?->murid;
     }
 }

@@ -44,11 +44,11 @@
                     <label class="form-label">Konfirmasi Password</label>
                     <input type="password" name="password_confirmation" class="form-control"/>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label class="form-label">Foto Profil</label>
                     <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
                     <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
-                </div>
+                </div> --}}
             </div>
 
             <hr style="border:none;border-top:1px solid #f0f0f0;margin:20px 0"/>

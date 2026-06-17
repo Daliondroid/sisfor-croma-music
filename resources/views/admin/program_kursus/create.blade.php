@@ -16,11 +16,13 @@
             @if($errors->any())
                 <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
             @endif
+
             <div class="form-group">
                 <label class="form-label">Nama Program <span style="color:red">*</span></label>
                 <input type="text" name="nama_program" class="form-control"
                        value="{{ old('nama_program') }}" placeholder="Contoh: Piano, Gitar Akustik, Vokal Pop" required/>
             </div>
+
             <div class="form-group">
                 <label class="form-label">Tipe Les <span style="color:red">*</span></label>
                 <select name="tipe_les" class="form-control" required>
@@ -29,11 +31,20 @@
                     <option value="home_private"{{ old('tipe_les')=='home_private'?'selected':'' }}>Home Private saja</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Biaya Kursus (Rp) <span style="color:red">*</span></label>
+                <input type="number" name="biaya_kursus" class="form-control" min="0"
+                       value="{{ old('biaya_kursus') }}" placeholder="Contoh: 350000" required/>
+                <small class="text-muted">Masukkan angka saja tanpa titik atau koma.</small>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Deskripsi</label>
                 <textarea name="deskripsi" class="form-control" rows="3"
                           placeholder="Deskripsi singkat program...">{{ old('deskripsi') }}</textarea>
             </div>
+
             <div style="display:flex;gap:12px">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                 <a href="{{ route('admin.program-kursus.index') }}" class="btn btn-outline">Batal</a>

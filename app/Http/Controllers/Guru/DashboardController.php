@@ -11,11 +11,17 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())
+            ->with('spesialisasis')
+            ->firstOrFail();
 
-        $jadwalHariIni = Jadwal::where('id_guru', $guru->id_guru)
+        // Jadwal mengajar hari ini
+        $jadwalHariIni = Jadwal::with(['spp.murid', 'spp.programKursus'])
+            ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
-            ->with(['murid', 'kelas'])
+            ->whereDate('tanggal', today())
+            ->whereIn('status_jadwal', ['Sesuai Jadwal', 'Reschedule'])
+            ->orderBy('jam_mulai')
             ->get();
 
         return view('guru.dashboard', compact('guru', 'jadwalHariIni'));

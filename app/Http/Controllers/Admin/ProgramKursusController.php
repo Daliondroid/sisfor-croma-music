@@ -10,7 +10,10 @@ class ProgramKursusController extends Controller
 {
     public function index()
     {
-        $programs = ProgramKursus::withCount('kelas')->latest()->paginate(20);
+        $programs = ProgramKursus::withCount('spps')
+            ->latest()
+            ->paginate(20);
+
         return view('admin.program_kursus.index', compact('programs'));
     }
 
@@ -25,13 +28,19 @@ class ProgramKursusController extends Controller
             'nama_program' => 'required|string|max:100',
             'deskripsi'    => 'nullable|string',
             'tipe_les'     => 'required|in:onsite,home_private,keduanya',
+            'biaya_kursus' => 'required|numeric|min:0',
         ]);
 
         ProgramKursus::create([
-            ...$request->only(['nama_program', 'deskripsi', 'tipe_les']),
-            'is_active' => true,
+            'nama_program' => $request->nama_program,
+            'deskripsi'    => $request->deskripsi,
+            'tipe_les'     => $request->tipe_les,
+            'biaya_kursus' => $request->biaya_kursus,
+            'is_active'    => true,
         ]);
-        return redirect()->route('admin.program-kursus.index')->with('success', 'Program kursus berhasil ditambahkan.');
+
+        return redirect()->route('admin.program-kursus.index')
+            ->with('success', 'Program kursus berhasil ditambahkan.');
     }
 
     public function edit(ProgramKursus $programKursus)
@@ -45,21 +54,33 @@ class ProgramKursusController extends Controller
             'nama_program' => 'required|string|max:100',
             'deskripsi'    => 'nullable|string',
             'tipe_les'     => 'required|in:onsite,home_private,keduanya',
+            'biaya_kursus' => 'required|numeric|min:0',
         ]);
 
         $programKursus->update([
-            ...$request->only(['nama_program', 'deskripsi', 'tipe_les']),
-            'is_active' => $request->boolean('is_active'),
+            'nama_program' => $request->nama_program,
+            'deskripsi'    => $request->deskripsi,
+            'tipe_les'     => $request->tipe_les,
+            'biaya_kursus' => $request->biaya_kursus,
+            'is_active'    => $request->boolean('is_active'),
         ]);
-        return redirect()->route('admin.program-kursus.index')->with('success', 'Program kursus berhasil diperbarui.');
+
+        return redirect()->route('admin.program-kursus.index')
+            ->with('success', 'Program kursus berhasil diperbarui.');
     }
 
     public function destroy(ProgramKursus $programKursus)
     {
-        if ($programKursus->kelas()->exists()) {
-            return back()->with('error', 'Program tidak dapat dihapus karena masih memiliki kelas terdaftar.');
+        // Cegah hapus jika masih ada SPP yang merujuk ke program ini
+        if ($programKursus->spps()->exists()) {
+            return back()->with(
+                'error',
+                'Program tidak dapat dihapus karena masih memiliki tagihan SPP terdaftar.'
+            );
         }
+
         $programKursus->delete();
+
         return back()->with('success', 'Program kursus berhasil dihapus.');
     }
 }

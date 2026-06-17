@@ -29,11 +29,11 @@
                     <label class="form-label">Nomor HP</label>
                     <input type="text" name="nomor_hp" class="form-control" value="{{ old('nomor_hp', $guru->nomor_hp) }}"/>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label class="form-label">Foto Profil</label>
                     <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
                     <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <label class="form-label">Password Baru <span style="font-weight:400;color:var(--text-light)">(opsional)</span></label>
                     <input type="password" name="password" class="form-control"/>
@@ -43,19 +43,14 @@
                     <input type="password" name="password_confirmation" class="form-control"/>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Spesialisasi Instrumen <span style="color:red">*</span></label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                        @foreach($spesialisasis as $s)
-                            <label title="{{ $s->nama_spesialisasi }}" style="display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; margin: 0; overflow: hidden; white-space: nowrap;">
-                                <input type="checkbox" name="spesialisasi_ids[]" value="{{ $s->id_spesialisasi }}" 
-                                    {{ (collect(old('spesialisasi_ids'))->contains($s->id_spesialisasi) || $guru->spesialisasis->contains('id_spesialisasi', $s->id_spesialisasi)) ? 'checked' : '' }}
-                                    style="flex-shrink: 0;"> 
-                                <span style="overflow: hidden; text-overflow: ellipsis;">
-                                    {{ \Illuminate\Support\Str::limit($s->nama_spesialisasi, 18) }}
-                                </span>
-                            </label>
-                        @endforeach
+                    <label class="form-label">Spesialisasi Instrumen</label>
+                    <input type="text" name="spesialisasi" class="form-control"
+                        value="{{ old('spesialisasi', $guru->spesialisasis->pluck('nama_spesialisasi')->implode(', ')) }}"
+                        placeholder="Piano, Gitar, Vokal (pisahkan dengan koma)"/>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+                        Pisahkan beberapa instrumen dengan koma.
                     </div>
+                </div>
                     @error('spesialisasi_ids') <small style="color:red; margin-top:4px; display:block;">{{ $message }}</small> @enderror
                 </div>
             </div>
