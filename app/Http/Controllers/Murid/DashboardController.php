@@ -19,7 +19,8 @@ class DashboardController extends Controller
 
         // Mengambil riwayat jadwal pelajaran yang sudah diisi presensinya pada bulan ini
         $presensiBulanIni = $murid->jadwals()
-            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [now()->format('Y-m')])
+            ->whereYear('tanggal', now()->year)
+            ->whereMonth('tanggal', now()->month)
             ->whereNotNull('status_kehadiran_murid')
             ->with('progresMurid')
             ->orderBy('tanggal', 'desc')

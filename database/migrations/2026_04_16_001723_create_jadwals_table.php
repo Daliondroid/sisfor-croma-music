@@ -28,6 +28,8 @@ return new class extends Migration
             $table->enum('status_kehadiran_guru', ['Hadir', 'Tidak Hadir'])->nullable();
             $table->timestamp('waktu_presensi_diisi')->nullable();
             $table->enum('presensi_diisi_oleh', ['Guru', 'Murid'])->nullable();
+            $table->timestamp('verified_at')->nullable();
+            $table->foreignId('verified_by')->nullable()->constrained('users', 'id_user');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

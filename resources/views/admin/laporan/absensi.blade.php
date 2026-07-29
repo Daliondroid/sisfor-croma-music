@@ -5,25 +5,25 @@
     <title>Rekap Absensi — Croma Music</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1f2937; }
+        body { font-family: 'DejaVu Sans', sans-serif; font-size: 0.625rem; color: #1f2937; }
 
-        .header { background: #1e3a5f; color: #fff; padding: 18px 24px; margin-bottom: 16px; }
-        .header h1 { font-size: 16px; letter-spacing: .5px; }
-        .header .sub { font-size: 10px; color: #93c5fd; margin-top: 4px; }
+        .header { background: #1e3a5f; color: #fff; padding: 1rem 1.5rem; margin-bottom: 1rem; }
+        .header h1 { font-size: 1rem; letter-spacing: 0.03125rem; }
+        .header .sub { font-size: 0.625rem; color: #93c5fd; margin-top: 0.25rem; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 9px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.5625rem; }
         thead tr { background: #1e3a5f; color: #fff; }
-        thead th { padding: 7px 8px; text-align: left; font-weight: bold; }
+        thead th { padding: 0.5rem 0.5rem; text-align: left; font-weight: bold; }
         tbody tr:nth-child(even) { background: #f8fafc; }
-        tbody td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; }
+        tbody td { padding: 0.25rem 0.5rem; border-bottom: 1px solid #f1f5f9; }
 
-        .bar-wrap { width: 80px; height: 7px; background: #e5e7eb; border-radius: 99px; display: inline-block; vertical-align: middle; overflow: hidden; }
-        .bar-fill  { height: 100%; border-radius: 99px; }
+        .bar-wrap { width: 5rem; height: 0.5rem; background: #e5e7eb; border-radius: 6.1875rem; display: inline-block; vertical-align: middle; overflow: hidden; }
+        .bar-fill  { height: 100%; border-radius: 6.1875rem; }
         .green  { background: #16a34a; }
         .yellow { background: #f59e0b; }
         .red    { background: #dc2626; }
 
-        .footer { margin-top: 24px; font-size: 8px; color: #9ca3af; text-align: right; }
+        .footer { margin-top: 1.5rem; font-size: 0.5rem; color: #9ca3af; text-align: right; }
     </style>
 </head>
 <body>

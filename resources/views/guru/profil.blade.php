@@ -20,54 +20,54 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start">
+<div style="display:grid;grid-template-columns:18.75rem 1fr;gap:1.5rem;align-items:start">
 
     {{-- Kartu Info Kiri --}}
-    <div class="card" style="text-align:center;padding:32px 24px">
-        <div style="margin-bottom:16px">
+    <div class="card" style="text-align:center;padding:2rem 1.5rem">
+        <div style="margin-bottom:1rem">
             @if($guru->user->foto_profil)
                 <img src="{{ asset('storage/' . $guru->user->foto_profil) }}"
-                     style="width:96px;height:96px;border-radius:50%;object-fit:cover;
-                            border:3px solid var(--primary-blue);margin:0 auto;display:block">
+                     style="width:6rem;height:6rem;border-radius:50%;object-fit:cover;
+                            border:0.1875rem solid var(--primary-blue);margin:0 auto;display:block">
             @else
-                <div style="width:96px;height:96px;border-radius:50%;background:var(--primary-blue);
+                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-blue);
                             display:flex;align-items:center;justify-content:center;
                             font-size:2.2rem;font-weight:700;color:#fff;margin:0 auto">
                     {{ strtoupper(substr($guru->nama_guru, 0, 1)) }}
                 </div>
             @endif
         </div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">{{ $guru->nama_guru }}</div>
-        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:8px">{{ $guru->user->email }}</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.25rem">{{ $guru->nama_guru }}</div>
+        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:0.5rem">{{ $guru->user->email }}</div>
 
         @if($guru->spesialisasis->count())
-            <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:12px">
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem;justify-content:center;margin-bottom:1rem">
                 @foreach($guru->spesialisasis as $s)
                     <span class="badge badge-info" style="font-size:.7rem">{{ $s->nama_spesialisasi }}</span>
                 @endforeach
             </div>
         @endif
 
-        <span class="badge badge-warning" style="font-size:.75rem;padding:5px 14px">
-            <i class="fa-solid fa-chalkboard-user" style="margin-right:5px"></i>Guru
+        <span class="badge badge-warning" style="font-size:.75rem;padding:0.25rem 1rem">
+            <i class="fa-solid fa-chalkboard-user" style="margin-right:0.25rem"></i>Guru
         </span>
 
-        <hr style="border:none;border-top:1px solid var(--topbar-border);margin:20px 0">
+        <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.5rem 0">
 
         <div style="text-align:left">
             <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;
-                        letter-spacing:.8px;font-weight:600;margin-bottom:10px">Info Akun</div>
-            <div style="display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;align-items:center;gap:10px;font-size:.82rem">
-                    <i class="fa-solid fa-phone" style="width:16px;color:var(--text-light)"></i>
+                        letter-spacing:0.05rem;font-weight:600;margin-bottom:0.5rem">Info Akun</div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
+                    <i class="fa-solid fa-phone" style="width:1rem;color:var(--text-light)"></i>
                     <span>{{ $guru->nomor_hp ?? '-' }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;font-size:.82rem">
-                    <i class="fa-solid fa-calendar-plus" style="width:16px;color:var(--text-light)"></i>
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
+                    <i class="fa-solid fa-calendar-plus" style="width:1rem;color:var(--text-light)"></i>
                     <span>Bergabung {{ $guru->created_at->translatedFormat('M Y') }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:10px;font-size:.82rem">
-                    <i class="fa-solid fa-circle" style="width:16px;color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-size:.5rem"></i>
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
+                    <i class="fa-solid fa-circle" style="width:1rem;color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-size:.5rem"></i>
                     <span style="color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-weight:600">
                         {{ $guru->status_aktif ? 'Aktif' : 'Non-aktif' }}
                     </span>
@@ -77,7 +77,7 @@
     </div>
 
     {{-- Form Kanan --}}
-    <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
 
         @if(session('success'))
             <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
@@ -89,7 +89,7 @@
         {{-- Data Profil --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-user" style="color:var(--primary-blue);margin-right:8px"></i>Data Profil</h3>
+                <h3><i class="fa-solid fa-user" style="color:var(--primary-blue);margin-right:0.5rem"></i>Data Profil</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.profil.update') }}" enctype="multipart/form-data">
@@ -110,12 +110,12 @@
                             <input type="text" name="spesialisasi" class="form-control"
                                    value="{{ old('spesialisasi', $guru->spesialisasis->pluck('nama_spesialisasi')->implode(', ')) }}"
                                    placeholder="Piano, Gitar, Vokal (pisahkan dengan koma)"/>
-                            <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Pisahkan beberapa instrumen dengan koma.</div>
+                            <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Pisahkan beberapa instrumen dengan koma.</div>
                         </div>
                         <div class="form-group" style="grid-column:1/-1">
                             <label class="form-label">Foto Profil</label>
                             <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
-                            <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">JPG/PNG, maks 2MB</div>
+                            <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">JPG/PNG, maks 2MB</div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">
@@ -128,7 +128,7 @@
         {{-- Ganti Password --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-lock" style="color:var(--primary-blue);margin-right:8px"></i>Ganti Password</h3>
+                <h3><i class="fa-solid fa-lock" style="color:var(--primary-blue);margin-right:0.5rem"></i>Ganti Password</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.profil.update') }}" enctype="multipart/form-data">
@@ -151,7 +151,7 @@
                             <input type="password" name="password_confirmation" class="form-control"/>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-outline" style="margin-top:4px">
+                    <button type="submit" class="btn btn-outline" style="margin-top:0.25rem">
                         <i class="fa-solid fa-key"></i> Update Password
                     </button>
                 </form>

@@ -35,7 +35,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 0.5rem;
     color: rgba(255,255,255,.5);
     font-size: .875rem;
 }
@@ -46,8 +46,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 64px; height: 64px;
-    border-radius: 16px;
+    width: 4rem; height: 4rem;
+    border-radius: 1rem;
     font-size: 1.6rem;
     font-weight: 800;
     flex-shrink: 0;
@@ -63,9 +63,9 @@
 /* ── Evaluasi box ── */
 .eval-box {
     background: var(--bg-light);
-    border-left: 4px solid var(--primary-blue);
-    border-radius: 0 8px 8px 0;
-    padding: 14px 18px;
+    border-left: 0.25rem solid var(--primary-blue);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1rem 1rem;
     font-size: .875rem;
     line-height: 1.7;
     color: var(--text-dark);
@@ -75,13 +75,13 @@
 .skor-card {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 20px 24px;
+    gap: 1.5rem;
+    padding: 1.5rem 1.5rem;
 }
 .skor-card-info { flex: 1; }
-.skor-label { font-size: .72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
+.skor-label { font-size: .72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.025rem; margin-bottom: 0.25rem; }
 .skor-period { font-size: 1.05rem; font-weight: 700; }
-.skor-sub { font-size: .78rem; color: var(--text-light); margin-top: 2px; }
+.skor-sub { font-size: .78rem; color: var(--text-light); margin-top: 0.125rem; }
 </style>
 @endpush
 
@@ -130,7 +130,7 @@
     </a>
 </div>
 
-<div style="display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:column;gap:1.5rem">
 
     {{-- Skor --}}
     <div class="card">
@@ -151,7 +151,7 @@
     {{-- Video Pembelajaran --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-film" style="color:var(--primary-blue);margin-right:8px"></i>Video Pembelajaran</h3>
+            <h3><i class="fa-solid fa-film" style="color:var(--primary-blue);margin-right:0.5rem"></i>Video Pembelajaran</h3>
             @if($report->url_video)
                 <a href="{{ $report->url_video }}" target="_blank" class="btn btn-sm btn-outline">
                     <i class="fa-solid fa-external-link-alt"></i> Buka di tab baru
@@ -179,7 +179,7 @@
     @if($report->evaluasi_bulanan)
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-comment-dots" style="color:var(--primary-blue);margin-right:8px"></i>Kesimpulan Pembelajaran</h3>
+            <h3><i class="fa-solid fa-comment-dots" style="color:var(--primary-blue);margin-right:0.5rem"></i>Kesimpulan Pembelajaran</h3>
         </div>
         <div class="card-body">
             <div class="eval-box">{{ $report->evaluasi_bulanan }}</div>

@@ -5,12 +5,10 @@
 
 @section('content')
 <div class="page-header">
-    <div>
-        <h2>Program Kursus</h2>
-        <div class="breadcrumb">Admin / Akademik / <span>Program Kursus</span></div>
-    </div>
-    <div style="display:flex;gap:10px">
-        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary">
+    <h2>Program Kursus</h2>
+    <div class="breadcrumb">Admin / Akademik / <span>Program Kursus</span></div>
+    <div class="page-header-filters">
+        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary btn-sm">
             <i class="fa-solid fa-plus"></i> Tambah Program
         </a>
     </div>
@@ -44,7 +42,7 @@
                         </span>
                     </td>
                     <td>
-                        <div style="display:flex;gap:6px">
+                        <div style="display:flex;gap:0.25rem">
                             <a href="{{ route('admin.program-kursus.edit', $p) }}" class="btn btn-sm btn-outline">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
@@ -57,11 +55,20 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-light)">Belum ada program kursus.</td></tr>
+                <tr><td colspan="6">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="16" width="40" height="52" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><rect x="30" y="12" width="40" height="52" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--card-bg)"/><path d="M40 28h20M40 38h14M40 48h18" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
+                        </div>
+                        <div class="empty-state-title">Belum ada program kursus.</div>
+                        <div class="empty-state-description">Mulai dengan menambahkan program kursus baru.</div>
+                        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Program</a>
+                    </div>
+                </td></tr>
             @endforelse
             </tbody>
         </table>
     </div>
-    @if($programs->hasPages())<div style="padding:16px 24px">{{ $programs->links() }}</div>@endif
+    @if($programs->hasPages())<div style="padding:1rem 1.5rem">{{ $programs->links() }}</div>@endif
 </div>
 @endsection

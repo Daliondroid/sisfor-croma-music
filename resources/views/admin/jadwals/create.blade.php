@@ -7,14 +7,14 @@
 <style>
     .radio-toggle {
         display: inline-flex;
-        border-radius: 6px;
+        border-radius: 0.375rem;
         border: 1px solid #cbd5e1;
         overflow: hidden;
         background-color: #f8fafc;
     }
     .radio-toggle input[type="radio"] { display: none; }
     .radio-toggle label {
-        padding: 0.5rem 1.25rem;
+        padding: 0.5rem 1.5rem;
         color: #475569;
         cursor: pointer;
         border-right: 1px solid #cbd5e1;
@@ -45,9 +45,9 @@
     </a>
 </div>
 
-<div class="card" style="padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+<div class="card" style="padding: 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
     @if ($errors->any())
-        <div class="alert alert-danger" style="margin-bottom: 1.5rem; color: #dc2626; background: #fef2f2; padding: 1rem; border-radius: 6px;">
+        <div class="alert alert-danger" style="margin-bottom: 1.5rem; color: #dc2626; background: #fef2f2; padding: 1rem; border-radius: 0.375rem;">
             <ul style="margin: 0; padding-left: 1.5rem;">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -123,7 +123,7 @@
             
         </div>
 
-        <div style="border-top: 2px solid #e2e8f0; padding-top: 2rem; margin-bottom: 1.5rem;">
+        <div style="border-top: 0.125rem solid #e2e8f0; padding-top: 2rem; margin-bottom: 1.5rem;">
             <h3 id="judul_pengaturan" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dark);">
                 Pengaturan Jadwal Tetap
             </h3>
@@ -140,7 +140,7 @@
             </div>
 
             <div id="container-tetap">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; background-color: #f8fafc; padding: 1.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; background-color: #f8fafc; padding: 1.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
                     <div>
                         <label style="display: block; font-size: 0.875rem; font-weight: bold; margin-bottom: 0.5rem;">Hari</label>
                         <select name="pola_tunggal[hari]" class="form-control" required>
@@ -164,8 +164,8 @@
             <div id="container-pola" style="display: none;">
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
                     @for($index = 0; $index < 4; $index++)
-                        <div style="display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 1.5rem; align-items: center; background-color: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0;">
-                            <span style="font-weight: bold; color: #475569; min-width: 80px;">Minggu {{ $index + 1 }}</span>
+                        <div style="display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: 1.5rem; align-items: center; background-color: #f8fafc; padding: 1rem; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                            <span style="font-weight: bold; color: #475569; min-width: 5rem;">Minggu {{ $index + 1 }}</span>
                             <select name="pola[{{ $index }}][hari]" class="form-control" disabled required>
                                 <option value="">-- Pilih Hari --</option>
                                 @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $hari)
@@ -181,7 +181,7 @@
 
             <div id="container-manual" style="display: none;">
                 <div id="manual-rows">
-                    <div style="text-align:center; padding:1rem; color:#64748b; background-color: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <div style="text-align:center; padding:1rem; color:#64748b; background-color: #f8fafc; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
                         Silakan pilih Total Pertemuan pada form di atas terlebih dahulu.
                     </div>
                 </div>
@@ -189,10 +189,10 @@
         </div>
 
         <div style="display: flex; gap: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1rem;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">
                 <i class="fa-solid fa-save"></i> Proses Jadwal
             </button>
-            <a href="{{ route('admin.jadwals.index') }}" class="btn btn-secondary" style="padding: 0.6rem 1.5rem;">Batal</a>
+            <a href="{{ route('admin.jadwals.index') }}" class="btn btn-secondary" style="padding: 0.5rem 1.5rem;">Batal</a>
         </div>
     </form>
 </div>
@@ -297,13 +297,13 @@
         container.innerHTML = '';
 
         if (total === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:1rem; color:#64748b; background-color: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">Silakan pilih Total Pertemuan pada form di atas terlebih dahulu.</div>';
+            container.innerHTML = '<div style="text-align:center; padding:1rem; color:#64748b; background-color: #f8fafc; border-radius: 0.375rem; border: 1px solid #e2e8f0;">Silakan pilih Total Pertemuan pada form di atas terlebih dahulu.</div>';
             return;
         }
 
         for (let i = 0; i < total; i++) {
             container.innerHTML += `
-                <div style="display: grid; grid-template-columns: 80px 1fr 1fr 1fr; gap: 1rem; align-items: center; background-color: #f8fafc; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 0.5rem;">
+                <div style="display: grid; grid-template-columns: 5rem 1fr 1fr 1fr; gap: 1rem; align-items: center; background-color: #f8fafc; padding: 1rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; margin-bottom: 0.5rem;">
                     <span style="font-weight: bold; color: #475569;">Sesi ${i + 1}</span>
                     <input type="date" name="jadwal_manual[${i}][tanggal]" class="form-control" required>
                     <input type="time" name="jadwal_manual[${i}][jam_mulai]" class="form-control" required>

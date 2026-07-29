@@ -14,13 +14,13 @@ class JadwalController extends Controller
     {
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
 
-        // Bulan tersedia (untuk navigasi)
         $availableMonths = $murid->jadwals()
             ->where('is_active', true)
-            ->selectRaw("DATE_FORMAT(tanggal, '%Y-%m') as bulan")
-            ->groupBy('bulan')
-            ->orderByRaw("bulan DESC")
-            ->pluck('bulan');
+            ->pluck('tanggal')
+            ->map(fn($t) => \Carbon\Carbon::parse($t)->format('Y-m'))
+            ->unique()
+            ->sortDesc()
+            ->values();
 
         $selectedMonth = $request->get('bulan', now()->format('Y-m'));
 

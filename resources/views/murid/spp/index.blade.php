@@ -13,13 +13,13 @@
     .spp-list {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 1rem;
     }
 
     .spp-card {
         background: var(--card-bg);
         border-radius: var(--radius);
-        border: 1.5px solid var(--topbar-border);
+        border: 0.09375rem solid var(--topbar-border);
         overflow: hidden;
         transition: box-shadow .2s;
     }
@@ -35,13 +35,13 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        padding: 18px 22px 14px;
-        gap: 12px;
+        padding: 1rem 1.5rem 1rem;
+        gap: 1rem;
     }
     .spp-period {
         font-size: 1.05rem;
         font-weight: 700;
-        margin-bottom: 4px;
+        margin-bottom: 0.25rem;
     }
     .spp-meta {
         font-size: .82rem;
@@ -53,14 +53,14 @@
     .status-pill {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 0.25rem;
         font-size: .75rem;
         font-weight: 700;
-        padding: 5px 13px;
-        border-radius: 999px;
+        padding: 0.25rem 1rem;
+        border-radius: 62.4375rem;
         white-space: nowrap;
         flex-shrink: 0;
-        letter-spacing: .3px;
+        letter-spacing: 0.01875rem;
     }
     .pill-lunas    { background: #dcfce7; color: #15803d; }
     .pill-menunggu { background: #dbeafe; color: #1d4ed8; }
@@ -71,26 +71,26 @@
     [data-theme="dark"] .pill-belum    { background: #3d1515; color: #f87171; }
 
     /* ── Card Body ── */
-    .spp-card-body { padding: 0 22px 18px; }
+    .spp-card-body { padding: 0 1.5rem 1rem; }
 
     /* Divider sebelum body */
     .spp-divider {
         height: 1px;
         background: var(--topbar-border);
-        margin: 0 22px 16px;
+        margin: 0 1.5rem 1rem;
     }
 
     /* ── Status Lunas: konfirmasi row ── */
     .confirm-row {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 0.5rem;
         font-size: .83rem;
         color: #15803d;
         background: #f0fdf4;
         border: 1px solid #bbf7d0;
-        border-radius: 8px;
-        padding: 10px 14px;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
     }
     [data-theme="dark"] .confirm-row {
         background: #14312a;
@@ -103,12 +103,12 @@
     .waiting-row {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 0.25rem;
         background: #eff6ff;
         border: 1px solid #bfdbfe;
-        border-radius: 8px;
-        padding: 12px 14px;
-        margin-bottom: 14px;
+        border-radius: 0.5rem;
+        padding: 1rem 1rem;
+        margin-bottom: 1rem;
     }
     [data-theme="dark"] .waiting-row {
         background: #1e3a5f;
@@ -117,7 +117,7 @@
     .waiting-title {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0.5rem;
         font-size: .83rem;
         font-weight: 600;
         color: #1d4ed8;
@@ -128,8 +128,8 @@
         color: #3b82f6;
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding-left: 24px;
+        gap: 0.25rem;
+        padding-left: 1.5rem;
     }
     [data-theme="dark"] .waiting-sub { color: #93c5fd; }
     .waiting-sub a { color: #1d4ed8; font-weight: 600; }
@@ -138,14 +138,14 @@
     /* ── Upload Box ── */
     .upload-box {
         border: 1px solid var(--input-border);
-        border-radius: 8px;
+        border-radius: 0.5rem;
         overflow: hidden;
     }
     .upload-box-header {
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
         background: var(--bg-light);
         border-bottom: 1px solid var(--input-border);
         font-size: .82rem;
@@ -153,12 +153,12 @@
         color: var(--text-dark);
     }
     .upload-box-header i { color: var(--primary-blue); }
-    .upload-box-body { padding: 14px; }
+    .upload-box-body { padding: 1rem; }
     .upload-field-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: 1rem;
+        margin-bottom: 1rem;
     }
     .upload-field-label {
         display: block;
@@ -166,8 +166,8 @@
         font-weight: 600;
         color: var(--text-light);
         text-transform: uppercase;
-        letter-spacing: .5px;
-        margin-bottom: 5px;
+        letter-spacing: 0.03125rem;
+        margin-bottom: 0.25rem;
     }
 
     /* Tombol kirim per status */
@@ -187,10 +187,10 @@
     /* Empty state */
     .spp-empty {
         text-align: center;
-        padding: 48px;
+        padding: 3rem;
         color: var(--text-light);
     }
-    .spp-empty i { font-size: 2.2rem; opacity: .25; display: block; margin-bottom: 12px; }
+    .spp-empty i { font-size: 2.2rem; opacity: .25; display: block; margin-bottom: 1rem; }
 </style>
 @endpush
 
@@ -297,7 +297,7 @@
                                            value="{{ $spp->nominal_tagihan }}" required/>
                                 </div>
                             </div>
-                            <div class="form-group" style="max-width:260px;margin-bottom:14px">
+                            <div class="form-group" style="max-width:16.25rem;margin-bottom:1rem">
                                 <label class="upload-field-label">Tanggal Bayar</label>
                                 <input type="date" name="tanggal_bayar" class="form-control"
                                        value="{{ now()->format('Y-m-d') }}" required/>
@@ -330,7 +330,7 @@
                                            value="{{ $spp->nominal_tagihan }}" required/>
                                 </div>
                             </div>
-                            <div class="form-group" style="max-width:260px;margin-bottom:14px">
+                            <div class="form-group" style="max-width:16.25rem;margin-bottom:1rem">
                                 <label class="upload-field-label">Tanggal Bayar</label>
                                 <input type="date" name="tanggal_bayar" class="form-control"
                                        value="{{ now()->format('Y-m-d') }}" required/>
@@ -348,15 +348,18 @@
 
     @empty
         <div class="card">
-            <div class="spp-empty">
-                <i class="fa-solid fa-receipt"></i>
-                <p>Belum ada tagihan SPP.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="16" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M16 32h48" stroke="var(--primary-blue)" stroke-width="2"/><circle cx="40" cy="48" r="8" stroke="var(--primary-blue)" stroke-width="2"/><path d="M40 44v8" stroke="var(--primary-blue)" stroke-width="2"/><path d="M38 46h4" stroke="var(--primary-blue)" stroke-width="2"/></svg>
+                </div>
+                <div class="empty-state-title">Tidak ada tagihan SPP.</div>
+                <div class="empty-state-description">Belum ada tagihan SPP untuk saat ini.</div>
             </div>
         </div>
     @endforelse
 
     @if($spps->hasPages())
-        <div style="padding: 8px 0">{{ $spps->links() }}</div>
+        <div style="padding: 0.5rem 0">{{ $spps->links() }}</div>
     @endif
 </div>
 @endsection

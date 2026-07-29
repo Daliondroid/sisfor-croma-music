@@ -14,24 +14,25 @@
 
 @section('content')
 <div class="page-header">
-    <div><h2>Input Presensi</h2><div class="breadcrumb">Guru / <span>Presensi</span></div></div>
+    <h2>Input Presensi</h2>
+    <div class="breadcrumb">Guru / <span>Presensi</span></div>
 </div>
 
-<div style="display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start">
+<div style="display:grid;grid-template-columns:20rem 1fr;gap:1.5rem;align-items:start">
 
     {{-- ── Panel Kiri: Pilih Jadwal ── --}}
     <div class="card">
         <div class="card-header"><h3>Pilih Jadwal</h3></div>
 
         {{-- Month picker --}}
-        <form method="GET" style="padding:12px 16px;border-bottom:1px solid var(--topbar-border);background:var(--bg-light)">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <form method="GET" style="padding:1rem 1rem;border-bottom:1px solid var(--topbar-border);background:var(--bg-light)">
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
                 <label style="font-size:.72rem;font-weight:600;color:var(--text-light);white-space:nowrap">
-                    <i class="fa-regular fa-calendar" style="color:var(--primary-blue);margin-right:4px"></i>
+                    <i class="fa-regular fa-calendar" style="color:var(--primary-blue);margin-right:0.25rem"></i>
                     Bulan:
                 </label>
                 <input type="month" name="bulan" class="form-control"
-                       style="flex:1;min-width:130px;font-size:.8rem;padding:6px 10px"
+                       style="flex:1;min-width:8.125rem;font-size:.8rem;padding:0.25rem 0.5rem"
                        value="{{ $bulan }}"
                        max="{{ now()->format('Y-m') }}"
                        onchange="this.form.submit()"/>
@@ -39,7 +40,7 @@
         </form>
 
         {{-- Daftar jadwal dikelompokkan per tanggal --}}
-        <div style="padding:0;max-height:600px;overflow-y:auto">
+        <div style="padding:0;max-height:37.5rem;overflow-y:auto">
             @forelse($jadwalGrouped as $tgl => $items)
                 @php
                     $dt      = \Carbon\Carbon::parse($tgl);
@@ -47,9 +48,9 @@
                 @endphp
 
                 {{-- Header tanggal --}}
-                <div style="padding:8px 16px;background:var(--bg-light);border-bottom:1px solid var(--topbar-border);
+                <div style="padding:0.5rem 1rem;background:var(--bg-light);border-bottom:1px solid var(--topbar-border);
                             font-size:.72rem;font-weight:700;color:var(--text-light);
-                            text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px">
+                            text-transform:uppercase;letter-spacing:0.03125rem;display:flex;align-items:center;gap:0.5rem">
                     {{ $dt->translatedFormat('l, d M') }}
                     @if($isToday)
                         <span class="badge badge-success" style="font-size:.6rem">Hari Ini</span>
@@ -64,13 +65,13 @@
                     $isSelected  = request('jadwal') == $j->id_jadwal;
                 @endphp
                 <a href="{{ route('guru.presensi.index') }}?bulan={{ $bulan }}&jadwal={{ $j->id_jadwal }}"
-                   style="display:block;padding:12px 18px;border-bottom:1px solid var(--topbar-border);transition:.15s;
-                          {{ $isSelected  ? 'background:#eff6ff;border-left:3px solid var(--primary-blue);' : '' }}
+                   style="display:block;padding:1rem 1rem;border-bottom:1px solid var(--topbar-border);transition:.15s;
+                          {{ $isSelected  ? 'background:#eff6ff;border-left:0.1875rem solid var(--primary-blue);' : '' }}
                           {{ $sudah       ? 'opacity:.55;'  : '' }}">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem">
                         <div>
                             <div style="font-weight:600;font-size:.85rem">{{ $j->spp->murid->nama_murid ?? '-' }}</div>
-                            <div style="font-size:.72rem;color:var(--text-light);margin-top:2px">
+                            <div style="font-size:.72rem;color:var(--text-light);margin-top:0.125rem">
                                 {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}
                                 · {{ $j->spp->programKursus->nama_program ?? '-' }}
                             </div>
@@ -92,8 +93,11 @@
                 </a>
                 @endforeach
             @empty
-                <div style="padding:32px;text-align:center;color:var(--text-light);font-size:.875rem">
-                    Tidak ada jadwal pada bulan ini.
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
+                    </div>
+                    <div class="empty-state-title">Tidak ada jadwal pada bulan ini.</div>
                 </div>
             @endforelse
         </div>
@@ -125,27 +129,27 @@
                 @endphp
 
                 {{-- Info jadwal terpilih --}}
-                <div style="background:#f8faff;border:1px solid #dbeafe;border-radius:8px;padding:14px;margin-bottom:20px">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+                <div style="background:#f8faff;border:1px solid #dbeafe;border-radius:0.5rem;padding:1rem;margin-bottom:1.5rem">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem">
                         <div>
                             <div style="font-weight:700">{{ $selected->spp->murid->nama_murid ?? '-' }}</div>
-                            <div style="font-size:.82rem;color:var(--text-light);margin-top:2px">
+                            <div style="font-size:.82rem;color:var(--text-light);margin-top:0.125rem">
                                 {{ $selected->spp->programKursus->nama_program ?? '-' }}
                                 · {{ $selected->spp->tipe_les ?? '' }}
                             </div>
-                            <div style="font-size:.82rem;margin-top:4px">
-                                <i class="fa-regular fa-calendar" style="margin-right:4px;color:var(--primary-blue)"></i>
+                            <div style="font-size:.82rem;margin-top:0.25rem">
+                                <i class="fa-regular fa-calendar" style="margin-right:0.25rem;color:var(--primary-blue)"></i>
                                 {{ \Carbon\Carbon::parse($selected->tanggal)->translatedFormat('l, d M Y') }},
                                 {{ substr($selected->jam_mulai,0,5) }}–{{ substr($selected->jam_selesai,0,5) }}
                             </div>
                         </div>
                         @if($sudahDiisi)
                             <span class="badge badge-success">
-                                <i class="fa-solid fa-lock" style="margin-right:4px"></i>Sudah Diisi
+                                <i class="fa-solid fa-lock" style="margin-right:0.25rem"></i>Sudah Diisi
                             </span>
                         @elseif($belumMulai)
                             <span class="badge badge-warning">
-                                <i class="fa-solid fa-clock" style="margin-right:4px"></i>Belum Dimulai
+                                <i class="fa-solid fa-clock" style="margin-right:0.25rem"></i>Belum Dimulai
                             </span>
                         @endif
                     </div>
@@ -153,9 +157,9 @@
 
                 @if($belumMulai)
                     {{-- Belum waktunya --}}
-                    <div style="background:#fffbeb;border:1px solid #fbbf24;border-radius:8px;padding:20px;text-align:center">
-                        <i class="fa-solid fa-clock" style="font-size:1.8rem;color:#d97706;margin-bottom:10px;display:block"></i>
-                        <div style="font-weight:700;color:#92400e;margin-bottom:4px">Jadwal Belum Dimulai</div>
+                    <div style="background:#fffbeb;border:1px solid #fbbf24;border-radius:0.5rem;padding:1.5rem;text-align:center">
+                        <i class="fa-solid fa-clock" style="font-size:1.8rem;color:#d97706;margin-bottom:0.5rem;display:block"></i>
+                        <div style="font-weight:700;color:#92400e;margin-bottom:0.25rem">Jadwal Belum Dimulai</div>
                         <div style="font-size:.82rem;color:#b45309">
                             Presensi bisa diisi mulai pukul <strong>{{ substr($selected->jam_mulai, 0, 5) }}</strong>.
                         </div>
@@ -163,22 +167,22 @@
 
                 @elseif($sudahDiisi)
                     {{-- Sudah diisi — tampilkan ringkasan --}}
-                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin-bottom:16px">
-                        <div style="font-size:.85rem;font-weight:600;color:#16a34a;margin-bottom:10px">
-                            <i class="fa-solid fa-circle-check" style="margin-right:6px"></i>Presensi sudah dicatat
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0.5rem;padding:1rem;margin-bottom:1rem">
+                        <div style="font-size:.85rem;font-weight:600;color:#16a34a;margin-bottom:0.5rem">
+                            <i class="fa-solid fa-circle-check" style="margin-right:0.25rem"></i>Presensi sudah dicatat
                         </div>
-                        <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:.85rem">
+                        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.85rem">
                             <div>
                                 <span style="color:var(--text-light)">Murid:</span>
-                                <strong style="margin-left:6px">{{ $selected->status_kehadiran_murid }}</strong>
+                                <strong style="margin-left:0.25rem">{{ $selected->status_kehadiran_murid }}</strong>
                             </div>
                             <div>
                                 <span style="color:var(--text-light)">Guru:</span>
-                                <strong style="margin-left:6px">{{ $selected->status_kehadiran_guru }}</strong>
+                                <strong style="margin-left:0.25rem">{{ $selected->status_kehadiran_guru }}</strong>
                             </div>
                             <div>
                                 <span style="color:var(--text-light)">Waktu:</span>
-                                <strong style="margin-left:6px">
+                                <strong style="margin-left:0.25rem">
                                     {{ $selected->waktu_presensi_diisi->translatedFormat('d M Y, H:i') }}
                                 </strong>
                             </div>
@@ -202,7 +206,7 @@
                         @csrf
                         <input type="hidden" name="id_jadwal" value="{{ $selected->id_jadwal }}"/>
 
-                        <div class="form-grid" style="margin-bottom:20px">
+                        <div class="form-grid" style="margin-bottom:1.5rem">
                             <div class="form-group">
                                 <label class="form-label">Kehadiran Murid <span style="color:red">*</span></label>
                                 <select name="status_kehadiran_murid" class="form-control" required>
@@ -226,16 +230,20 @@
                 @endif
 
                 @else
-                    <div style="text-align:center;padding:48px;color:var(--text-light)">
-                        <i class="fa-solid fa-triangle-exclamation" style="font-size:1.5rem;margin-bottom:12px;opacity:.3;display:block"></i>
-                        <p>Jadwal tidak ditemukan.</p>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="14" width="52" height="52" rx="8" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M32 40h16M40 32v16" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></svg>
+                        </div>
+                        <div class="empty-state-title">Jadwal tidak ditemukan.</div>
                     </div>
                 @endif
 
             @else
-                <div style="text-align:center;padding:48px;color:var(--text-light)">
-                    <i class="fa-solid fa-arrow-left" style="font-size:1.5rem;margin-bottom:12px;opacity:.3;display:block"></i>
-                    <p>Pilih jadwal di sebelah kiri untuk mulai input.</p>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
+                    </div>
+                    <div class="empty-state-title">Pilih jadwal di sebelah kiri untuk mulai input.</div>
                 </div>
             @endif
         </div>

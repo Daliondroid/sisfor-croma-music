@@ -14,23 +14,14 @@
 
 @section('content')
 <div class="page-header">
-    <div>
-        <h2>Data Absensi Murid</h2>
-        <div class="breadcrumb">Guru / <span>Data Absensi</span></div>
-    </div>
-</div>
-
-{{-- Filter --}}
-<div class="card" style="margin-bottom:20px">
-    <div class="card-body" style="padding:16px 24px">
-        <form method="GET" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <h2>Data Absensi Murid</h2>
+    <div class="breadcrumb">Guru / <span>Data Absensi</span></div>
+    <div class="page-header-filters">
+        <form method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
             @if(request('id_spp'))
                 <input type="hidden" name="id_spp" value="{{ request('id_spp') }}">
             @endif
-            <label style="font-weight:600;font-size:.875rem;white-space:nowrap">
-                <i class="fa-regular fa-calendar" style="color:var(--primary-blue);margin-right:6px"></i>Pilih Bulan:
-            </label>
-            <input type="month" name="bulan" class="form-control" style="width:auto"
+            <input type="month" name="bulan" class="form-control form-control-sm" style="width:auto"
                    value="{{ $bulan }}" onchange="this.form.submit()"/>
             <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-filter"></i> Tampilkan
@@ -45,34 +36,34 @@
 </div>
 
 {{-- Statistik --}}
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:24px">
-    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:1rem;margin-bottom:1.5rem">
+    <div class="card" style="padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem">
+        <div style="width:2.5rem;height:2.5rem;border-radius:0.625rem;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <i class="fa-solid fa-calendar-days" style="color:var(--primary-blue)"></i>
         </div>
         <div><div style="font-size:1.5rem;font-weight:700">{{ $totalSesiAll }}</div><div style="font-size:.72rem;color:var(--text-light)">Total Sesi</div></div>
     </div>
-    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <div class="card" style="padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem">
+        <div style="width:2.5rem;height:2.5rem;border-radius:0.625rem;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <i class="fa-solid fa-circle-check" style="color:#16a34a"></i>
         </div>
         <div><div style="font-size:1.5rem;font-weight:700;color:#16a34a">{{ $totalHadirAll }}</div><div style="font-size:.72rem;color:var(--text-light)">Hadir</div></div>
     </div>
-    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <div class="card" style="padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem">
+        <div style="width:2.5rem;height:2.5rem;border-radius:0.625rem;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <i class="fa-solid fa-circle-xmark" style="color:#dc2626"></i>
         </div>
         <div><div style="font-size:1.5rem;font-weight:700;color:#dc2626">{{ $totalAbsenAll }}</div><div style="font-size:.72rem;color:var(--text-light)">Tidak Hadir</div></div>
     </div>
-    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px">
-        <div style="width:42px;height:42px;border-radius:10px;background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <div class="card" style="padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem">
+        <div style="width:2.5rem;height:2.5rem;border-radius:0.625rem;background:#fffbeb;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <i class="fa-solid fa-clock-rotate-left" style="color:#d97706"></i>
         </div>
         <div><div style="font-size:1.5rem;font-weight:700;color:#d97706">{{ $totalBelumAll }}</div><div style="font-size:.72rem;color:var(--text-light)">Belum Diisi</div></div>
     </div>
     @if($totalMenunggu > 0)
-    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:14px;border:1px solid #fbbf24">
-        <div style="width:42px;height:42px;border-radius:10px;background:#fef9c3;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <div class="card" style="padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;border:1px solid #fbbf24">
+        <div style="width:2.5rem;height:2.5rem;border-radius:0.625rem;background:#fef9c3;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <i class="fa-solid fa-bell" style="color:#a16207"></i>
         </div>
         <div><div style="font-size:1.5rem;font-weight:700;color:#a16207">{{ $totalMenunggu }}</div><div style="font-size:.72rem;color:var(--text-light)">Perlu Verifikasi</div></div>
@@ -81,24 +72,27 @@
 </div>
 
 {{-- Layout dua kolom --}}
-<div style="display:grid;grid-template-columns:{{ $selectedSpp ? '1fr 1fr' : '1fr' }};gap:20px;align-items:start">
+<div style="display:grid;grid-template-columns:{{ $selectedSpp ? '1fr 1fr' : '1fr' }};gap:1.5rem;align-items:start">
 
     {{-- Tabel Rekap Per Murid --}}
     <div class="card">
         <div class="card-header">
             <h3>
-                <i class="fa-solid fa-users" style="color:var(--primary-blue);margin-right:8px"></i>
+                <i class="fa-solid fa-users" style="color:var(--primary-blue);margin-right:0.5rem"></i>
                 Rekap per Murid
-                <span style="font-size:.78rem;color:var(--text-light);font-weight:400;margin-left:6px">
+                <span style="font-size:.78rem;color:var(--text-light);font-weight:400;margin-left:0.25rem">
                     — {{ \Carbon\Carbon::createFromFormat('Y-m', $bulan)->translatedFormat('F Y') }}
                 </span>
             </h3>
         </div>
 
         @if($rekapAbsensi->isEmpty())
-            <div style="text-align:center;padding:48px;color:var(--text-light)">
-                <i class="fa-solid fa-folder-open" style="font-size:2rem;opacity:.3;margin-bottom:12px;display:block"></i>
-                <p>Tidak ada data jadwal pada bulan ini.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="8" width="48" height="64" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 24h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 56V36l8 8 6-4 10 12" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
+                </div>
+                <div class="empty-state-title">Tidak ada data absensi.</div>
+                <div class="empty-state-description">Tidak ada data jadwal pada bulan ini.</div>
             </div>
         @else
             <div class="table-wrap">
@@ -128,7 +122,7 @@
                                     {{ $rekap->program->nama_program ?? '-' }}
                                     · <span class="badge {{ $rekap->spp->tipe_les === 'Onsite' ? 'badge-info' : 'badge-warning' }}" style="font-size:.68rem">{{ $rekap->spp->tipe_les }}</span>
                                     @if($rekap->menunggu > 0)
-                                        <span class="badge badge-warning" style="font-size:.68rem;margin-left:4px">
+                                        <span class="badge badge-warning" style="font-size:.68rem;margin-left:0.25rem">
                                             <i class="fa-solid fa-bell"></i> {{ $rekap->menunggu }} perlu verifikasi
                                         </span>
                                     @endif
@@ -148,12 +142,12 @@
                                     {{ $rekap->belum_diisi }}
                                 </span>
                             </td>
-                            <td style="min-width:120px">
-                                <div style="display:flex;align-items:center;gap:8px">
-                                    <div style="flex:1;height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden">
-                                        <div style="width:{{ $persen }}%;height:100%;background:{{ $barColor }};border-radius:3px;transition:.4s"></div>
+                            <td style="min-width:7.5rem">
+                                <div style="display:flex;align-items:center;gap:0.5rem">
+                                    <div style="flex:1;height:0.25rem;background:#f3f4f6;border-radius:0.1875rem;overflow:hidden">
+                                        <div style="width:{{ $persen }}%;height:100%;background:{{ $barColor }};border-radius:0.1875rem;transition:.4s"></div>
                                     </div>
-                                    <span style="font-size:.78rem;font-weight:700;color:{{ $barColor }};min-width:36px">{{ $persen }}%</span>
+                                    <span style="font-size:.78rem;font-weight:700;color:{{ $barColor }};min-width:2.25rem">{{ $persen }}%</span>
                                 </div>
                             </td>
                             <td style="text-align:center">
@@ -175,7 +169,7 @@
     <div class="card">
         <div class="card-header">
             <h3>
-                <i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:8px"></i>
+                <i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:0.5rem"></i>
                 Detail — {{ $selectedSpp->murid->nama_murid ?? '-' }}
             </h3>
             <span style="font-size:.78rem;color:var(--text-light)">
@@ -184,8 +178,11 @@
         </div>
 
         @if($detailJadwals->isEmpty())
-            <div style="text-align:center;padding:40px;color:var(--text-light)">
-                <p>Tidak ada jadwal ditemukan.</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="14" width="52" height="52" rx="8" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M32 40h16M40 32v16" stroke="var(--primary-blue)" stroke-width="2.5" stroke-linecap="round" opacity=".5"/></svg>
+                </div>
+                <div class="empty-state-title">Tidak ada jadwal ditemukan.</div>
             </div>
         @else
             <div style="padding:0">
@@ -211,10 +208,10 @@
                         default       => 'fa-circle-question',
                     };
                 @endphp
-                <div style="padding:16px 20px;border-bottom:1px solid #f3f4f6;{{ $perluVerif ? 'background:#fffbeb;' : '' }}">
-                    <div style="display:flex;gap:14px;align-items:flex-start">
+                <div style="padding:1rem 1.5rem;border-bottom:1px solid #f3f4f6;{{ $perluVerif ? 'background:#fffbeb;' : '' }}">
+                    <div style="display:flex;gap:1rem;align-items:flex-start">
                         {{-- Nomor sesi --}}
-                        <div style="width:34px;height:34px;border-radius:50%;
+                        <div style="width:2rem;height:2rem;border-radius:50%;
                                     background:{{ $perluVerif ? '#d97706' : 'var(--primary-blue)' }};
                                     color:#fff;display:flex;align-items:center;justify-content:center;
                                     font-size:.8rem;font-weight:700;flex-shrink:0">
@@ -222,30 +219,30 @@
                         </div>
 
                         <div style="flex:1;min-width:0">
-                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;flex-wrap:wrap">
                                 <div>
                                     <div style="font-weight:600;font-size:.875rem">
                                         {{ $j->tanggal->translatedFormat('l, d M Y') }}
                                     </div>
-                                    <div style="font-size:.78rem;color:var(--text-light);margin-top:2px">
+                                    <div style="font-size:.78rem;color:var(--text-light);margin-top:0.125rem">
                                         <i class="fa-regular fa-clock"></i>
                                         {{ substr($j->jam_mulai, 0, 5) }} – {{ substr($j->jam_selesai, 0, 5) }}
                                         @if($perluVerif)
-                                            <span class="badge badge-warning" style="font-size:.68rem;margin-left:6px">
+                                            <span class="badge badge-warning" style="font-size:.68rem;margin-left:0.25rem">
                                                 <i class="fa-solid fa-bell"></i> Diisi Murid
                                             </span>
                                         @endif
                                     </div>
                                 </div>
-                                <div style="background:{{ $bgMurid }};color:{{ $colorMurid }};border-radius:8px;
-                                            padding:5px 10px;font-size:.75rem;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:5px">
+                                <div style="background:{{ $bgMurid }};color:{{ $colorMurid }};border-radius:0.5rem;
+                                            padding:0.25rem 0.5rem;font-size:.75rem;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:0.25rem">
                                     <i class="fa-solid {{ $iconMurid }}"></i>
                                     {{ $statusMurid ?? 'Belum Diisi' }}
                                 </div>
                             </div>
 
                             {{-- Status Guru --}}
-                            <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                            <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
                                 <span style="font-size:.75rem;color:var(--text-light)">Guru:</span>
                                 @if($statusGuru === 'Hadir')
                                     <span style="font-size:.75rem;color:#16a34a;font-weight:600"><i class="fa-solid fa-circle-check"></i> Hadir</span>
@@ -267,14 +264,14 @@
                             @if($perluVerif)
                                 <form method="POST"
                                       action="{{ route('guru.absensi.verifikasi', $j->id_jadwal) }}"
-                                      style="margin-top:10px">
+                                      style="margin-top:0.5rem">
                                     @csrf @method('PATCH')
                                     <button type="submit" class="btn btn-primary btn-sm">
                                         <i class="fa-solid fa-badge-check"></i> Verifikasi Kehadiran
                                     </button>
                                 </form>
                             @elseif(!is_null($j->verified_at ?? null))
-                                <div style="margin-top:8px;font-size:.72rem;color:#16a34a">
+                                <div style="margin-top:0.5rem;font-size:.72rem;color:#16a34a">
                                     <i class="fa-solid fa-circle-check"></i>
                                     Terverifikasi {{ \Carbon\Carbon::parse($j->verified_at)->translatedFormat('d M Y, H:i') }}
                                 </div>
@@ -282,13 +279,13 @@
 
                             {{-- Progres KBM --}}
                             @if($j->progresMurid)
-                                <div style="margin-top:10px;background:#f8faff;border:1px solid #dbeafe;border-radius:8px;padding:10px 12px">
-                                    <div style="font-size:.75rem;font-weight:600;color:var(--primary-blue);margin-bottom:4px">
-                                        <i class="fa-solid fa-book-open" style="margin-right:4px"></i>Materi KBM
+                                <div style="margin-top:0.5rem;background:#f8faff;border:1px solid #dbeafe;border-radius:0.5rem;padding:0.5rem 1rem">
+                                    <div style="font-size:.75rem;font-weight:600;color:var(--primary-blue);margin-bottom:0.25rem">
+                                        <i class="fa-solid fa-book-open" style="margin-right:0.25rem"></i>Materi KBM
                                     </div>
                                     <div style="font-size:.8rem">{{ $j->progresMurid->materi_diajarkan }}</div>
                                     @if($j->progresMurid->catatan_perkembangan)
-                                        <div style="font-size:.78rem;color:var(--text-light);margin-top:4px;font-style:italic">
+                                        <div style="font-size:.78rem;color:var(--text-light);margin-top:0.25rem;font-style:italic">
                                             {{ Str::limit($j->progresMurid->catatan_perkembangan, 80) }}
                                         </div>
                                     @endif

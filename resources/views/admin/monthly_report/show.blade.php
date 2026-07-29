@@ -15,7 +15,7 @@
 </div>
 
 <!-- Summary -->
-<div class="stats-grid" style="margin-bottom:24px">
+<div class="stats-grid" style="margin-bottom:1.5rem">
     <div class="stat-card">
         <div class="stat-icon green"><i class="fa-solid fa-check-circle"></i></div>
         <div><div class="stat-value">{{ $report->total_hadir }}</div><div class="stat-label">Total Hadir</div></div>
@@ -35,10 +35,10 @@
 </div>
 
 @if($report->catatan_guru)
-<div class="card" style="margin-bottom:20px">
-    <div class="card-header"><h3><i class="fa-solid fa-note-sticky" style="margin-right:8px;color:var(--primary-blue)"></i>Catatan Guru</h3></div>
+<div class="card" style="margin-bottom:1.5rem">
+    <div class="card-header"><h3><i class="fa-solid fa-note-sticky" style="margin-right:0.5rem;color:var(--primary-blue)"></i>Catatan Guru</h3></div>
     <div class="card-body">
-        <div style="background:#f8faff;padding:14px 18px;border-radius:8px;border-left:3px solid var(--primary-blue);font-size:.9rem">
+        <div style="background:#f8faff;padding:1rem 1rem;border-radius:0.5rem;border-left:0.1875rem solid var(--primary-blue);font-size:.9rem">
             {{ $report->catatan_guru }}
         </div>
     </div>
@@ -64,9 +64,9 @@
                     <td>{{ $p->materiKbm?->materi_diajarkan ?? '-' }}</td>
                     <td>
                         @if($p->materiKbm)
-                            <div style="display:flex;align-items:center;gap:6px">
-                                <div style="width:60px;height:5px;background:#e5e7eb;border-radius:99px;overflow:hidden">
-                                    <div style="width:{{ $p->materiKbm->tingkat_progres }}%;height:100%;background:var(--primary-blue);border-radius:99px"></div>
+                            <div style="display:flex;align-items:center;gap:0.25rem">
+                                <div style="width:4rem;height:0.25rem;background:#e5e7eb;border-radius:6.1875rem;overflow:hidden">
+                                    <div style="width:{{ $p->materiKbm->tingkat_progres }}%;height:100%;background:var(--primary-blue);border-radius:6.1875rem"></div>
                                 </div>
                                 <span style="font-size:.72rem">{{ $p->materiKbm->tingkat_progres }}%</span>
                             </div>
@@ -85,7 +85,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-light)">Tidak ada sesi.</td></tr>
+                <tr><td colspan="6" style="text-align:center;padding:1.5rem;color:var(--text-light)">Tidak ada sesi.</td></tr>
             @endforelse
             </tbody>
         </table>

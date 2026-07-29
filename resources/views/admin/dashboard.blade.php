@@ -5,32 +5,7 @@
 @section('page-title', 'Dashboard')
 
 @section('sidebar-menu')
-    <div class="nav-section-label">Utama</div>
-    <a href="{{ route('admin.dashboard') }}" class="nav-item active">
-        <i class="fa-solid fa-gauge"></i> Dashboard
-    </a>
-
-    <div class="nav-section-label">Akademik</div>
-    <a href="{{ route('admin.murids.index') }}" class="nav-item">
-        <i class="fa-solid fa-user-graduate"></i> Data Murid
-    </a>
-    <a href="{{ route('admin.gurus.index') }}" class="nav-item">
-        <i class="fa-solid fa-chalkboard-user"></i> Data Guru
-    </a>
-    <a href="{{ route('admin.jadwals.index') }}" class="nav-item">
-        <i class="fa-solid fa-calendar-days"></i> Jadwal KBM
-    </a>
-
-    <div class="nav-section-label">Keuangan</div>
-    <a href="{{ route('admin.spp.index') }}" class="nav-item">
-        <i class="fa-solid fa-file-invoice-dollar"></i> Tagihan SPP
-    </a>
-
-    <div class="nav-section-label">Gaji & Laporan</div>
-    <a href="{{ route('admin.honor-guru.index') }}" class="nav-item">
-        <i class="fa-solid fa-file-invoice-dollar"></i> Manajemen Gaji Guru
-    </a>
-    {{-- Fitur laporan keuangan dan absensi ditiadakan/dialihkan --}}
+    @include('admin.partials.sidebar')
 @endsection
 
 @section('content')
@@ -74,11 +49,11 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
     <!-- SPP Belum Bayar -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;margin-right:6px"></i>SPP Belum Bayar</h3>
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;margin-right:0.25rem"></i>SPP Belum Bayar</h3>
             <a href="{{ route('admin.spp.index', ['status'=>'belum_bayar']) }}" class="btn btn-sm btn-outline">Lihat Semua</a>
         </div>
         <div class="table-wrap">
@@ -99,7 +74,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:24px">Semua SPP sudah lunas 🎉</td></tr>
+                    <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:1.5rem">Semua SPP sudah lunas</td></tr>
                 @endforelse
                 </tbody>
             </table>
@@ -109,7 +84,7 @@
     <!-- Jadwal Hari Ini -->
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-calendar-day" style="color:var(--primary-blue);margin-right:6px"></i>Jadwal Hari Ini</h3>
+            <h3><i class="fa-solid fa-calendar-day" style="color:var(--primary-blue);margin-right:0.25rem"></i>Jadwal Hari Ini</h3>
             <a href="{{ route('admin.jadwals.index') }}" class="btn btn-sm btn-outline">Kelola</a>
         </div>
         <div class="table-wrap">
@@ -128,7 +103,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:24px">Tidak ada jadwal hari ini</td></tr>
+                    <tr><td colspan="4" style="text-align:center;color:var(--text-light);padding:1.5rem">Tidak ada jadwal hari ini</td></tr>
                 @endforelse
                 </tbody>
             </table>

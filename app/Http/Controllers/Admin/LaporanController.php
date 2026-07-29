@@ -58,12 +58,20 @@ class LaporanController extends Controller
         $bulan = $request->bulan ?? now()->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
-        $murids = Murid::where('status_aktif', true)->get()->map(function ($murid) use ($tahun, $bln) {
-            $jadwals = Jadwal::where('is_active', true)
-                ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
-                ->whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bln)
-                ->get();
+        $murids = Murid::where('status_aktif', true)
+            ->with(['spps.jadwals' => function ($q) use ($tahun, $bln) {
+                $q->where('is_active', true)
+                  ->whereYear('tanggal', $tahun)
+                  ->whereMonth('tanggal', $bln);
+            }])->get()->map(function ($murid) {
+            $jadwals = collect();
+            if ($murid->spps) {
+                foreach ($murid->spps as $spp) {
+                    if ($spp->jadwals) {
+                        $jadwals = $jadwals->merge($spp->jadwals);
+                    }
+                }
+            }
 
             $murid->total_sesi    = $jadwals->count();
             $murid->total_hadir   = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
@@ -209,12 +217,20 @@ class LaporanController extends Controller
     {
         [$tahun, $bln] = explode('-', $bulan);
 
-        $murids = Murid::where('status_aktif', true)->get()->map(function ($murid) use ($tahun, $bln) {
-            $jadwals = Jadwal::where('is_active', true)
-                ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
-                ->whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bln)
-                ->get();
+        $murids = Murid::where('status_aktif', true)
+            ->with(['spps.jadwals' => function ($q) use ($tahun, $bln) {
+                $q->where('is_active', true)
+                  ->whereYear('tanggal', $tahun)
+                  ->whereMonth('tanggal', $bln);
+            }])->get()->map(function ($murid) {
+            $jadwals = collect();
+            if ($murid->spps) {
+                foreach ($murid->spps as $spp) {
+                    if ($spp->jadwals) {
+                        $jadwals = $jadwals->merge($spp->jadwals);
+                    }
+                }
+            }
 
             $murid->total_sesi   = $jadwals->count();
             $murid->total_hadir  = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
@@ -568,12 +584,20 @@ class LaporanController extends Controller
     {
         [$tahun, $bln] = explode('-', $bulan);
 
-        $murids = Murid::where('status_aktif', true)->get()->map(function ($murid) use ($tahun, $bln) {
-            $jadwals = Jadwal::where('is_active', true)
-                ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
-                ->whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bln)
-                ->get();
+        $murids = Murid::where('status_aktif', true)
+            ->with(['spps.jadwals' => function ($q) use ($tahun, $bln) {
+                $q->where('is_active', true)
+                  ->whereYear('tanggal', $tahun)
+                  ->whereMonth('tanggal', $bln);
+            }])->get()->map(function ($murid) {
+            $jadwals = collect();
+            if ($murid->spps) {
+                foreach ($murid->spps as $spp) {
+                    if ($spp->jadwals) {
+                        $jadwals = $jadwals->merge($spp->jadwals);
+                    }
+                }
+            }
 
             $murid->total_sesi   = $jadwals->count();
             $murid->total_hadir  = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();

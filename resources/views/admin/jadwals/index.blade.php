@@ -5,51 +5,29 @@
 
 @section('content')
 <div class="page-header">
-    <div>
-        <h2>Jadwal KBM</h2>
-        <div class="breadcrumb">Admin / <span>Jadwal</span></div>
-    </div>
-    <a href="{{ route('admin.jadwals.create') }}" class="btn btn-primary">
-        <i class="fa-solid fa-plus"></i> Buat Jadwal
-    </a>
-</div>
-
-<div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem;">
-    <form action="{{ route('admin.jadwals.index') }}" method="GET" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
-        <div style="flex: 1; min-width: 200px;">
-            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--text-dark);">Cari Murid</label>
-            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Masukkan nama murid...">
-        </div>
-        <div style="flex: 1; min-width: 180px;">
-            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--text-dark);">Filter Guru</label>
-            <select name="id_guru" class="form-control">
+    <h2>Jadwal KBM</h2>
+    <div class="breadcrumb">Admin / <span>Jadwal</span></div>
+    <div class="page-header-filters">
+        <form action="{{ route('admin.jadwals.index') }}" method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control form-control-sm" placeholder="Cari murid...">
+            <select name="id_guru" class="form-control form-control-sm">
                 <option value="">Semua Guru</option>
                 @foreach($gurus as $g)
                     <option value="{{ $g->id_guru }}" {{ request('id_guru') == $g->id_guru ? 'selected' : '' }}>{{ $g->nama_guru }}</option>
                 @endforeach
             </select>
-        </div>
-        <div style="flex: 1; min-width: 150px;">
-            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--text-dark);">Tanggal</label>
-            <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control">
-        </div>
-        <div style="flex: 1; min-width: 150px;">
-            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--text-dark);">Status Jadwal</label>
-            <select name="status" class="form-control">
+            <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control form-control-sm">
+            <select name="status" class="form-control form-control-sm">
                 <option value="">Semua Status</option>
                 <option value="Sesuai Jadwal" {{ request('status') == 'Sesuai Jadwal' ? 'selected' : '' }}>Sesuai Jadwal</option>
                 <option value="Reschedule" {{ request('status') == 'Reschedule' ? 'selected' : '' }}>Reschedule</option>
             </select>
-        </div>
-        <div style="display: flex; gap: 0.5rem;">
-            <button type="submit" class="btn btn-primary" title="Terapkan Filter">
-                <i class="fa-solid fa-magnifying-glass"></i> Cari
-            </button>
-            {{-- <a href="{{ route('admin.jadwals.index') }}" class="btn btn-secondary" title="Reset Filter">
-                <i class="fa-solid fa-rotate-right"></i>
-            </a> --}}
-        </div>
-    </form>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
+        </form>
+        <a href="{{ route('admin.jadwals.create') }}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Buat Jadwal
+        </a>
+    </div>
 </div>
 
 @php
@@ -64,14 +42,14 @@
             $murid = $listJadwal->first()->spp->murid ?? $listJadwal->first()->murid;
         @endphp
         
-        <div class="card" style="padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div class="card" style="padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm);">
             
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem;">
                 <div>
                     <h3 style="margin: 0; font-size: 1.25rem; font-weight: 600; color: var(--text-dark);">
                         {{ $murid->nama_murid ?? 'Data Murid Tidak Ditemukan' }}
                     </h3>
-                    <p style="margin: 4px 0 0 0; color: var(--text-light); font-size: 0.875rem;">
+                    <p style="margin: 0.25rem 0 0 0; color: var(--text-light); font-size: 0.875rem;">
                         Kelas: {{ $listJadwal->first()->kelas->nama_kelas ?? '-' }}
                     </p>
                 </div>
@@ -86,11 +64,11 @@
                 Jadwal Terbaru (Aktif)
             </h4>
             
-            <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.75rem;">
+            <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem;">
                 @foreach($listJadwal as $j)
-                    <div style="min-width: 240px; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem; background-color: #f8fafc; flex-shrink: 0; display: flex; flex-direction: column;">
+                    <div style="min-width: 15rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 1rem; background-color: #f8fafc; flex-shrink: 0; display: flex; flex-direction: column;">
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                             <span class="badge badge-info">{{ $j->hari ?? \Carbon\Carbon::parse($j->tanggal)->translatedFormat('l') }}</span>
                             <span style="font-size: 0.75rem; color: #6b7280; font-weight: 500;">
                                 {{ \Carbon\Carbon::parse($j->tanggal)->format('d/m/Y') }}
@@ -98,24 +76,24 @@
                         </div>
                         
                         <div style="margin-bottom: 0.5rem; font-weight: 600; color: var(--text-dark); font-size: 1rem;">
-                            <i class="fa-regular fa-clock" style="margin-right: 6px; color: #64748b;"></i>
+                            <i class="fa-regular fa-clock" style="margin-right: 0.25rem; color: #64748b;"></i>
                             {{ substr($j->jam_mulai, 0, 5) }} – {{ substr($j->jam_selesai, 0, 5) }}
                         </div>
                         
                         <div style="font-size: 0.875rem; color: #475569; margin-bottom: 0.25rem;">
-                            <i class="fa-solid fa-user-tie" style="margin-right: 6px; width: 16px; color: #64748b; text-align: center;"></i> 
+                            <i class="fa-solid fa-user-tie" style="margin-right: 0.25rem; width: 1rem; color: #64748b; text-align: center;"></i> 
                             {{ $j->guru->nama_guru }}
                         </div>
                         
                         <div style="font-size: 0.875rem; color: #475569; margin-bottom: 1rem;">
-                            <i class="fa-solid fa-map-pin" style="margin-right: 6px; width: 16px; color: #64748b; text-align: center;"></i> 
+                            <i class="fa-solid fa-map-pin" style="margin-right: 0.25rem; width: 1rem; color: #64748b; text-align: center;"></i> 
                             <span class="badge {{ stripos($j->lokasi, 'off') !== false ? 'badge-warning' : 'badge-success' }}">
                                 {{ $j->lokasi ?? 'On Site' }}
                             </span>
                         </div>
 
-                        <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px dashed #cbd5e1; text-align: center;">
-                            <a href="{{ route('admin.jadwals.show', $j->id_jadwal) }}" class="btn btn-sm btn-outline-primary" style="width: 100%; font-size: 0.75rem; padding: 0.35rem 0.5rem; background-color: #fff;">
+                        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px dashed #cbd5e1; text-align: center;">
+                            <a href="{{ route('admin.jadwals.show', $j->id_jadwal) }}" class="btn btn-sm btn-outline-primary" style="width: 100%; font-size: 0.75rem; padding: 0.25rem 0.5rem; background-color: #fff;">
                                 <i class="fa-solid fa-circle-info"></i> Detail Jadwal
                             </a>
                         </div>
@@ -126,9 +104,13 @@
             
         </div>
     @empty
-        <div class="card" style="padding: 3rem 2rem; text-align: center; color: var(--text-light); border: 1px dashed #cbd5e1;">
-            <i class="fa-solid fa-calendar-xmark" style="font-size: 2rem; margin-bottom: 1rem; color: #94a3b8;"></i>
-            <p style="margin: 0;">Belum ada jadwal yang sesuai dengan filter/pencarian.</p>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
+            </div>
+            <div class="empty-state-title">Belum ada jadwal ditemukan.</div>
+            <div class="empty-state-description">Tidak ada jadwal yang sesuai dengan filter/pencarian Anda.</div>
+            <a href="{{ route('admin.jadwals.create') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Buat Jadwal</a>
         </div>
     @endforelse
 </div>

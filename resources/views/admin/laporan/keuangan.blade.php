@@ -5,77 +5,50 @@
 
 @section('content')
 <div class="page-header">
-    <div>
-        <h2>Laporan Keuangan Bulanan</h2>
-        <div class="breadcrumb">Admin / Laporan / <span>Keuangan</span></div>
-    </div>
-    {{-- Tombol ekspor --}}
-    <div style="display:flex;gap:10px">
-        <a href="{{ route('admin.laporan.export.pdf', ['jenis' => 'keuangan']) }}?start_date={{ $startDate }}&end_date={{ $endDate }}"
-           class="btn btn-outline" target="_blank">
-            <i class="fa-solid fa-file-pdf" style="color:#dc2626"></i> Ekspor PDF
-        </a>
-        <a href="{{ route('admin.laporan.export.xlsx', ['jenis' => 'keuangan']) }}?start_date={{ $startDate }}&end_date={{ $endDate }}"
-           class="btn btn-outline">
-            <i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Ekspor Excel
-        </a>
-    </div>
-</div>
-
-{{-- Filter --}}
-<div class="card" style="margin-bottom:20px">
-    <div class="card-body" style="padding:16px 24px">
-        <form method="GET" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <div class="form-group" style="margin:0">
-                <label class="form-label">Tanggal Mulai</label>
-                <input type="date" name="start_date" class="form-control" value="{{ $startDate }}"/>
-            </div>
-            <div class="form-group" style="margin:0">
-                <label class="form-label">Tanggal Akhir</label>
-                <input type="date" name="end_date" class="form-control" value="{{ $endDate }}"/>
-            </div>
-            <button type="submit" class="btn btn-primary">
+    <h2>Laporan Keuangan Bulanan</h2>
+    <div class="breadcrumb">Admin / Laporan / <span>Keuangan</span></div>
+    <div class="page-header-filters">
+        <form method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <input type="date" name="start_date" class="form-control form-control-sm" value="{{ $startDate }}"/>
+            <input type="date" name="end_date" class="form-control form-control-sm" value="{{ $endDate }}"/>
+            <button type="submit" class="btn btn-primary btn-sm">
                 <i class="fa-solid fa-search"></i> Tampilkan
             </button>
-            <a href="{{ route('admin.laporan.keuangan') }}" class="btn btn-outline">Reset</a>
+            <a href="{{ route('admin.laporan.keuangan') }}" class="btn btn-outline btn-sm">Reset</a>
         </form>
-        @error('end_date')
-            <div style="color:#dc2626;font-size:.8rem;margin-top:8px">
-                <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
-            </div>
-        @enderror
+        <a href="{{ route('admin.laporan.export.pdf', ['jenis' => 'keuangan']) }}?start_date={{ $startDate }}&end_date={{ $endDate }}"
+           class="btn btn-outline btn-sm" target="_blank">
+            <i class="fa-solid fa-file-pdf" style="color:#dc2626"></i> PDF
+        </a>
+        <a href="{{ route('admin.laporan.export.xlsx', ['jenis' => 'keuangan']) }}?start_date={{ $startDate }}&end_date={{ $endDate }}"
+           class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-file-excel" style="color:#16a34a"></i> Excel
+        </a>
     </div>
+    @error('end_date')
+        <div style="color:#dc2626;font-size:.8rem;margin-top:0.5rem">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ $message }}
+        </div>
+    @enderror
 </div>
 
 {{-- Ringkasan stats --}}
-<div class="stats-grid" style="margin-bottom:24px">
-    <div class="stat-card">
-        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
-        <div>
-            <div class="stat-value">Rp {{ number_format($totalMasuk, 0, ',', '.') }}</div>
-            <div class="stat-label">Total Masuk (Lunas)</div>
-        </div>
+<div class="stats-grid" style="margin-bottom:1.5rem">
+    <div class="stat-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; padding: 1.5rem 1.5rem;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">Total Masuk (Lunas)</div>
+        <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-dark);">Rp {{ number_format($totalMasuk, 0, ',', '.') }}</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon blue"><i class="fa-solid fa-file-invoice"></i></div>
-        <div>
-            <div class="stat-value">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</div>
-            <div class="stat-label">Total Tagihan</div>
-        </div>
+    <div class="stat-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; padding: 1.5rem 1.5rem;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">Total Tagihan</div>
+        <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-dark);">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon red"><i class="fa-solid fa-clock"></i></div>
-        <div>
-            <div class="stat-value">Rp {{ number_format($totalTunggakan, 0, ',', '.') }}</div>
-            <div class="stat-label">Total Tunggakan</div>
-        </div>
+    <div class="stat-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; padding: 1.5rem 1.5rem;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">Total Tunggakan</div>
+        <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-dark);">Rp {{ number_format($totalTunggakan, 0, ',', '.') }}</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon yellow"><i class="fa-solid fa-percent"></i></div>
-        <div>
-            <div class="stat-value">{{ $totalTagihan > 0 ? round(($totalMasuk / $totalTagihan) * 100) : 0 }}%</div>
-            <div class="stat-label">Tingkat Pembayaran</div>
-        </div>
+    <div class="stat-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem; padding: 1.5rem 1.5rem;">
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">Tingkat Pembayaran</div>
+        <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-dark);">{{ $totalTagihan > 0 ? round(($totalMasuk / $totalTagihan) * 100) : 0 }}%</div>
     </div>
 </div>
 
@@ -131,18 +104,22 @@
                     </td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="8" style="text-align:center;padding:32px;color:var(--text-light)">
-                        Tidak ada data tagihan untuk periode ini.
-                    </td>
-                </tr>
+                <tr><td colspan="8">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="8" width="48" height="64" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 24h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 56V36l8 8 6-4 10 12" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
+                        </div>
+                        <div class="empty-state-title">Tidak ada data tagihan.</div>
+                        <div class="empty-state-description">Tidak ada data tagihan untuk periode yang dipilih.</div>
+                    </div>
+                </td></tr>
             @endforelse
             </tbody>
             @if($spps->count())
             <tfoot>
                 <tr style="background:#f8f9fa;font-weight:600">
-                    <td colspan="4" style="padding:12px 16px;text-align:right">Total</td>
-                    <td style="padding:12px 16px">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</td>
+                    <td colspan="4" style="padding:1rem 1rem;text-align:right">Total</td>
+                    <td style="padding:1rem 1rem">Rp {{ number_format($totalTagihan, 0, ',', '.') }}</td>
                     <td colspan="3"></td>
                 </tr>
             </tfoot>

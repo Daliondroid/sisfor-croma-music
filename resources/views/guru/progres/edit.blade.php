@@ -26,7 +26,7 @@
 <div class="card">
     <div class="card-header">
         <h3>
-            <i class="fa-solid fa-pen" style="color:var(--primary-blue);margin-right:8px"></i>
+            <i class="fa-solid fa-pen" style="color:var(--primary-blue);margin-right:0.5rem"></i>
             Edit — {{ $jadwal->spp->murid->nama_murid ?? '-' }}
             · {{ $jadwal->tanggal->translatedFormat('d M Y') }}
         </h3>
@@ -54,9 +54,9 @@
             @if($progresMurid->url_foto)
             <div class="form-group">
                 <label class="form-label">Foto Saat Ini</label>
-                <div style="margin-bottom:10px">
+                <div style="margin-bottom:0.5rem">
                     <img src="{{ asset('storage/' . $progresMurid->url_foto) }}"
-                         style="max-width:200px;border-radius:8px;border:1px solid var(--topbar-border)">
+                         style="max-width:12.5rem;border-radius:0.5rem;border:1px solid var(--topbar-border)">
                 </div>
             </div>
             @endif
@@ -64,10 +64,10 @@
             <div class="form-group">
                 <label class="form-label">Ganti Foto (Opsional)</label>
                 <input type="file" name="url_foto" class="form-control" accept="image/jpg,image/jpeg,image/png"/>
-                <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Kosongkan jika tidak ingin mengganti foto</div>
+                <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Kosongkan jika tidak ingin mengganti foto</div>
             </div>
 
-            <div style="display:flex;gap:12px;margin-top:8px">
+            <div style="display:flex;gap:1rem;margin-top:0.5rem">
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
                 </button>

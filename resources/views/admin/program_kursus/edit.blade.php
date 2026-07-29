@@ -8,7 +8,7 @@
     <div><h2>Edit Program Kursus</h2><div class="breadcrumb">Admin / Program Kursus / <span>Edit</span></div></div>
     <a href="{{ route('admin.program-kursus.index') }}" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
 </div>
-<div class="card" style="max-width:560px">
+<div class="card" style="max-width:35rem">
     <div class="card-header"><h3>{{ $program->nama_program }}</h3></div>
     <div class="card-body">
         <form method="POST" action="{{ route('admin.program-kursus.update', $program) }}">
@@ -34,13 +34,13 @@
                 <textarea name="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $program->deskripsi) }}</textarea>
             </div>
             <div class="form-group">
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.875rem">
+                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:.875rem">
                     <input type="hidden" name="is_active" value="0"/>
                     <input type="checkbox" name="is_active" value="1" {{ old('is_active', $program->is_active) ? 'checked' : '' }}/>
                     Program masih aktif
                 </label>
             </div>
-            <div style="display:flex;gap:12px">
+            <div style="display:flex;gap:1rem">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
                 <a href="{{ route('admin.program-kursus.index') }}" class="btn btn-outline">Batal</a>
             </div>

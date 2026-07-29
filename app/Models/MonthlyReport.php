@@ -19,6 +19,24 @@ class MonthlyReport extends Model
         'periode_bulan' => 'date',
     ];
 
+    /**
+     * Calculate automatic evaluation score based on attendance percentage.
+     */
+    public static function calculateScore(float $persen): string
+    {
+        return match (true) {
+            $persen >= 95 => 'A+',
+            $persen >= 90 => 'A',
+            $persen >= 85 => 'A-',
+            $persen >= 80 => 'B+',
+            $persen >= 75 => 'B',
+            $persen >= 70 => 'B-',
+            $persen >= 65 => 'C+',
+            $persen >= 60 => 'C',
+            default       => 'C-',
+        };
+    }
+
     // ── Relasi ─────────────────────────────────────────────────
 
     /**

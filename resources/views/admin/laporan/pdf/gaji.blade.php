@@ -5,27 +5,27 @@
     <title>Rekap Gaji Guru {{ $bulan }}</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1f2937; }
+        body { font-family: 'DejaVu Sans', sans-serif; font-size: 0.625rem; color: #1f2937; }
 
-        .header { background: #1e3a5f; color: #fff; padding: 18px 24px; margin-bottom: 16px; }
-        .header h1 { font-size: 16px; letter-spacing: .5px; }
-        .header .sub { font-size: 10px; color: #93c5fd; margin-top: 4px; }
+        .header { background: #1e3a5f; color: #fff; padding: 1rem 1.5rem; margin-bottom: 1rem; }
+        .header h1 { font-size: 1rem; letter-spacing: 0.03125rem; }
+        .header .sub { font-size: 0.625rem; color: #93c5fd; margin-top: 0.25rem; }
 
-        .section-title { font-size: 11px; font-weight: bold; color: #1e3a5f; margin: 16px 0 8px 0; padding-bottom: 4px; border-bottom: 2px solid #1e3a5f; }
+        .section-title { font-size: 0.6875rem; font-weight: bold; color: #1e3a5f; margin: 1rem 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 0.125rem solid #1e3a5f; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.5625rem; margin-bottom: 0.5rem; }
         thead tr { background: #1e3a5f; color: #fff; }
-        thead th { padding: 7px 8px; text-align: left; font-weight: bold; }
+        thead th { padding: 0.5rem 0.5rem; text-align: left; font-weight: bold; }
         tbody tr:nth-child(even) { background: #f8fafc; }
-        tbody td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; }
-        tfoot td { padding: 8px; font-weight: bold; background: #dbeafe; border-top: 2px solid #2563eb; }
+        tbody td { padding: 0.25rem 0.5rem; border-bottom: 1px solid #f1f5f9; }
+        tfoot td { padding: 0.5rem; font-weight: bold; background: #dbeafe; border-top: 0.125rem solid #2563eb; }
 
-        .badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 8px; font-weight: bold; }
+        .badge { display: inline-block; padding: 0.125rem 0.25rem; border-radius: 0.1875rem; font-size: 0.5rem; font-weight: bold; }
         .badge-success { background: #dcfce7; color: #16a34a; }
         .badge-info    { background: #dbeafe; color: #2563eb; }
         .badge-warning { background: #fef3c7; color: #92400e; }
 
-        .footer { margin-top: 24px; font-size: 8px; color: #9ca3af; text-align: right; }
+        .footer { margin-top: 1.5rem; font-size: 0.5rem; color: #9ca3af; text-align: right; }
     </style>
 </head>
 <body>
@@ -64,7 +64,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" style="text-align:center;padding:20px;color:#9ca3af">Tidak ada data.</td>
+                <td colspan="6" style="text-align:center;padding:1.5rem;color:#9ca3af">Tidak ada data.</td>
             </tr>
         @endforelse
         </tbody>
@@ -122,7 +122,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="8" style="text-align:center;padding:20px;color:#9ca3af">
+                <td colspan="8" style="text-align:center;padding:1.5rem;color:#9ca3af">
                     Tidak ada data honor untuk periode ini.
                 </td>
             </tr>

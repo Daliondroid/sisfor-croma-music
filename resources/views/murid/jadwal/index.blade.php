@@ -26,17 +26,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
 }
-.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-pills { display: flex; gap: 0.25rem; flex-wrap: wrap; }
 .filter-pill {
     font-size: .72rem;
     font-weight: 600;
-    padding: 4px 14px;
-    border-radius: 20px;
-    border: 1.5px solid var(--input-border);
+    padding: 0.25rem 1rem;
+    border-radius: 1.25rem;
+    border: 0.09375rem solid var(--input-border);
     background: transparent;
     color: var(--text-light);
     text-decoration: none;
@@ -52,10 +52,10 @@
 
 /* ─── Month picker ──────────────────────────────────── */
 .month-picker-wrap {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 .month-picker-label {
@@ -68,9 +68,9 @@
     font-family: inherit;
     font-size: .8rem;
     font-weight: 600;
-    padding: 6px 12px;
-    border: 1.5px solid var(--input-border);
-    border-radius: 8px;
+    padding: 0.25rem 1rem;
+    border: 0.09375rem solid var(--input-border);
+    border-radius: 0.5rem;
     background: var(--card-bg);
     color: var(--text-dark);
     cursor: pointer;
@@ -79,18 +79,18 @@
 .month-picker-input:focus {
     outline: none;
     border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(0,86,179,.1);
+    box-shadow: 0 0 0 1px var(--primary-blue);
 }
 
 /* ─── Section header (Senin, Selasa, …) ────────────── */
-.day-section { margin-bottom: 8px; }
+.day-section { margin-bottom: 0.5rem; }
 .day-section-header {
     font-size: .8rem;
     font-weight: 600;
     color: var(--text-light);
-    padding: 10px 16px;
+    padding: 0.5rem 1rem;
     background: var(--bg-light);
-    border-radius: 10px 10px 0 0;
+    border-radius: 0.625rem 0.625rem 0 0;
     border: 1px solid var(--topbar-border);
     border-bottom: none;
 }
@@ -102,13 +102,13 @@
     background: var(--card-bg);
     transition: background .15s;
 }
-.session-item:last-child { border-radius: 0 0 10px 10px; }
+.session-item:last-child { border-radius: 0 0 0.625rem 0.625rem; }
 
 .session-main {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: 1rem;
+    padding: 1rem 1rem;
     cursor: pointer;
     user-select: none;
 }
@@ -116,9 +116,9 @@
 
 /* Left accent bar */
 .session-accent {
-    width: 3px;
-    height: 36px;
-    border-radius: 3px;
+    width: 0.1875rem;
+    height: 2.5rem;
+    border-radius: 0.1875rem;
     flex-shrink: 0;
     background: var(--primary-blue);
 }
@@ -135,28 +135,28 @@
     color: var(--text-dark);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.25rem;
     flex-wrap: wrap;
 }
 .session-sub {
     font-size: .72rem;
     color: var(--text-light);
-    margin-top: 2px;
+    margin-top: 0.125rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
-.session-sub span { display: flex; align-items: center; gap: 4px; }
+.session-sub span { display: flex; align-items: center; gap: 0.25rem; }
 
 /* Tipe tag */
 .tipe-tag {
     font-size: .6rem;
     font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 4px;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
     text-transform: uppercase;
-    letter-spacing: .3px;
+    letter-spacing: 0.01875rem;
 }
 .tipe-onsite { background: #dbeafe; color: #1d4ed8; }
 .tipe-home   { background: #fef9c3; color: #a16207; }
@@ -167,13 +167,13 @@
 .s-badge {
     font-size: .68rem;
     font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
+    padding: 0.1875rem 0.5rem;
+    border-radius: 1.25rem;
     white-space: nowrap;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
 }
 .s-confirmed { background: #dcfce7; color: #15803d; }
 .s-pending   { background: #fef9c3; color: #a16207; }
@@ -198,7 +198,7 @@
 /* ─── Session detail (dropdown) ─────────────────────── */
 .session-detail {
     display: none;
-    padding: 0 16px 16px 16px;
+    padding: 0 1rem 1rem 1rem;
     border-top: 1px solid var(--topbar-border);
 }
 .session-detail.open { display: block; }
@@ -206,24 +206,24 @@
 .detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 1rem;
+    margin-top: 1rem;
 }
-@media (max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 37.5rem) { .detail-grid { grid-template-columns: 1fr; } }
 
 .detail-block {
     background: var(--bg-light);
-    border-radius: 8px;
-    padding: 12px 14px;
+    border-radius: 0.5rem;
+    padding: 1rem 1rem;
     font-size: .8rem;
 }
 .detail-block .db-label {
     font-size: .65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .6px;
+    letter-spacing: 0.0375rem;
     color: var(--text-light);
-    margin-bottom: 5px;
+    margin-bottom: 0.25rem;
 }
 .detail-block .db-value {
     color: var(--text-dark);
@@ -236,18 +236,18 @@
     font-size: .65rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .6px;
+    letter-spacing: 0.0375rem;
     color: var(--text-light);
-    margin-bottom: 6px;
-    margin-top: 12px;
+    margin-bottom: 0.25rem;
+    margin-top: 1rem;
 }
 .progres-section-title:first-child { margin-top: 0; }
 
 .materi-box {
     background: var(--card-bg);
     border: 1px solid var(--topbar-border);
-    border-radius: 6px;
-    padding: 10px 12px;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
     font-size: .82rem;
     line-height: 1.6;
     color: var(--text-dark);
@@ -255,21 +255,21 @@
 
 .catatan-box {
     background: var(--card-bg);
-    border-left: 3px solid var(--primary-blue);
-    border-radius: 0 6px 6px 0;
-    padding: 10px 12px;
+    border-left: 0.1875rem solid var(--primary-blue);
+    border-radius: 0 0.375rem 0.375rem 0;
+    padding: 0.5rem 1rem;
     font-size: .82rem;
     line-height: 1.6;
     color: var(--text-dark);
 }
 
 /* Foto bukti — thumbnail + lightbox trigger */
-.foto-thumb-wrap { margin-top: 8px; position: relative; display: inline-block; }
+.foto-thumb-wrap { margin-top: 0.5rem; position: relative; display: inline-block; }
 .foto-thumb {
-    width: 120px;
-    height: 80px;
+    width: 7.5rem;
+    height: 5rem;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 0.375rem;
     border: 1px solid var(--topbar-border);
     cursor: pointer;
     transition: opacity .15s;
@@ -283,11 +283,11 @@
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,.3);
-    border-radius: 6px;
+    border-radius: 0.375rem;
     color: #fff;
     font-size: .7rem;
     font-weight: 700;
-    gap: 4px;
+    gap: 0.25rem;
     pointer-events: none;
     opacity: 0;
     transition: opacity .15s;
@@ -303,25 +303,25 @@
     z-index: 500;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 1.5rem;
 }
 .lightbox-backdrop.open { display: flex; }
 .lightbox-img {
     max-width: 90vw;
     max-height: 88vh;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-md);
 }
 .lightbox-close {
     position: absolute;
-    top: 16px;
-    right: 20px;
+    top: 1rem;
+    right: 1.5rem;
     color: #fff;
     font-size: 1.5rem;
     cursor: pointer;
-    width: 38px;
-    height: 38px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     background: rgba(255,255,255,.15);
     display: flex;
@@ -335,9 +335,9 @@
 .btn-isi-presensi {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 8px 18px;
-    border-radius: 8px;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     font-size: .8rem;
     font-weight: 700;
     background: var(--primary-blue);
@@ -345,7 +345,7 @@
     border: none;
     cursor: pointer;
     font-family: inherit;
-    margin-top: 12px;
+    margin-top: 1rem;
     transition: background .15s;
 }
 .btn-isi-presensi:hover { background: var(--primary-dark); }
@@ -353,10 +353,10 @@
 /* ─── Empty state ───────────────────────────────────── */
 .empty-state {
     text-align: center;
-    padding: 48px 24px;
+    padding: 3rem 1.5rem;
     color: var(--text-light);
     border: 1px solid var(--topbar-border);
-    border-radius: 12px;
+    border-radius: 0.75rem;
     background: var(--card-bg);
 }
 
@@ -369,25 +369,25 @@
 .confirm-backdrop.open { display: flex; }
 .confirm-box {
     background: var(--card-bg);
-    border-radius: 14px;
-    padding: 28px; width: 400px; max-width: 92vw;
-    box-shadow: 0 20px 48px rgba(0,0,0,.22);
+    border-radius: 0.875rem;
+    padding: 2rem; width: 25rem; max-width: 92vw;
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--topbar-border);
 }
 .confirm-icon {
-    width: 46px; height: 46px; border-radius: 10px;
+    width: 3rem; height: 3rem; border-radius: 0.625rem;
     background: #eff6ff; display: flex; align-items: center;
-    justify-content: center; margin-bottom: 14px;
+    justify-content: center; margin-bottom: 1rem;
 }
 .confirm-icon i { color: var(--primary-blue); font-size: 1.2rem; }
 .confirm-detail {
-    background: var(--bg-light); border-radius: 8px;
-    padding: 12px 14px; margin: 12px 0;
+    background: var(--bg-light); border-radius: 0.5rem;
+    padding: 1rem 1rem; margin: 1rem 0;
     font-size: .82rem; line-height: 1.9;
     border: 1px solid var(--topbar-border);
 }
-.confirm-detail i { width: 16px; color: var(--primary-blue); }
-.confirm-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.confirm-detail i { width: 1rem; color: var(--primary-blue); }
+.confirm-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
 </style>
 @endpush
 
@@ -407,6 +407,12 @@
         <h2>Jadwal Kelas Saya</h2>
         <div class="breadcrumb">Murid / <span>Jadwal Kelas</span></div>
     </div>
+    <div class="page-header-filters">
+        <form method="GET" action="{{ route('murid.jadwal.index') }}" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <input type="hidden" name="filter" value="{{ $filter }}">
+            <input type="month" name="bulan" id="month-picker" class="form-control form-control-sm" style="width:auto" value="{{ $selectedMonth }}" onchange="this.form.submit()" @if($availableMonths->isNotEmpty()) min="{{ $availableMonths->last() }}" max="{{ $availableMonths->first() }}" @endif>
+        </form>
+    </div>
 </div>
 
 {{-- ── FILTER PILLS ── --}}
@@ -420,27 +426,15 @@
     <span style="font-size:.72rem;color:var(--text-light)">{{ $jadwalsFiltered->count() }} sesi</span>
 </div>
 
-{{-- ── MONTH PICKER ── --}}
-<div class="month-picker-wrap">
-    <span class="month-picker-label"><i class="fa-regular fa-calendar" style="margin-right:5px"></i>Bulan:</span>
-    <input
-        type="month"
-        id="month-picker"
-        class="month-picker-input"
-        value="{{ $selectedMonth }}"
-        @if($availableMonths->isNotEmpty())
-            min="{{ $availableMonths->last() }}"
-            max="{{ $availableMonths->first() }}"
-        @endif
-    />
-</div>
-
 {{-- ── DAFTAR JADWAL ── --}}
 <div id="jadwal-list">
 @if($jadwalsFiltered->isEmpty())
     <div class="empty-state">
-        <i class="fa-solid fa-calendar-xmark" style="font-size:2rem;opacity:.2;display:block;margin-bottom:10px"></i>
-        <p style="font-size:.875rem">Tidak ada jadwal ditemukan.</p>
+        <div class="empty-state-icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
+        </div>
+        <div class="empty-state-title">Belum ada jadwal ditemukan.</div>
+        <div class="empty-state-description">Tidak ada jadwal yang sesuai dengan filter/pencarian Anda.</div>
     </div>
 @else
     @php
@@ -455,7 +449,7 @@
             if ($isToday) $hariLabel .= ' — Hari ini';
         @endphp
 
-        <div class="day-section" style="margin-bottom:12px">
+        <div class="day-section" style="margin-bottom:1rem">
             <div class="day-section-header">{{ $hariLabel }}</div>
 
             @foreach($daySessions->sortBy('jam_mulai') as $j)
@@ -525,13 +519,13 @@
                             <div class="detail-block">
                                 <div class="db-label">Info Sesi</div>
                                 <div class="db-value">
-                                    <div><i class="fa-regular fa-calendar" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div><i class="fa-regular fa-calendar" style="width:1rem;color:var(--primary-blue)"></i>
                                         {{ $j->tanggal->translatedFormat('l, d F Y') }}
                                     </div>
-                                    <div><i class="fa-regular fa-clock" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div><i class="fa-regular fa-clock" style="width:1rem;color:var(--primary-blue)"></i>
                                         {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}
                                     </div>
-                                    <div><i class="fa-solid fa-hashtag" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div><i class="fa-solid fa-hashtag" style="width:1rem;color:var(--primary-blue)"></i>
                                         Sesi ke-{{ $j->sesi_ke }}
                                     </div>
                                 </div>
@@ -541,13 +535,13 @@
                             <div class="detail-block">
                                 <div class="db-label">Guru</div>
                                 <div class="db-value">
-                                    <div><i class="fa-solid fa-chalkboard-user" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div><i class="fa-solid fa-chalkboard-user" style="width:1rem;color:var(--primary-blue)"></i>
                                         {{ $j->guru->nama_guru }}
                                     </div>
-                                    <div style="margin-top:4px"><i class="fa-solid fa-music" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div style="margin-top:0.25rem"><i class="fa-solid fa-music" style="width:1rem;color:var(--primary-blue)"></i>
                                         {{ $j->spp?->programKursus?->nama_program ?? '—' }}
                                     </div>
-                                    <div style="margin-top:4px"><i class="fa-solid fa-location-dot" style="width:16px;color:var(--primary-blue)"></i>
+                                    <div style="margin-top:0.25rem"><i class="fa-solid fa-location-dot" style="width:1rem;color:var(--primary-blue)"></i>
                                         {{ $tipe }}
                                     </div>
                                 </div>
@@ -557,7 +551,7 @@
                             @if($progres)
                                 <div class="detail-block full">
                                     <div class="db-label">
-                                        <i class="fa-solid fa-book-open" style="margin-right:4px"></i>Materi &amp; Progres
+                                        <i class="fa-solid fa-book-open" style="margin-right:0.25rem"></i>Materi &amp; Progres
                                     </div>
                                     <div class="db-value">
 
@@ -590,7 +584,7 @@
                                 </div>
                             @else
                                 <div class="detail-block full" style="color:var(--text-light);font-size:.8rem">
-                                    <div class="db-label"><i class="fa-solid fa-book-open" style="margin-right:4px"></i>Materi &amp; Progres</div>
+                                    <div class="db-label"><i class="fa-solid fa-book-open" style="margin-right:0.25rem"></i>Materi &amp; Progres</div>
                                     <div class="db-value" style="color:var(--text-light);font-style:italic">
                                         Belum ada catatan materi dari guru untuk sesi ini.
                                     </div>
@@ -631,7 +625,7 @@
 <div class="confirm-backdrop" id="confirm-backdrop">
     <div class="confirm-box">
         <div class="confirm-icon"><i class="fa-solid fa-clipboard-check"></i></div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:6px">Isi Presensi Kehadiran</h3>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem">Isi Presensi Kehadiran</h3>
         <p style="font-size:.82rem;color:var(--text-light)">Konfirmasi bahwa kamu hadir pada sesi berikut:</p>
         <div class="confirm-detail" id="confirm-detail"></div>
         <p style="font-size:.72rem;color:var(--text-light)">

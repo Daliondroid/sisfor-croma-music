@@ -14,7 +14,7 @@
     </a>
 </div>
 
-<div class="card" style="max-width:780px">
+<div class="card" style="max-width:48.75rem">
     <div class="card-header"><h3>Data Akun & Profil</h3></div>
     <div class="card-body">
         <form method="POST" action="{{ route('admin.murids.store') }}" enctype="multipart/form-data">
@@ -26,8 +26,8 @@
                 </div>
             @endif
 
-            <div style="font-weight:600;margin-bottom:14px;color:var(--primary-blue)">
-                <i class="fa-solid fa-lock" style="margin-right:6px"></i>Data Login
+            <div style="font-weight:600;margin-bottom:1rem;color:var(--primary-blue)">
+                <i class="fa-solid fa-lock" style="margin-right:0.25rem"></i>Data Login
             </div>
             <div class="form-grid">
                 <div class="form-group">
@@ -49,13 +49,13 @@
                 {{-- <div class="form-group">
                     <label class="form-label">Foto Profil</label>
                     <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Format: JPG, PNG. Maks: 2MB</div>
                 </div> --}}
             </div>
 
-            <hr style="border:none;border-top:1px solid #f0f0f0;margin:20px 0"/>
-            <div style="font-weight:600;margin-bottom:14px;color:var(--primary-blue)">
-                <i class="fa-solid fa-user" style="margin-right:6px"></i>Data Pribadi
+            <hr style="border:none;border-top:1px solid #f0f0f0;margin:1.5rem 0"/>
+            <div style="font-weight:600;margin-bottom:1rem;color:var(--primary-blue)">
+                <i class="fa-solid fa-user" style="margin-right:0.25rem"></i>Data Pribadi
             </div>
             <div class="form-grid">
                 <div class="form-group">
@@ -80,7 +80,7 @@
                 <textarea name="alamat" class="form-control" rows="3">{{ old('alamat') }}</textarea>
             </div>
 
-            <div style="display:flex;gap:12px;margin-top:8px">
+            <div style="display:flex;gap:1rem;margin-top:0.5rem">
                 <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan
                 </button>

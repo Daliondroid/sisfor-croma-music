@@ -13,10 +13,13 @@ class NotifikasiController extends Controller
             ->latest()
             ->paginate(20);
 
-        // Tandai semua sebagai sudah dibaca
-        Notifikasi::where('id_user', Auth::id())
-            ->where('status_baca', 'belum_dibaca')
-            ->update(['status_baca' => 'sudah_dibaca']);
+        // Tandai hanya yang tampil di halaman ini sebagai sudah dibaca
+        $ids = $notifikasis->modelKeys();
+        if (!empty($ids)) {
+            Notifikasi::whereIn((new Notifikasi())->getKeyName(), $ids)
+                ->where('status_baca', 'belum_dibaca')
+                ->update(['status_baca' => 'sudah_dibaca']);
+        }
 
         return view('notifikasi.index', compact('notifikasis'));
     }

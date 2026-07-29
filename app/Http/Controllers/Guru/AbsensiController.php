@@ -21,33 +21,26 @@ class AbsensiController extends Controller
         $bulan = $request->bulan ?? now()->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
-        // Ambil semua SPP (murid) yang diajar guru ini bulan ini
-        $sppIds = Jadwal::where('id_guru', $guru->id_guru)
+        // Ambil semua jadwal guru bulan ini grouped by id_spp (Batch query to eliminate N+1)
+        $allJadwals = Jadwal::where('id_guru', $guru->id_guru)
             ->whereYear('tanggal', $tahun)
             ->whereMonth('tanggal', $bln)
             ->where('is_active', true)
-            ->pluck('id_spp')
-            ->unique();
+            ->get()
+            ->groupBy('id_spp');
 
         $rekapAbsensi = Spp::with(['murid', 'programKursus'])
-            ->whereIn('id_spp', $sppIds)
+            ->whereIn('id_spp', $allJadwals->keys())
             ->get()
-            ->map(function (Spp $spp) use ($guru, $tahun, $bln) {
-                $jadwals = Jadwal::where('id_guru', $guru->id_guru)
-                    ->where('id_spp', $spp->id_spp)
-                    ->whereYear('tanggal', $tahun)
-                    ->whereMonth('tanggal', $bln)
-                    ->where('is_active', true)
-                    ->get();
-
-                $total       = $jadwals->count();
-                $hadir       = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-                $tidakHadir  = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
-                $belumDiisi  = $jadwals->whereNull('status_kehadiran_murid')->count();
-                // Menunggu verifikasi: diisi murid tapi belum dikonfirmasi guru
-                $menunggu    = $jadwals->where('presensi_diisi_oleh', 'Murid')
-                                       ->whereNull('verified_at')
-                                       ->count();
+            ->map(function (Spp $spp) use ($allJadwals) {
+                $jadwals    = $allJadwals->get($spp->id_spp, collect());
+                $total      = $jadwals->count();
+                $hadir      = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+                $tidakHadir = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
+                $belumDiisi = $jadwals->whereNull('status_kehadiran_murid')->count();
+                $menunggu   = $jadwals->where('presensi_diisi_oleh', 'Murid')
+                                      ->whereNull('verified_at')
+                                      ->count();
 
                 return (object) [
                     'spp'          => $spp,

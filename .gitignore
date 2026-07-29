@@ -1,8 +1,23 @@
 *.log
 .DS_Store
 .env
+.env.*.local
 .env.backup
 .env.production
+.env.testing
+
+# Temporary & Test Scripts
+e2e_test.py
+test_results.txt
+*.tmp
+
+# Binary & Workspace dumps
+/laravel
+/.agents/
+*.sqlite
+*.sqlite-journal
+
+# IDE & Tooling Caches
 .phpactor.json
 .phpunit.result.cache
 /.cursor/
@@ -23,3 +38,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+desktop.ini
+npm-debug.log*
+yarn-debug.log*

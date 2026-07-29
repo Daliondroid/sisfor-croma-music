@@ -116,8 +116,16 @@ class PresensiController extends Controller
             }
         }
 
-        return view('guru.presensi.rekap', compact(
-            'guru', 'bulan', 'rekapAbsensi', 'detailJadwals', 'selectedSpp'
+        // Statistik keseluruhan
+        $totalSesiAll  = $rekapAbsensi->sum('total_sesi');
+        $totalHadirAll = $rekapAbsensi->sum('hadir');
+        $totalAbsenAll = $rekapAbsensi->sum('tidak_hadir');
+        $totalBelumAll = $rekapAbsensi->sum('belum_diisi');
+        $totalMenunggu = 0;
+
+        return view('guru.absensi.index', compact(
+            'guru', 'bulan', 'rekapAbsensi', 'detailJadwals', 'selectedSpp',
+            'totalSesiAll', 'totalHadirAll', 'totalAbsenAll', 'totalBelumAll', 'totalMenunggu'
         ));
     }
 

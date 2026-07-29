@@ -17,95 +17,94 @@ class MonthlyReportController extends Controller
     public function index(Request $request)
     {
         $bulan = $request->bulan ?? now()->format('Y-m');
+        $tahun = substr($bulan, 0, 4);
+        $bln   = substr($bulan, 5, 2);
 
-        // Ambil semua murid aktif beserta report-nya untuk bulan tsb
         $murids = Murid::where('status_aktif', true)
             ->with([
                 'user',
                 'monthlyReports' => fn($q) => $q
-                    ->whereYear('periode_bulan', substr($bulan, 0, 4))
-                    ->whereMonth('periode_bulan', substr($bulan, 5, 2)),
+                    ->whereYear('periode_bulan', $tahun)
+                    ->whereMonth('periode_bulan', $bln),
             ])
+            ->get();
+
+        $sppsGrouped = Spp::whereIn('id_murid', $murids->pluck('id_murid'))
             ->get()
-            ->map(function (Murid $murid) use ($bulan) {
-                // Rekap absensi dari jadwal bulan tsb (kehadiran murid)
-                $jadwals = Jadwal::where('is_active', true)
-                    ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
-                    ->whereYear('tanggal', substr($bulan, 0, 4))
-                    ->whereMonth('tanggal', substr($bulan, 5, 2))
-                    ->get();
+            ->groupBy('id_murid');
 
-                $totalSesi  = $jadwals->count();
-                $totalHadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-                $totalAbsen = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
-                $persen     = $totalSesi > 0 ? round(($totalHadir / $totalSesi) * 100) : 0;
+        $allSppIds = $sppsGrouped->flatten()->pluck('id_spp');
+        $jadwalsGrouped = Jadwal::where('is_active', true)
+            ->whereIn('id_spp', $allSppIds)
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bln)
+            ->get()
+            ->groupBy('id_spp');
 
-                $murid->total_sesi   = $totalSesi;
-                $murid->total_hadir  = $totalHadir;
-                $murid->total_absen  = $totalAbsen;
-                $murid->persen_hadir = $persen;
-                $murid->report       = $murid->monthlyReports->first();
+        $murids->transform(function (Murid $murid) use ($sppsGrouped, $jadwalsGrouped) {
+            $userSpps = $sppsGrouped->get($murid->id_murid, collect());
+            $jadwals  = collect();
+            foreach ($userSpps as $spp) {
+                $jadwals = $jadwals->merge($jadwalsGrouped->get($spp->id_spp, collect()));
+            }
 
-                return $murid;
-            });
+            $stats = Jadwal::calculateAttendanceStats($jadwals);
+            $murid->total_sesi   = $stats['total_sesi'];
+            $murid->total_hadir  = $stats['hadir'];
+            $murid->total_absen  = $stats['tidak_hadir'];
+            $murid->persen_hadir = $stats['persen_hadir'];
+            $murid->report       = $murid->monthlyReports->first();
+
+            return $murid;
+        });
 
         return view('admin.monthly_report.index', compact('murids', 'bulan'));
     }
 
     /**
-     * Generate monthly report untuk satu murid pada bulan tertentu.
-     * Jika sudah ada → update; belum ada → insert.
+     * Generate monthly report untuk semua murid aktif pada bulan tertentu.
      */
     public function generate(Request $request)
     {
         $request->validate(['bulan' => 'required|date_format:Y-m']);
 
+        $tahun  = substr($request->bulan, 0, 4);
+        $bln    = substr($request->bulan, 5, 2);
         $murids = Murid::where('status_aktif', true)->get();
-        $count  = 0;
+
+        $spps = Spp::whereIn('id_murid', $murids->pluck('id_murid'))
+            ->whereYear('periode_tagihan', $tahun)
+            ->whereMonth('periode_tagihan', $bln)
+            ->get()
+            ->keyBy('id_murid');
+
+        $jadwalsGrouped = Jadwal::where('is_active', true)
+            ->whereIn('id_spp', $spps->pluck('id_spp'))
+            ->whereYear('tanggal', $tahun)
+            ->whereMonth('tanggal', $bln)
+            ->get()
+            ->groupBy('id_spp');
+
+        $count = 0;
 
         foreach ($murids as $murid) {
-            // Ambil SPP bulan ini milik murid
-            $spp = Spp::where('id_murid', $murid->id_murid)
-                ->whereYear('periode_tagihan', substr($request->bulan, 0, 4))
-                ->whereMonth('periode_tagihan', substr($request->bulan, 5, 2))
-                ->first();
-
+            $spp = $spps->get($murid->id_murid);
             if (! $spp) {
-                continue; // Murid tidak memiliki SPP bulan ini
+                continue;
             }
 
-            // Rekap absensi jadwal
-            $jadwals    = Jadwal::where('is_active', true)
-                ->where('id_spp', $spp->id_spp)
-                ->whereYear('tanggal', substr($request->bulan, 0, 4))
-                ->whereMonth('tanggal', substr($request->bulan, 5, 2))
-                ->get();
-
-            $totalSesi  = $jadwals->count();
-            $totalHadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-            $persen     = $totalSesi > 0 ? round(($totalHadir / $totalSesi) * 100) : 0;
-
-            // Tentukan skor otomatis berdasarkan persentase kehadiran
-            $skor = match (true) {
-                $persen >= 95 => 'A+',
-                $persen >= 90 => 'A',
-                $persen >= 85 => 'A-',
-                $persen >= 80 => 'B+',
-                $persen >= 75 => 'B',
-                $persen >= 70 => 'B-',
-                $persen >= 65 => 'C+',
-                $persen >= 60 => 'C',
-                default       => 'C-',
-            };
+            $jadwals = $jadwalsGrouped->get($spp->id_spp, collect());
+            $stats   = Jadwal::calculateAttendanceStats($jadwals);
+            $skor    = MonthlyReport::calculateScore($stats['persen_hadir']);
 
             MonthlyReport::updateOrCreate(
                 [
-                    'id_spp'       => $spp->id_spp,
+                    'id_spp'        => $spp->id_spp,
                     'periode_bulan' => $request->bulan . '-01',
                 ],
                 [
-                    'skor'              => $skor,
-                    'evaluasi_bulanan'  => "Kehadiran {$persen}% ({$totalHadir}/{$totalSesi} sesi).",
+                    'skor'             => $skor,
+                    'evaluasi_bulanan' => "Kehadiran {$stats['persen_hadir']}% ({$stats['hadir']}/{$stats['total_sesi']} sesi).",
                 ]
             );
 

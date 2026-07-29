@@ -36,9 +36,9 @@
 
 <div class="card">
     @forelse($notifikasis as $n)
-    <div style="padding:16px 24px;border-bottom:1px solid #f3f4f6;display:flex;gap:14px;align-items:flex-start;
+    <div style="padding:1rem 1.5rem;border-bottom:1px solid #f3f4f6;display:flex;gap:1rem;align-items:flex-start;
         {{ $n->status_baca=='belum_dibaca' ? 'background:#f8faff;' : '' }}">
-        <div style="width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;
+        <div style="width:2.5rem;height:2.5rem;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;
             {{ match(true) {
                 str_contains($n->jenis_notifikasi,'spp')     => 'background:#fee2e2;color:#dc2626;',
                 str_contains($n->jenis_notifikasi,'absensi') => 'background:#fffbeb;color:#d97706;',
@@ -54,7 +54,7 @@
             <div style="font-size:.875rem;{{ $n->status_baca=='belum_dibaca' ? 'font-weight:600;' : '' }}">
                 {{ $n->pesan }}
             </div>
-            <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+            <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">
                 {{ $n->created_at->diffForHumans() }}
                 @if($n->status_baca=='belum_dibaca')
                     · <span style="color:var(--primary-blue);font-weight:600">Baru</span>
@@ -63,11 +63,11 @@
         </div>
     </div>
     @empty
-    <div style="text-align:center;padding:60px;color:var(--text-light)">
-        <i class="fa-regular fa-bell" style="font-size:2.5rem;opacity:.25;margin-bottom:12px;display:block"></i>
+    <div style="text-align:center;padding:4rem;color:var(--text-light)">
+        <i class="fa-regular fa-bell" style="font-size:2.5rem;opacity:.25;margin-bottom:1rem;display:block"></i>
         <div>Tidak ada notifikasi.</div>
     </div>
     @endforelse
-    @if($notifikasis->hasPages())<div style="padding:16px 24px">{{ $notifikasis->links() }}</div>@endif
+    @if($notifikasis->hasPages())<div style="padding:1rem 1.5rem">{{ $notifikasis->links() }}</div>@endif
 </div>
 @endsection

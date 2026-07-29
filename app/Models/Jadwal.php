@@ -15,14 +15,34 @@ class Jadwal extends Model
         'id_admin', 'id_guru', 'id_spp', 'id_honor', 'id_report',
         'tanggal', 'jam_mulai', 'jam_selesai', 'sesi_ke',
         'status_jadwal', 'status_kehadiran_murid', 'status_kehadiran_guru',
-        'waktu_presensi_diisi', 'presensi_diisi_oleh', 'is_active',
+        'waktu_presensi_diisi', 'presensi_diisi_oleh', 'verified_at', 'verified_by', 'is_active',
     ];
 
     protected $casts = [
         'tanggal'              => 'date',
         'waktu_presensi_diisi' => 'datetime',
+        'verified_at'          => 'datetime',
         'is_active'            => 'boolean',
     ];
+
+    /**
+     * Calculate aggregated attendance statistics for a given collection of Jadwal models.
+     */
+    public static function calculateAttendanceStats($jadwals): array
+    {
+        $total      = $jadwals->count();
+        $hadir      = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+        $tidakHadir = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
+        $belumDiisi = $jadwals->whereNull('status_kehadiran_murid')->count();
+
+        return [
+            'total_sesi'   => $total,
+            'hadir'        => $hadir,
+            'tidak_hadir'  => $tidakHadir,
+            'belum_diisi'  => $belumDiisi,
+            'persen_hadir' => $total > 0 ? round(($hadir / $total) * 100) : 0,
+        ];
+    }
 
     // ── Relasi ─────────────────────────────────────────────────
 

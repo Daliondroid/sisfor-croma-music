@@ -13,9 +13,6 @@
 <a href="{{ route('admin.jadwals.index') }}" class="nav-item {{ request()->routeIs('admin.jadwals*') ? 'active' : '' }}">
     <i class="fa-solid fa-calendar-days"></i> Jadwal KBM
 </a>
-{{-- <a href="{{ route('admin.kelas.index') }}" class="nav-item {{ request()->routeIs('admin.kelas*') ? 'active' : '' }}">
-    <i class="fa-solid fa-door-open"></i> Data Kelas
-</a> --}}
 <a href="{{ route('admin.program-kursus.index') }}" class="nav-item {{ request()->routeIs('admin.program-kursus*') ? 'active' : '' }}">
     <i class="fa-solid fa-layer-group"></i> Program Kursus
 </a>
@@ -25,7 +22,7 @@
     <i class="fa-solid fa-file-invoice-dollar"></i> Tagihan SPP
 </a>
 
-<a href="{{ route('admin.laporan.keuangan') }}" class="nav-item">
+<a href="{{ route('admin.laporan.keuangan') }}" class="nav-item {{ request()->routeIs('admin.laporan.keuangan*') ? 'active' : '' }}">
     <i class="fa-solid fa-chart-line"></i> Laporan Keuangan
 </a>
 

@@ -101,17 +101,7 @@ class MonthlyReportController extends Controller
         $totalHadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
         $persen     = $totalSesi > 0 ? round(($totalHadir / $totalSesi) * 100) : 0;
 
-        $skorOtomatis = match (true) {
-            $persen >= 95 => 'A+',
-            $persen >= 90 => 'A',
-            $persen >= 85 => 'A-',
-            $persen >= 80 => 'B+',
-            $persen >= 75 => 'B',
-            $persen >= 70 => 'B-',
-            $persen >= 65 => 'C+',
-            $persen >= 60 => 'C',
-            default       => 'C-',
-        };
+        $skorOtomatis = MonthlyReport::calculateScore($persen);
 
         return view('guru.monthly_report.create', compact(
             'guru', 'spp', 'jadwals', 'bulan', 'report',

@@ -18,7 +18,7 @@
         <h2>Detail Laporan Bulanan</h2>
         <div class="breadcrumb">Guru / Laporan Bulanan / <span>Detail</span></div>
     </div>
-    <div style="display:flex;gap:10px">
+    <div style="display:flex;gap:0.5rem">
         <a href="{{ route('guru.monthly-report.create', ['id_spp' => $spp->id_spp, 'bulan' => $bulan]) }}"
            class="btn btn-outline btn-sm">
             <i class="fa-solid fa-pen"></i> Edit
@@ -33,16 +33,16 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start">
+<div style="display:grid;grid-template-columns:1fr 20rem;gap:1.5rem;align-items:start">
 
     {{-- Konten utama --}}
-    <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
 
         {{-- Header laporan --}}
         <div class="card">
-            <div style="padding:24px">
-                <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-                    <div style="width:52px;height:52px;border-radius:12px;background:var(--primary-blue);
+            <div style="padding:1.5rem">
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+                    <div style="width:3.5rem;height:3.5rem;border-radius:0.75rem;background:var(--primary-blue);
                                 color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;flex-shrink:0">
                         {{ $monthlyReport->skor }}
                     </div>
@@ -51,8 +51,8 @@
                         <div style="font-size:.82rem;color:var(--text-light)">
                             {{ $program->nama_program ?? '-' }} · {{ $spp->tipe_les ?? '' }}
                         </div>
-                        <div style="font-size:.78rem;color:var(--text-light);margin-top:2px">
-                            <i class="fa-regular fa-calendar" style="margin-right:4px"></i>
+                        <div style="font-size:.78rem;color:var(--text-light);margin-top:0.125rem">
+                            <i class="fa-regular fa-calendar" style="margin-right:0.25rem"></i>
                             {{ \Carbon\Carbon::createFromFormat('Y-m', $bulan)->translatedFormat('F Y') }}
                         </div>
                     </div>
@@ -64,17 +64,17 @@
                     </div>
                 </div>
 
-                <hr style="border:none;border-top:1px solid var(--topbar-border);margin:16px 0">
+                <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1rem 0">
 
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:10px">
+                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600;margin-bottom:0.5rem">
                     Evaluasi Bulanan
                 </div>
                 <div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap">{{ $monthlyReport->evaluasi_bulanan }}</div>
 
                 @if($monthlyReport->url_video)
-                <div style="margin-top:16px;padding:14px;background:#f8faff;border:1px solid #dbeafe;border-radius:8px">
-                    <div style="font-size:.78rem;font-weight:600;color:var(--primary-blue);margin-bottom:6px">
-                        <i class="fa-brands fa-youtube" style="margin-right:6px"></i>Video KBM
+                <div style="margin-top:1rem;padding:1rem;background:#f8faff;border:1px solid #dbeafe;border-radius:0.5rem">
+                    <div style="font-size:.78rem;font-weight:600;color:var(--primary-blue);margin-bottom:0.25rem">
+                        <i class="fa-brands fa-youtube" style="margin-right:0.25rem"></i>Video KBM
                     </div>
                     <a href="{{ $monthlyReport->url_video }}" target="_blank"
                        style="font-size:.85rem;color:var(--primary-blue);word-break:break-all">
@@ -88,7 +88,7 @@
         {{-- Tabel Rincian Sesi --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:8px"></i>Rincian Sesi</h3>
+                <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:0.5rem"></i>Rincian Sesi</h3>
             </div>
             <div class="table-wrap">
                 <table>
@@ -137,9 +137,9 @@
     </div>
 
     {{-- Sidebar statistik --}}
-    <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="card" style="padding:20px">
-            <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:14px">
+    <div style="display:flex;flex-direction:column;gap:1rem">
+        <div class="card" style="padding:1.5rem">
+            <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600;margin-bottom:1rem">
                 Ringkasan Kehadiran
             </div>
             @php
@@ -150,15 +150,15 @@
                 $barColor   = $persen >= 80 ? '#16a34a' : ($persen >= 60 ? '#d97706' : '#dc2626');
             @endphp
 
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
                 <span style="font-size:.85rem">Kehadiran</span>
                 <span style="font-size:1.1rem;font-weight:700;color:{{ $barColor }}">{{ $persen }}%</span>
             </div>
-            <div style="height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden;margin-bottom:16px">
-                <div style="width:{{ $persen }}%;height:100%;background:{{ $barColor }};border-radius:4px"></div>
+            <div style="height:0.5rem;background:#f3f4f6;border-radius:0.25rem;overflow:hidden;margin-bottom:1rem">
+                <div style="width:{{ $persen }}%;height:100%;background:{{ $barColor }};border-radius:0.25rem"></div>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
                 <div style="display:flex;justify-content:space-between;font-size:.85rem">
                     <span style="color:var(--text-light)">Total Sesi</span>
                     <span style="font-weight:600">{{ $totalSesi }}</span>
@@ -171,7 +171,7 @@
                     <span style="color:#dc2626">Tidak Hadir</span>
                     <span style="font-weight:600;color:#dc2626">{{ $totalAbsen }}</span>
                 </div>
-                <hr style="border:none;border-top:1px solid var(--topbar-border);margin:4px 0">
+                <hr style="border:none;border-top:1px solid var(--topbar-border);margin:0.25rem 0">
                 <div style="display:flex;justify-content:space-between;font-size:.9rem">
                     <span style="color:var(--text-light)">Skor</span>
                     <span style="font-size:1.2rem;font-weight:700;color:var(--primary-blue)">{{ $monthlyReport->skor }}</span>
@@ -179,13 +179,13 @@
             </div>
         </div>
 
-        <div class="card" style="padding:20px">
-            <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:12px">
+        <div class="card" style="padding:1.5rem">
+            <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600;margin-bottom:1rem">
                 Guru Pengajar
             </div>
             <div style="font-weight:600">{{ $guru->nama_guru }}</div>
             @if($guru->spesialisasis->count())
-                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">
+                <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-top:0.25rem">
                     @foreach($guru->spesialisasis as $s)
                         <span class="badge badge-info" style="font-size:.68rem">{{ $s->nama_spesialisasi }}</span>
                     @endforeach

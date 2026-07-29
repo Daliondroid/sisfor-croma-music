@@ -7,50 +7,38 @@
 
 {{-- ══ Page Header ══════════════════════════════════════════════════════════ --}}
 <div class="page-header">
-    <div>
-        <h2>Tagihan SPP</h2>
-        <div class="breadcrumb">Admin / <span>SPP</span></div>
+    <h2>Tagihan SPP</h2>
+    <div class="breadcrumb">Admin / <span>SPP</span></div>
+    <div class="page-header-filters">
+        <form method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <input type="month" name="bulan" class="form-control form-control-sm"
+                value="{{ request('bulan', now()->format('Y-m')) }}"/>
+            <select name="status" class="form-control form-control-sm">
+                <option value="">Semua Status</option>
+                <option value="Belum Lunas" {{ request('status')=='Belum Lunas'?'selected':'' }}>Belum Lunas</option>
+                <option value="Lunas"       {{ request('status')=='Lunas'?'selected':'' }}>Lunas</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-search"></i> Filter
+            </button>
+            <a href="{{ route('admin.spp.index') }}" class="btn btn-outline btn-sm">Reset</a>
+        </form>
     </div>
 </div>
 
 {{-- ══ Ringkasan ════════════════════════════════════════════════════════════ --}}
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-    <div class="card" style="padding:20px 24px;border-left:4px solid var(--primary)">
-        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Total Tagihan</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+    <div class="card" style="padding:1.5rem 1.5rem;border-left:0.25rem solid var(--primary)">
+        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.25rem">Total Tagihan</div>
         <div style="font-size:1.4rem;font-weight:700;color:var(--text-main)">Rp {{ number_format($totalTagihan,0,',','.') }}</div>
     </div>
-    <div class="card" style="padding:20px 24px;border-left:4px solid #22c55e">
-        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Sudah Masuk</div>
-        <div style="font-size:1.4rem;font-weight:700;color:#16a34a">Rp {{ number_format($totalMasuk,0,',','.') }}</div>
+    <div class="card" style="padding:1.5rem 1.5rem;">
+        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.25rem">Sudah Masuk</div>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--text-main)">Rp {{ number_format($totalMasuk,0,',','.') }}</div>
     </div>
-    <div class="card" style="padding:20px 24px;border-left:4px solid #ef4444">
-        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Tunggakan</div>
-        <div style="font-size:1.4rem;font-weight:700;color:#dc2626">Rp {{ number_format($totalTunggakan,0,',','.') }}</div>
-    </div>
-</div>
-
-{{-- ══ Filter ═══════════════════════════════════════════════════════════════ --}}
-<div class="card" style="margin-bottom:20px">
-    <div class="card-body" style="padding:16px 24px">
-        <form method="GET" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-            <div class="form-group" style="margin:0">
-                <label class="form-label">Bulan</label>
-                <input type="month" name="bulan" class="form-control"
-                    value="{{ request('bulan', now()->format('Y-m')) }}"/>
-            </div>
-            <div class="form-group" style="margin:0">
-                <label class="form-label">Status</label>
-                <select name="status" class="form-control">
-                    <option value="">Semua Status</option>
-                    <option value="Belum Lunas" {{ request('status')=='Belum Lunas'?'selected':'' }}>Belum Lunas</option>
-                    <option value="Lunas"       {{ request('status')=='Lunas'?'selected':'' }}>Lunas</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fa-solid fa-search"></i> Filter
-            </button>
-            <a href="{{ route('admin.spp.index') }}" class="btn btn-outline">Reset</a>
-        </form>
+    <div class="card" style="padding:1.5rem 1.5rem;">
+        <div style="font-size:.75rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.25rem">Tunggakan</div>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--text-main)">Rp {{ number_format($totalTunggakan,0,',','.') }}</div>
     </div>
 </div>
 
@@ -60,14 +48,14 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width:40px">#</th>
+                    <th style="width:2.5rem">#</th>
                     <th>Nama Siswa</th>
                     <th>Bulan</th>
                     <th>Program Kursus</th>
                     <th>Jatuh Tempo</th>
-                    <th style="width:110px">Status</th>
-                    <th style="width:80px;text-align:center">Bukti</th>
-                    <th style="width:80px;text-align:center">Aksi</th>
+                    <th style="width:7rem">Status</th>
+                    <th style="width:5rem;text-align:center">Bukti</th>
+                    <th style="width:5rem;text-align:center">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,15 +114,15 @@
                     <td>
                         @if($spp->status_bayar === 'Lunas')
                             <span class="badge badge-success">
-                                <i class="fa-solid fa-circle-check" style="margin-right:4px"></i>Lunas
+                                <i class="fa-solid fa-circle-check" style="margin-right:0.25rem"></i>Lunas
                             </span>
                         @elseif($transaksi)
                             <span class="badge" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a">
-                                <i class="fa-solid fa-clock" style="margin-right:4px"></i>Menunggu
+                                <i class="fa-solid fa-clock" style="margin-right:0.25rem"></i>Menunggu
                             </span>
                         @else
                             <span class="badge badge-danger">
-                                <i class="fa-solid fa-circle-xmark" style="margin-right:4px"></i>Belum Lunas
+                                <i class="fa-solid fa-circle-xmark" style="margin-right:0.25rem"></i>Belum Lunas
                             </span>
                         @endif
                     </td>
@@ -158,7 +146,7 @@
                     <td style="text-align:center">
                         @if($spp->status_bayar !== 'Lunas' && $transaksi)
                             {{-- Ada bukti transfer: tombol validasi + notifikasi --}}
-                            <div style="display:flex;gap:6px;justify-content:center">
+                            <div style="display:flex;gap:0.25rem;justify-content:center">
                                 <button
                                     class="btn btn-sm btn-primary"
                                     title="Konfirmasi Pembayaran"
@@ -191,12 +179,15 @@
                     </td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="8" style="text-align:center;padding:48px;color:var(--text-light)">
-                        <i class="fa-solid fa-inbox" style="font-size:2rem;display:block;margin-bottom:8px;opacity:.4"></i>
-                        Tidak ada data tagihan SPP untuk filter ini.
-                    </td>
-                </tr>
+                <tr><td colspan="8">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="12" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 28h24M28 38h16M28 48h20" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" opacity=".5"/><circle cx="56" cy="56" r="14" stroke="var(--primary-blue)" stroke-width="2" fill="var(--card-bg)"/><text x="56" y="61" text-anchor="middle" font-size="14" font-weight="700" fill="var(--primary-blue)" font-family="Poppins">$</text></svg>
+                        </div>
+                        <div class="empty-state-title">Tidak ada data tagihan SPP.</div>
+                        <div class="empty-state-description">Tidak ada tagihan yang sesuai dengan filter yang dipilih.</div>
+                    </div>
+                </td></tr>
             @endforelse
             </tbody>
         </table>
@@ -204,7 +195,7 @@
 
     {{-- Pagination --}}
     @if($spps->hasPages())
-        <div style="padding:16px 24px;border-top:1px solid var(--border)">
+        <div style="padding:1rem 1.5rem;border-top:1px solid var(--border)">
             {{ $spps->links() }}
         </div>
     @endif
@@ -213,13 +204,13 @@
 {{-- ══════════════════════════════════════════════════════════════════════════
      MODAL: Bukti Transfer
 ═══════════════════════════════════════════════════════════════════════════ --}}
-<div id="modal-bukti" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:20px">
-    <div class="card" style="width:520px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column">
+<div id="modal-bukti" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:1.5rem">
+    <div class="card" style="width:32.5rem;max-width:95vw;max-height:90vh;display:flex;flex-direction:column">
 
         {{-- Header --}}
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
             <h3 style="margin:0;font-size:1rem">
-                <i class="fa-solid fa-receipt" style="margin-right:8px;color:var(--primary)"></i>
+                <i class="fa-solid fa-receipt" style="margin-right:0.5rem;color:var(--primary)"></i>
                 Detail Bukti Transfer
             </h3>
             <button onclick="tutupModal('modal-bukti')"
@@ -229,37 +220,37 @@
         </div>
 
         {{-- Body --}}
-        <div style="padding:20px 24px;overflow-y:auto;flex:1">
+        <div style="padding:1.5rem 1.5rem;overflow-y:auto;flex:1">
 
             {{-- Info Ringkas --}}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-                <div style="background:var(--bg-light,#f8fafc);border-radius:8px;padding:12px 14px">
-                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:4px">Nama Wali Murid / Siswa</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+                <div style="background:var(--bg-light,#f8fafc);border-radius:0.5rem;padding:1rem 1rem">
+                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:0.25rem">Nama Wali Murid / Siswa</div>
                     <div id="bukti-nama" style="font-weight:600;font-size:.9rem">—</div>
                 </div>
-                <div style="background:var(--bg-light,#f8fafc);border-radius:8px;padding:12px 14px">
-                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:4px">Tanggal Bayar</div>
+                <div style="background:var(--bg-light,#f8fafc);border-radius:0.5rem;padding:1rem 1rem">
+                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:0.25rem">Tanggal Bayar</div>
                     <div id="bukti-tanggal" style="font-weight:600;font-size:.9rem">—</div>
                 </div>
-                <div style="background:var(--bg-light,#f8fafc);border-radius:8px;padding:12px 14px;grid-column:1/-1">
-                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:4px">Nominal Dibayar</div>
+                <div style="background:var(--bg-light,#f8fafc);border-radius:0.5rem;padding:1rem 1rem;grid-column:1/-1">
+                    <div style="font-size:.7rem;text-transform:uppercase;color:var(--text-light);letter-spacing:.05em;margin-bottom:0.25rem">Nominal Dibayar</div>
                     <div id="bukti-nominal" style="font-weight:700;font-size:1.1rem;color:var(--primary)">—</div>
                 </div>
             </div>
 
             {{-- Preview Bukti --}}
-            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#f1f5f9">
-                <div style="padding:8px 14px;background:var(--bg-light,#f8fafc);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--text-light);display:flex;justify-content:space-between;align-items:center">
-                    <span><i class="fa-solid fa-image" style="margin-right:6px"></i>Lampiran Bukti</span>
-                    <a id="bukti-link-download" href="#" target="_blank" class="btn btn-sm btn-outline" style="font-size:.72rem;padding:4px 10px">
+            <div style="border:1px solid var(--border);border-radius:0.5rem;overflow:hidden;background:#f1f5f9">
+                <div style="padding:0.5rem 1rem;background:var(--bg-light,#f8fafc);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--text-light);display:flex;justify-content:space-between;align-items:center">
+                    <span><i class="fa-solid fa-image" style="margin-right:0.25rem"></i>Lampiran Bukti</span>
+                    <a id="bukti-link-download" href="#" target="_blank" class="btn btn-sm btn-outline" style="font-size:.72rem;padding:0.25rem 0.5rem">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka
                     </a>
                 </div>
-                <div style="padding:12px;text-align:center">
+                <div style="padding:1rem;text-align:center">
                     <img id="bukti-img" src="" alt="Bukti Transfer"
-                        style="max-width:100%;max-height:320px;object-fit:contain;border-radius:4px;display:none"/>
-                    <div id="bukti-pdf-notice" style="display:none;padding:32px;color:var(--text-light)">
-                        <i class="fa-solid fa-file-pdf" style="font-size:2.5rem;display:block;margin-bottom:10px;color:#ef4444"></i>
+                        style="max-width:100%;max-height:20rem;object-fit:contain;border-radius:0.25rem;display:none"/>
+                    <div id="bukti-pdf-notice" style="display:none;padding:2rem;color:var(--text-light)">
+                        <i class="fa-solid fa-file-pdf" style="font-size:2.5rem;display:block;margin-bottom:0.5rem;color:#ef4444"></i>
                         File PDF — klik tombol <strong>Buka</strong> untuk melihat.
                     </div>
                 </div>
@@ -271,13 +262,13 @@
 {{-- ══════════════════════════════════════════════════════════════════════════
      MODAL: Aksi (Validasi / Tolak + Catatan opsional)
 ═══════════════════════════════════════════════════════════════════════════ --}}
-<div id="modal-aksi" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:20px">
-    <div class="card" style="width:460px;max-width:95vw">
+<div id="modal-aksi" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:1.5rem">
+    <div class="card" style="width:29rem;max-width:95vw">
 
         {{-- Header --}}
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
             <h3 style="margin:0;font-size:1rem">
-                <i class="fa-solid fa-pen-to-square" style="margin-right:8px;color:var(--primary)"></i>
+                <i class="fa-solid fa-pen-to-square" style="margin-right:0.5rem;color:var(--primary)"></i>
                 Tindakan Pembayaran
             </h3>
             <button onclick="tutupModal('modal-aksi')"
@@ -286,13 +277,13 @@
             </button>
         </div>
 
-        <div style="padding:20px 24px">
+        <div style="padding:1.5rem 1.5rem">
 
             {{-- Info SPP --}}
-            <div style="background:var(--bg-light,#f8fafc);border-radius:8px;padding:14px 16px;margin-bottom:20px">
-                <div style="font-size:.75rem;color:var(--text-light);margin-bottom:4px">Memproses pembayaran untuk:</div>
+            <div style="background:var(--bg-light,#f8fafc);border-radius:0.5rem;padding:1rem 1rem;margin-bottom:1.5rem">
+                <div style="font-size:.75rem;color:var(--text-light);margin-bottom:0.25rem">Memproses pembayaran untuk:</div>
                 <div id="aksi-nama" style="font-weight:700;font-size:1rem">—</div>
-                <div id="aksi-bulan" style="color:var(--text-light);font-size:.82rem;margin-top:2px">—</div>
+                <div id="aksi-bulan" style="color:var(--text-light);font-size:.82rem;margin-top:0.125rem">—</div>
             </div>
 
             {{-- Form Validasi --}}
@@ -302,7 +293,7 @@
                 <div class="form-group">
                     <label class="form-label">
                         Catatan Admin
-                        <span style="color:var(--text-light);font-weight:400;font-size:.8rem;margin-left:4px">— opsional</span>
+                        <span style="color:var(--text-light);font-weight:400;font-size:.8rem;margin-left:0.25rem">— opsional</span>
                     </label>
                     <textarea
                         name="catatan_admin"
@@ -313,7 +304,7 @@
                     ></textarea>
                 </div>
 
-                <div style="display:flex;gap:10px;margin-top:16px">
+                <div style="display:flex;gap:0.5rem;margin-top:1rem">
                     <button type="submit" class="btn btn-primary" style="flex:1">
                         <i class="fa-solid fa-circle-check"></i> Konfirmasi Lunas
                     </button>
@@ -329,12 +320,12 @@
 {{-- ══════════════════════════════════════════════════════════════════════════
      MODAL: Kirim Notifikasi
 ═══════════════════════════════════════════════════════════════════════════ --}}
-<div id="modal-notifikasi" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:20px">
-    <div class="card" style="width:460px;max-width:95vw">
+<div id="modal-notifikasi" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:center;justify-content:center;padding:1.5rem">
+    <div class="card" style="width:29rem;max-width:95vw">
 
         <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
             <h3 style="margin:0;font-size:1rem">
-                <i class="fa-solid fa-bell" style="margin-right:8px;color:var(--primary)"></i>
+                <i class="fa-solid fa-bell" style="margin-right:0.5rem;color:var(--primary)"></i>
                 Kirim Notifikasi Tagihan
             </h3>
             <button onclick="tutupModal('modal-notifikasi')"
@@ -343,13 +334,13 @@
             </button>
         </div>
 
-        <div style="padding:20px 24px">
+        <div style="padding:1.5rem 1.5rem">
 
             {{-- Info penerima --}}
-            <div style="background:var(--bg-light,#f8fafc);border-radius:8px;padding:14px 16px;margin-bottom:20px">
-                <div style="font-size:.75rem;color:var(--text-light);margin-bottom:4px">Penerima notifikasi:</div>
+            <div style="background:var(--bg-light,#f8fafc);border-radius:0.5rem;padding:1rem 1rem;margin-bottom:1.5rem">
+                <div style="font-size:.75rem;color:var(--text-light);margin-bottom:0.25rem">Penerima notifikasi:</div>
                 <div id="notif-nama" style="font-weight:700;font-size:1rem">—</div>
-                <div id="notif-bulan" style="color:var(--text-light);font-size:.82rem;margin-top:2px">—</div>
+                <div id="notif-bulan" style="color:var(--text-light);font-size:.82rem;margin-top:0.125rem">—</div>
             </div>
 
             <form id="form-notifikasi" method="POST" action="">
@@ -358,7 +349,7 @@
                 <div class="form-group">
                     <label class="form-label">
                         Pesan Notifikasi
-                        <span style="color:var(--text-light);font-weight:400;font-size:.8rem;margin-left:4px">— kosongkan untuk pesan otomatis</span>
+                        <span style="color:var(--text-light);font-weight:400;font-size:.8rem;margin-left:0.25rem">— kosongkan untuk pesan otomatis</span>
                     </label>
                     <textarea
                         id="notif-pesan"
@@ -368,13 +359,13 @@
                         style="resize:vertical"
                         placeholder="Pesan akan terisi otomatis jika dikosongkan…"
                     ></textarea>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:6px">
-                        <i class="fa-solid fa-circle-info" style="margin-right:4px"></i>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">
+                        <i class="fa-solid fa-circle-info" style="margin-right:0.25rem"></i>
                         Pesan otomatis: <em id="notif-pesan-preview">—</em>
                     </div>
                 </div>
 
-                <div style="display:flex;gap:10px;margin-top:16px">
+                <div style="display:flex;gap:0.5rem;margin-top:1rem">
                     <button type="submit" class="btn btn-primary" style="flex:1">
                         <i class="fa-solid fa-paper-plane"></i> Kirim Notifikasi
                     </button>

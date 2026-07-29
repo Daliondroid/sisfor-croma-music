@@ -21,35 +21,35 @@
 @push('styles')
 <style>
     /* ── Greeting ── */
-    .db-greeting { margin-bottom: 24px; }
-    .db-greeting h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    .db-greeting { margin-bottom: 1.5rem; }
+    .db-greeting h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.25rem; }
     .db-greeting .date-sub { font-size: .78rem; color: var(--text-light); }
 
     /* ── Metric cards ── */
     .db-metrics {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-        margin-bottom: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
     .db-metric {
         background: var(--card-bg);
         border-radius: var(--radius);
-        padding: 16px 18px;
+        padding: 1.5rem;
         box-shadow: var(--shadow-sm);
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 0.25rem;
     }
     .db-metric-label {
         font-size: .72rem;
         color: var(--text-light);
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: .5px;
+        letter-spacing: 0.03125rem;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 0.25rem;
     }
     .db-metric-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
     .db-metric-sub   { font-size: .72rem; color: var(--text-light); }
@@ -60,16 +60,16 @@
     /* ── SPP Banner ── */
     .spp-banner {
         border-radius: var(--radius);
-        padding: 14px 18px;
+        padding: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 20px;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
-    .spp-banner.ok   { background: #dcfce7; border-left: 4px solid #16a34a; }
-    .spp-banner.warn { background: #fff7ed; border-left: 4px solid #f97316; }
+    .spp-banner.ok   { background: #dcfce7; border-left: 0.25rem solid #16a34a; }
+    .spp-banner.warn { background: #fff7ed; border-left: 0.25rem solid #f97316; }
     .spp-banner-icon {
-        width: 40px; height: 40px; border-radius: 50%;
+        width: 2.5rem; height: 2.5rem; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
         flex-shrink: 0; font-size: 1rem;
     }
@@ -79,45 +79,45 @@
     .spp-banner-title { font-size: .875rem; font-weight: 700; }
     .spp-banner.ok .spp-banner-title   { color: #15803d; }
     .spp-banner.warn .spp-banner-title { color: #c2410c; }
-    .spp-banner-sub   { font-size: .75rem; color: var(--text-light); margin-top: 2px; }
+    .spp-banner-sub   { font-size: .75rem; color: var(--text-light); margin-top: 0.125rem; }
 
     /* ── Jadwal list ── */
     .jadwal-row {
-        padding: 14px 18px;
+        padding: 1rem 1rem;
         border-bottom: 1px solid var(--topbar-border);
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 1rem;
     }
     .jadwal-row:last-child { border-bottom: none; }
     .jadwal-date-box {
-        width: 46px; height: 46px;
-        border-radius: 10px;
+        width: 3rem; height: 3rem;
+        border-radius: 0.625rem;
         background: var(--bg-light);
         display: flex; flex-direction: column;
         align-items: center; justify-content: center;
         flex-shrink: 0;
     }
-    .jadwal-date-box .day-name { font-size: .6rem; text-transform: uppercase; letter-spacing: .4px; color: var(--text-light); font-weight: 600; }
+    .jadwal-date-box .day-name { font-size: .6rem; text-transform: uppercase; letter-spacing: 0.025rem; color: var(--text-light); font-weight: 600; }
     .jadwal-date-box .day-num  { font-size: 1.15rem; font-weight: 700; line-height: 1.1; }
     .jadwal-info { flex: 1; min-width: 0; }
     .jadwal-program { font-size: .875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .jadwal-meta    { font-size: .72rem; color: var(--text-light); margin-top: 2px; }
+    .jadwal-meta    { font-size: .72rem; color: var(--text-light); margin-top: 0.125rem; }
 
     /* ── Bottom grid ── */
-    .db-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-    @media (max-width: 640px) { .db-bottom { grid-template-columns: 1fr; } }
+    .db-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (max-width: 40rem) { .db-bottom { grid-template-columns: 1fr; } }
 
     /* ── Presensi list ── */
     .presensi-row {
-        padding: 11px 18px;
+        padding: 0.5rem 1rem;
         border-bottom: 1px solid var(--topbar-border);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 0.5rem;
     }
     .presensi-row:last-child { border-bottom: none; }
-    .presensi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .presensi-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0; }
     .dot-hadir { background: #16a34a; }
     .dot-izin  { background: #d97706; }
     .dot-absen { background: #dc2626; }
@@ -130,10 +130,10 @@
     .p-absen { color: #dc2626; }
 
     /* ── Score ring ── */
-    .laporan-inner { padding: 16px 18px; }
-    .laporan-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-    .score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
-    .score-ring-outer { position: relative; width: 64px; height: 64px; }
+    .laporan-inner { padding: 1.5rem; }
+    .laporan-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; flex-shrink: 0; }
+    .score-ring-outer { position: relative; width: 4rem; height: 4rem; }
     .score-ring-outer svg { transform: rotate(-90deg); }
     .score-ring-num {
         position: absolute; inset: 0;
@@ -141,20 +141,20 @@
         font-size: 1rem; font-weight: 700;
     }
     .score-ring-label { font-size: .68rem; color: var(--text-light); }
-    .laporan-stats { display: flex; gap: 10px; flex: 1; }
-    .laporan-stat { flex: 1; background: var(--bg-light); border-radius: 8px; padding: 10px 12px; }
-    .laporan-stat-label { font-size: .68rem; color: var(--text-light); margin-bottom: 2px; }
+    .laporan-stats { display: flex; gap: 0.5rem; flex: 1; }
+    .laporan-stat { flex: 1; background: var(--bg-light); border-radius: 0.5rem; padding: 0.5rem 1rem; }
+    .laporan-stat-label { font-size: .68rem; color: var(--text-light); margin-bottom: 0.125rem; }
     .laporan-stat-value { font-size: 1.1rem; font-weight: 700; }
     .eval-box {
         background: var(--bg-light);
-        border-left: 3px solid var(--primary-blue);
-        border-radius: 0 8px 8px 0;
-        padding: 10px 14px;
+        border-left: 0.1875rem solid var(--primary-blue);
+        border-radius: 0 0.5rem 0.5rem 0;
+        padding: 0.5rem 1rem;
         font-size: .8rem;
         line-height: 1.6;
         color: var(--text-dark);
     }
-    .eval-label { font-size: .68rem; color: var(--text-light); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .eval-label { font-size: .68rem; color: var(--text-light); margin-bottom: 0.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025rem; }
 </style>
 @endpush
 
@@ -242,7 +242,7 @@
 {{-- Jadwal Card --}}
 <div class="card">
     <div class="card-header">
-        <h3><i class="fa-solid fa-calendar-week" style="color:var(--primary-blue);margin-right:8px"></i>Jadwal Les Mendatang</h3>
+        <h3><i class="fa-solid fa-calendar-week" style="color:var(--primary-blue);margin-right:0.5rem"></i>Jadwal Les Mendatang</h3>
         <a href="{{ route('murid.jadwal.index') }}" class="btn btn-sm btn-outline">Semua <i class="fa-solid fa-arrow-right" style="font-size:.7rem"></i></a>
     </div>
     <div style="padding:0">
@@ -259,15 +259,17 @@
                 </div>
             </div>
             <span class="badge {{ ($j->spp?->tipe_les ?? 'onsite') == 'onsite' ? 'badge-info' : 'badge-warning' }}"
-                  style="font-size:.68rem;gap:4px">
+                  style="font-size:.68rem;gap:0.25rem">
                 <i class="fa-solid {{ ($j->spp?->tipe_les ?? 'onsite') == 'onsite' ? 'fa-building' : 'fa-house' }}" style="font-size:.65rem"></i>
                 {{ ($j->spp?->tipe_les ?? 'onsite') == 'onsite' ? 'Onsite' : 'Home' }}
             </span>
         </div>
         @empty
-        <div style="padding:28px;text-align:center;color:var(--text-light)">
-            <i class="fa-solid fa-calendar-xmark" style="font-size:1.5rem;opacity:.3;display:block;margin-bottom:8px"></i>
-            Tidak ada jadwal mendatang.
+        <div class="empty-state" style="border:none;padding:2rem">
+            <div class="empty-state-icon" style="width:3rem;height:3rem;margin-bottom:1rem">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
+            </div>
+            <div class="empty-state-title" style="font-size:1rem">Tidak ada jadwal mendatang.</div>
         </div>
         @endforelse
     </div>
@@ -279,7 +281,7 @@
     {{-- Presensi Bulan Ini --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-clipboard-list" style="color:var(--primary-blue);margin-right:8px"></i>Presensi Bulan Ini</h3>
+            <h3><i class="fa-solid fa-clipboard-list" style="color:var(--primary-blue);margin-right:0.5rem"></i>Presensi Bulan Ini</h3>
         </div>
         <div style="padding:0">
             @forelse($presensiBulanIni->take(5) as $p)
@@ -297,8 +299,11 @@
                 <div class="presensi-badge {{ $lblClass }}">{{ ucfirst($st) }}</div>
             </div>
             @empty
-            <div style="padding:24px;text-align:center;color:var(--text-light);font-size:.8rem">
-                Belum ada presensi bulan ini.
+            <div class="empty-state" style="border:none;padding:2rem">
+                <div class="empty-state-icon" style="width:3rem;height:3rem;margin-bottom:1rem">
+                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="12" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 28h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 40h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 52h16" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="empty-state-title" style="font-size:1rem">Belum ada presensi bulan ini.</div>
             </div>
             @endforelse
         </div>
@@ -307,7 +312,7 @@
     {{-- Laporan Terakhir --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-file-lines" style="color:var(--primary-blue);margin-right:8px"></i>
+            <h3><i class="fa-solid fa-file-lines" style="color:var(--primary-blue);margin-right:0.5rem"></i>
                 @if($reportTerakhir)
                     Laporan {{ \Carbon\Carbon::parse($reportTerakhir->periode_bulan)->translatedFormat('F Y') }}
                 @else
@@ -370,9 +375,11 @@
             @endif
         </div>
         @else
-        <div style="padding:32px;text-align:center;color:var(--text-light);font-size:.8rem">
-            <i class="fa-solid fa-file-circle-xmark" style="font-size:1.5rem;opacity:.3;display:block;margin-bottom:8px"></i>
-            Belum ada laporan bulanan.
+        <div class="empty-state" style="border:none;padding:2rem">
+            <div class="empty-state-icon" style="width:3rem;height:3rem;margin-bottom:1rem">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="12" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 28h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 40h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 52h16" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="empty-state-title" style="font-size:1rem">Belum ada laporan bulanan.</div>
         </div>
         @endif
     </div>

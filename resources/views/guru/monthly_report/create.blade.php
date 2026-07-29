@@ -24,34 +24,34 @@
 </div>
 
 {{-- Ringkasan Sesi --}}
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-bottom:24px">
-    <div class="card" style="padding:16px 20px;text-align:center">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(9.375rem,1fr));gap:1rem;margin-bottom:1.5rem">
+    <div class="card" style="padding:1rem 1.5rem;text-align:center">
         <div style="font-size:1.8rem;font-weight:700;color:var(--primary-blue)">{{ $totalSesi }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Total Sesi</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Total Sesi</div>
     </div>
-    <div class="card" style="padding:16px 20px;text-align:center">
+    <div class="card" style="padding:1rem 1.5rem;text-align:center">
         <div style="font-size:1.8rem;font-weight:700;color:#16a34a">{{ $totalHadir }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Hadir</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Hadir</div>
     </div>
-    <div class="card" style="padding:16px 20px;text-align:center">
+    <div class="card" style="padding:1rem 1.5rem;text-align:center">
         <div style="font-size:1.8rem;font-weight:700;color:{{ $persen >= 80 ? '#16a34a' : ($persen >= 60 ? '#d97706' : '#dc2626') }}">
             {{ $persen }}%
         </div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Kehadiran</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Kehadiran</div>
     </div>
-    <div class="card" style="padding:16px 20px;text-align:center">
+    <div class="card" style="padding:1rem 1.5rem;text-align:center">
         <div style="font-size:1.8rem;font-weight:700;color:var(--primary-blue)">{{ $skorOtomatis }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Skor Otomatis</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Skor Otomatis</div>
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
+<div style="display:grid;grid-template-columns:1fr 21.25rem;gap:1.5rem;align-items:start">
 
     {{-- Form Laporan --}}
     <div class="card">
         <div class="card-header">
             <h3>
-                <i class="fa-solid fa-file-pen" style="color:var(--primary-blue);margin-right:8px"></i>
+                <i class="fa-solid fa-file-pen" style="color:var(--primary-blue);margin-right:0.5rem"></i>
                 Form Laporan — {{ $spp->murid->nama_murid ?? '-' }}
                 <span style="font-weight:400;color:var(--text-light);font-size:.85rem">
                     · {{ \Carbon\Carbon::createFromFormat('Y-m', $bulan)->translatedFormat('F Y') }}
@@ -78,7 +78,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">
                         Skor otomatis berdasarkan kehadiran: <strong>{{ $skorOtomatis }}</strong>. Anda bisa mengubahnya.
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                     <textarea name="evaluasi_bulanan" class="form-control" rows="8"
                               placeholder="Tuliskan evaluasi dan perkembangan murid selama bulan ini, pencapaian yang diraih, materi yang dikuasai, serta saran ke depan..."
                               required>{{ old('evaluasi_bulanan', $report?->evaluasi_bulanan) }}</textarea>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Maks. 3000 karakter.</div>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Maks. 3000 karakter.</div>
                 </div>
 
                 <div class="form-group">
@@ -96,7 +96,7 @@
                     <input type="url" name="url_video" class="form-control"
                            value="{{ old('url_video', $report?->url_video) }}"
                            placeholder="https://drive.google.com/... atau https://youtube.com/..."/>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">
                         Link video rekaman atau highlight pembelajaran bulan ini.
                     </div>
                 </div>
@@ -112,9 +112,9 @@
     {{-- Ringkasan Sesi --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:8px"></i>Rekap Sesi</h3>
+            <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:0.5rem"></i>Rekap Sesi</h3>
         </div>
-        <div style="padding:0;max-height:500px;overflow-y:auto">
+        <div style="padding:0;max-height:31.25rem;overflow-y:auto">
             @forelse($jadwals as $j)
             @php
                 $sm = $j->status_kehadiran_murid;
@@ -124,8 +124,8 @@
                     default       => '#d97706',
                 };
             @endphp
-            <div style="padding:12px 16px;border-bottom:1px solid #f3f4f6;display:flex;gap:12px;align-items:center">
-                <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-blue);color:#fff;
+            <div style="padding:1rem 1rem;border-bottom:1px solid #f3f4f6;display:flex;gap:1rem;align-items:center">
+                <div style="width:2rem;height:2rem;border-radius:50%;background:var(--primary-blue);color:#fff;
                             display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">
                     {{ $j->sesi_ke }}
                 </div>
@@ -133,7 +133,7 @@
                     <div style="font-size:.8rem;font-weight:600">{{ $j->tanggal->translatedFormat('d M Y') }}</div>
                     <div style="font-size:.72rem;color:var(--text-light)">{{ substr($j->jam_mulai, 0, 5) }}</div>
                     @if($j->progresMurid)
-                        <div style="font-size:.72rem;color:var(--primary-blue);margin-top:2px">
+                        <div style="font-size:.72rem;color:var(--primary-blue);margin-top:0.125rem">
                             {{ Str::limit($j->progresMurid->materi_diajarkan, 40) }}
                         </div>
                     @endif
@@ -141,7 +141,7 @@
                 <span style="font-size:.72rem;font-weight:700;color:{{ $color }}">{{ $sm ?? '?' }}</span>
             </div>
             @empty
-                <div style="padding:24px;text-align:center;color:var(--text-light);font-size:.85rem">Tidak ada sesi.</div>
+                <div style="padding:1.5rem;text-align:center;color:var(--text-light);font-size:.85rem">Tidak ada sesi.</div>
             @endforelse
         </div>
     </div>

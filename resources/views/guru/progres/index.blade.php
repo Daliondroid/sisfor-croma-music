@@ -14,27 +14,19 @@
 
 @section('content')
 <div class="page-header">
-    <div>
-        <h2>Laporan KBM Harian</h2>
-        <div class="breadcrumb">Guru / <span>Laporan KBM</span></div>
-    </div>
-</div>
-
-{{-- Filter --}}
-<div class="card" style="margin-bottom:20px">
-    <div class="card-body" style="padding:16px 24px">
-        <form method="GET" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <label style="font-weight:600;font-size:.875rem">Filter Murid:</label>
-            <select name="id_spp" class="form-control" style="width:auto" onchange="this.form.submit()">
-                <option value="">— Semua Murid —</option>
+    <h2>Laporan KBM Harian</h2>
+    <div class="breadcrumb">Guru / <span>Laporan KBM</span></div>
+    <div class="page-header-filters">
+        <form method="GET" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <select name="id_spp" class="form-control form-control-sm" style="width:auto" onchange="this.form.submit()">
+                <option value="">Semua Murid</option>
                 @foreach($muridDiajar as $spp)
                     <option value="{{ $spp->id_spp }}" {{ request('id_spp') == $spp->id_spp ? 'selected' : '' }}>
                         {{ $spp->murid->nama_murid ?? '-' }}
                     </option>
                 @endforeach
             </select>
-            <label style="font-weight:600;font-size:.875rem">Bulan:</label>
-            <input type="month" name="bulan" class="form-control" style="width:auto"
+            <input type="month" name="bulan" class="form-control form-control-sm" style="width:auto"
                    value="{{ request('bulan', now()->format('Y-m')) }}" onchange="this.form.submit()"/>
         </form>
     </div>
@@ -42,14 +34,17 @@
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fa-solid fa-book-open" style="color:var(--primary-blue);margin-right:8px"></i>Riwayat Laporan KBM</h3>
+        <h3><i class="fa-solid fa-book-open" style="color:var(--primary-blue);margin-right:0.5rem"></i>Riwayat Laporan KBM</h3>
         <span style="font-size:.8rem;color:var(--text-light)">{{ $progres->total() }} record</span>
     </div>
 
     @if($progres->isEmpty())
-        <div style="text-align:center;padding:60px;color:var(--text-light)">
-            <i class="fa-solid fa-book-open" style="font-size:2.5rem;opacity:.3;display:block;margin-bottom:14px"></i>
-            <p>Belum ada laporan KBM yang diinput.</p>
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="8" width="48" height="64" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 24h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 56V36l8 8 6-4 10 12" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>
+            </div>
+            <div class="empty-state-title">Belum ada laporan KBM.</div>
+            <div class="empty-state-description">Belum ada laporan KBM yang diinput.</div>
         </div>
     @else
         <div class="table-wrap">
@@ -75,8 +70,8 @@
                         </td>
                         <td>{{ $p->jadwal->spp->murid->nama_murid ?? '-' }}</td>
                         <td>{{ $p->jadwal->spp->programKursus->nama_program ?? '-' }}</td>
-                        <td style="max-width:200px">{{ Str::limit($p->materi_diajarkan, 60) }}</td>
-                        <td style="max-width:200px;color:var(--text-light);font-size:.82rem">
+                        <td style="max-width:12.5rem">{{ Str::limit($p->materi_diajarkan, 60) }}</td>
+                        <td style="max-width:12.5rem;color:var(--text-light);font-size:.82rem">
                             {{ Str::limit($p->catatan_perkembangan, 60) }}
                         </td>
                         <td style="text-align:center">
@@ -89,7 +84,7 @@
                 </tbody>
             </table>
         </div>
-        <div style="padding:16px 24px">
+        <div style="padding:1rem 1.5rem">
             {{ $progres->withQueryString()->links() }}
         </div>
     @endif

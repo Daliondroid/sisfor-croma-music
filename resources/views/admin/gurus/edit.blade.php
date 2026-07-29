@@ -8,7 +8,7 @@
     <div><h2>Edit Data Guru</h2><div class="breadcrumb">Admin / Guru / <span>Edit</span></div></div>
     <a href="{{ route('admin.gurus.index') }}" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
 </div>
-<div class="card" style="max-width:680px">
+<div class="card" style="max-width:42.5rem">
     <div class="card-header"><h3>{{ $guru->nama_guru }}</h3></div>
     <div class="card-body">
         <form method="POST" action="{{ route('admin.gurus.update', $guru) }}" enctype="multipart/form-data">
@@ -32,7 +32,7 @@
                 {{-- <div class="form-group">
                     <label class="form-label">Foto Profil</label>
                     <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">Format: JPG, PNG. Maks: 2MB</div>
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Format: JPG, PNG. Maks: 2MB</div>
                 </div> --}}
                 <div class="form-group">
                     <label class="form-label">Password Baru <span style="font-weight:400;color:var(--text-light)">(opsional)</span></label>
@@ -47,14 +47,14 @@
                     <input type="text" name="spesialisasi" class="form-control"
                         value="{{ old('spesialisasi', $guru->spesialisasis->pluck('nama_spesialisasi')->implode(', ')) }}"
                         placeholder="Piano, Gitar, Vokal (pisahkan dengan koma)"/>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:4px">
+                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">
                         Pisahkan beberapa instrumen dengan koma.
                     </div>
                 </div>
-                    @error('spesialisasi_ids') <small style="color:red; margin-top:4px; display:block;">{{ $message }}</small> @enderror
+                    @error('spesialisasi_ids') <small style="color:red; margin-top:0.25rem; display:block;">{{ $message }}</small> @enderror
                 </div>
             </div>
-            <div style="display:flex;gap:12px;margin-top:8px">
+            <div style="display:flex;gap:1rem;margin-top:0.5rem">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
                 <a href="{{ route('admin.gurus.index') }}" class="btn btn-outline">Batal</a>
             </div>

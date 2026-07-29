@@ -8,7 +8,7 @@
     <div><h2>Tambah Program Kursus</h2><div class="breadcrumb">Admin / Program Kursus / <span>Tambah</span></div></div>
     <a href="{{ route('admin.program-kursus.index') }}" class="btn btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
 </div>
-<div class="card" style="max-width:560px">
+<div class="card" style="max-width:35rem">
     <div class="card-header"><h3>Detail Program</h3></div>
     <div class="card-body">
         <form method="POST" action="{{ route('admin.program-kursus.store') }}">
@@ -45,7 +45,7 @@
                           placeholder="Deskripsi singkat program...">{{ old('deskripsi') }}</textarea>
             </div>
 
-            <div style="display:flex;gap:12px">
+            <div style="display:flex;gap:1rem">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
                 <a href="{{ route('admin.program-kursus.index') }}" class="btn btn-outline">Batal</a>
             </div>

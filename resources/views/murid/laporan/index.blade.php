@@ -19,12 +19,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px; height: 48px;
-    border-radius: 12px;
+    width: 3rem; height: 3rem;
+    border-radius: 0.75rem;
     font-size: 1.05rem;
     font-weight: 800;
     flex-shrink: 0;
-    letter-spacing: -.5px;
+    letter-spacing: -.0.3125rem;
 }
 .skor-A-plus  { background: #dcfce7; color: #15803d; }
 .skor-A       { background: #dcfce7; color: #16a34a; }
@@ -47,8 +47,8 @@
 .report-card {
     display: flex;
     align-items: flex-start;
-    gap: 18px;
-    padding: 20px 24px;
+    gap: 1rem;
+    padding: 1.5rem 1.5rem;
     border-bottom: 1px solid var(--topbar-border);
     text-decoration: none;
     color: inherit;
@@ -63,10 +63,10 @@
     font-size: .95rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 .report-card-meta {
@@ -74,11 +74,11 @@
     color: var(--text-light);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
 }
-.report-card-meta span { display: flex; align-items: center; gap: 4px; }
+.report-card-meta span { display: flex; align-items: center; gap: 0.25rem; }
 .report-card-eval {
     font-size: .82rem;
     color: var(--text-light);
@@ -99,7 +99,7 @@
 /* ─── Empty state ───────────────────────────────────── */
 .empty-state {
     text-align: center;
-    padding: 60px 24px;
+    padding: 4rem 1.5rem;
     color: var(--text-light);
 }
 </style>
@@ -139,7 +139,7 @@
                 <div class="report-card-title">
                     {{ $bulanLabel }}
                     @if($r->spp?->programKursus)
-                        <span style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--bg-light);color:var(--text-light);text-transform:uppercase;letter-spacing:.4px">
+                        <span style="font-size:.65rem;font-weight:700;padding:0.125rem 0.5rem;border-radius:0.25rem;background:var(--bg-light);color:var(--text-light);text-transform:uppercase;letter-spacing:0.025rem">
                             {{ $r->spp->programKursus->nama_program }}
                         </span>
                     @endif
@@ -158,7 +158,7 @@
                 @endphp
                 @if($firstProgres?->progresMurid?->catatan_perkembangan)
                     <div class="report-card-eval">
-                        <span style="font-size:.68rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.4px">Catatan: </span>
+                        <span style="font-size:.68rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.025rem">Catatan: </span>
                         {{ $firstProgres->progresMurid->catatan_perkembangan }}
                     </div>
                 @elseif($r->evaluasi_bulanan)
@@ -172,9 +172,11 @@
         </a>
     @empty
         <div class="empty-state">
-            <i class="fa-solid fa-chart-line" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:12px"></i>
-            <p style="font-size:.875rem">Belum ada laporan bulanan.</p>
-            <p style="font-size:.78rem;margin-top:4px">Laporan akan muncul setelah bulan berjalan selesai dan dikompilasi oleh guru.</p>
+            <div class="empty-state-icon">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="12" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M28 28h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 40h24" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/><path d="M28 52h16" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="empty-state-title">Belum ada laporan bulanan.</div>
+            <div class="empty-state-description">Laporan akan muncul setelah bulan berjalan selesai dan dikompilasi oleh guru.</div>
         </div>
     @endforelse
 </div>
