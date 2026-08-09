@@ -50,6 +50,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/spp/{spp}/tolak',       [Admin\SppController::class, 'tolak'])->name('spp.tolak');
     Route::post('/spp/{spp}/notifikasi',   [Admin\SppController::class, 'kirimNotifikasi'])->name('spp.notifikasi');
 
+    // Secure authenticated payment proof viewer (private storage)
+    Route::get('/transaksi/{transaksi}/bukti', [Admin\SppController::class, 'viewBukti'])->name('transaksi.bukti');
+
     // Laporan Gaji
     Route::get('/honor-guru',                [Admin\HonorGuruController::class, 'index'])->name('honor-guru.index');
     Route::get('/honor-guru/{honorGuru}/edit',[Admin\HonorGuruController::class, 'edit'])->name('honor-guru.edit');
@@ -118,7 +121,8 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('/dashboard',            [Murid\DashboardController::class, 'index'])->name('dashboard');
     Route::post('/presensi',            [Murid\PresensiController::class, 'store'])->name('presensi.store');
     Route::get('/spp',                  [Murid\SppController::class, 'index'])->name('spp.index');
-    Route::post('/spp/{spp}/bukti',     [Murid\SppController::class, 'uploadBukti'])->name('spp.bukti');
+    // Rate-limited to 5 uploads per minute per authenticated user
+    Route::post('/spp/{spp}/bukti',     [Murid\SppController::class, 'uploadBukti'])->name('spp.bukti')->middleware('throttle:5,1');
     Route::get('/profil',               [Murid\ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil',               [Murid\ProfilController::class, 'update'])->name('profil.update');
     Route::get('/laporan',              [Murid\MonthlyReportController::class, 'index'])->name('laporan.index');

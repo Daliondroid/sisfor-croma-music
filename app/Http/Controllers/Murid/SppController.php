@@ -8,6 +8,7 @@ use App\Models\Transaksi;
 use App\Models\Murid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SppController extends Controller
 {
@@ -27,15 +28,18 @@ class SppController extends Controller
         // Pastikan SPP milik murid ini
         abort_unless($spp->id_murid === $murid->id_murid, 403, 'Akses ditolak: Data SPP ini bukan milik Anda.');
 
-        $file = $request->file('bukti_transfer');
+        $file     = $request->file('bukti_transfer');
         $filename = 'bukti_' . $spp->id_spp . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('bukti_transfer', $filename, 'public');
+
+        // Store in PRIVATE disk — inaccessible via direct public URL.
+        // Admins view files through an authenticated streamed route.
+        $path = $file->storeAs('bukti_transfer', $filename, 'local');
 
         // Hapus transaksi lama jika ada (re-upload)
         $oldTransaksi = Transaksi::where('id_spp', $spp->id_spp)->first();
         if ($oldTransaksi) {
             if ($oldTransaksi->file_bukti_transfer) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldTransaksi->file_bukti_transfer);
+                Storage::disk('local')->delete($oldTransaksi->file_bukti_transfer);
             }
             $oldTransaksi->delete();
         }

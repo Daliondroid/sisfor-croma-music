@@ -11,6 +11,8 @@ use App\Models\Admin;
 use App\Models\ProgramKursus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SppController extends Controller
 {
@@ -71,25 +73,27 @@ class SppController extends Controller
         $murids  = Murid::where('status_aktif', true)->get();
         $created = 0;
 
-        foreach ($murids as $murid) {
-            $spp = Spp::firstOrCreate(
-                [
-                    'id_murid'        => $murid->id_murid,
-                    'id_program'      => $program->id_program,
-                    'periode_tagihan' => $request->bulan . '-01',
-                ],
-                [
-                    'nominal_tagihan'    => $nominal,
-                    'tanggal_jatuh_tempo'=> now()->parse($request->bulan . '-01')->endOfMonth()->toDateString(),
-                    'tipe_les'           => $request->tipe_les,
-                    'status_bayar'       => 'Belum Lunas',
-                ]
-            );
+        DB::transaction(function () use ($murids, $program, $nominal, $request, &$created) {
+            foreach ($murids as $murid) {
+                $spp = Spp::firstOrCreate(
+                    [
+                        'id_murid'        => $murid->id_murid,
+                        'id_program'      => $program->id_program,
+                        'periode_tagihan' => $request->bulan . '-01',
+                    ],
+                    [
+                        'nominal_tagihan'    => $nominal,
+                        'tanggal_jatuh_tempo'=> now()->parse($request->bulan . '-01')->endOfMonth()->toDateString(),
+                        'tipe_les'           => $request->tipe_les,
+                        'status_bayar'       => 'Belum Lunas',
+                    ]
+                );
 
-            if ($spp->wasRecentlyCreated) {
-                $created++;
+                if ($spp->wasRecentlyCreated) {
+                    $created++;
+                }
             }
-        }
+        });
 
         return back()->with('success',
             "Tagihan SPP {$request->bulan} berhasil di-generate untuk {$created} murid baru."
@@ -115,15 +119,17 @@ class SppController extends Controller
 
         $admin = Admin::where('id_user', Auth::id())->firstOrFail();
 
-        // Update status SPP
-        $spp->update(['status_bayar' => 'Lunas']);
+        DB::transaction(function () use ($spp, $transaksi, $admin, $request) {
+            // Update status SPP
+            $spp->update(['status_bayar' => 'Lunas']);
 
-        // Update transaksi: isi admin, tanggal konfirmasi, catatan
-        $transaksi->update([
-            'id_admin'           => $admin->id_admin,
-            'tanggal_konfirmasi' => now()->toDateString(),
-            'catatan_admin'      => $request->catatan_admin,
-        ]);
+            // Update transaksi: isi admin, tanggal konfirmasi, catatan
+            $transaksi->update([
+                'id_admin'           => $admin->id_admin,
+                'tanggal_konfirmasi' => now()->toDateString(),
+                'catatan_admin'      => $request->catatan_admin,
+            ]);
+        });
 
         return back()->with('success', 'Pembayaran berhasil divalidasi dan SPP ditandai Lunas.');
     }
@@ -141,13 +147,14 @@ class SppController extends Controller
             return back()->with('error', 'Tidak ada transaksi untuk ditolak.');
         }
 
-        // Hapus bukti transfer dari storage
-        if ($transaksi->file_bukti_transfer) {
-            \Illuminate\Support\Facades\Storage::disk('public')
-                ->delete($transaksi->file_bukti_transfer);
-        }
+        DB::transaction(function () use ($transaksi) {
+            // Hapus bukti transfer dari private storage
+            if ($transaksi->file_bukti_transfer) {
+                Storage::disk('local')->delete($transaksi->file_bukti_transfer);
+            }
 
-        $transaksi->delete();
+            $transaksi->delete();
+        });
 
         return back()->with('success', 'Bukti transfer ditolak dan dihapus. Murid dapat mengunggah ulang.');
     }
@@ -185,5 +192,32 @@ class SppController extends Controller
         ]);
  
         return back()->with('success', "Notifikasi berhasil dikirim ke {$murid->nama_murid}.");
+    }
+
+    /**
+     * Stream a payment proof file to the authenticated admin.
+     *
+     * The file is stored on the private disk and cannot be accessed
+     * via a direct public URL. This method authorises the request,
+     * resolves the file path, and streams it inline so the admin can
+     * view or download it without ever exposing the real file path.
+     */
+    public function viewBukti(Transaksi $transaksi)
+    {
+        $path = $transaksi->file_bukti_transfer;
+
+        abort_unless($path && Storage::disk('local')->exists($path), 404, 'File bukti transfer tidak ditemukan.');
+
+        $mimeType  = Storage::disk('local')->mimeType($path);
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        return response()->stream(function () use ($path) {
+            echo Storage::disk('local')->get($path);
+        }, 200, [
+            'Content-Type'        => $mimeType,
+            'Content-Disposition' => 'inline; filename="bukti_transfer.' . $extension . '"',
+            'Cache-Control'       => 'private, no-store',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 }

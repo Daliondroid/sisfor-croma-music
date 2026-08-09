@@ -1,0 +1,75 @@
+services:
+  # -------------------------------------------------------
+  # PHP 8.4 FPM Application
+  # -------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: croma_app
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    volumes:
+      - app_storage:/var/www/storage
+      - app_bootstrap_cache:/var/www/bootstrap/cache
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - croma_network
+
+  # -------------------------------------------------------
+  # Nginx Web Server
+  # -------------------------------------------------------
+  web:
+    image: nginx:alpine
+    container_name: croma_web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/var/www/public:ro
+      - app_storage:/var/www/storage:ro
+    depends_on:
+      - app
+    networks:
+      - croma_network
+
+  # -------------------------------------------------------
+  # MySQL 8.0 Database
+  # -------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: croma_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sisfor_croma_music
+      MYSQL_USER: croma_user
+      MYSQL_PASSWORD: croma_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_secret"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - croma_network
+
+volumes:
+  db_data:
+    driver: local
+  app_storage:
+    driver: local
+  app_bootstrap_cache:
+    driver: local
+
+networks:
+  croma_network:
+    driver: bridge

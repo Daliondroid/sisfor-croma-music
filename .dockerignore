@@ -1,0 +1,38 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Compiled assets (built inside Docker)
+/public/build
+/public/hot
+
+# Environment files
+.env
+.env.*
+!.env.docker
+
+# Git history
+/.git
+/.gitignore
+
+# Local development artifacts
+/.agents
+/storage/logs/*.log
+/storage/debugbar
+/storage/clockwork
+
+# SQLite databases
+*.sqlite
+*.sqlite-journal
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test and IDE files
+e2e_test.py
+test_results.txt
+.phpunit.result.cache
+/.idea
+/.vscode

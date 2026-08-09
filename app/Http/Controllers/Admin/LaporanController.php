@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
@@ -58,30 +59,38 @@ class LaporanController extends Controller
         $bulan = $request->bulan ?? now()->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
-        $murids = Murid::where('status_aktif', true)
-            ->with(['spps.jadwals' => function ($q) use ($tahun, $bln) {
-                $q->where('is_active', true)
-                  ->whereYear('tanggal', $tahun)
-                  ->whereMonth('tanggal', $bln);
-            }])->get()->map(function ($murid) {
-            $jadwals = collect();
-            if ($murid->spps) {
-                foreach ($murid->spps as $spp) {
-                    if ($spp->jadwals) {
-                        $jadwals = $jadwals->merge($spp->jadwals);
-                    }
-                }
-            }
+        // Build a database-level aggregation subquery so no jadwal rows are
+        // loaded into PHP memory.  The subquery counts sessions per murid
+        // directly inside MySQL, then we join it onto the murids table.
+        $attendanceSub = DB::table('jadwals')
+            ->join('spps', 'jadwals.id_spp', '=', 'spps.id_spp')
+            ->whereYear('jadwals.tanggal', $tahun)
+            ->whereMonth('jadwals.tanggal', $bln)
+            ->where('jadwals.is_active', true)
+            ->select(
+                'spps.id_murid',
+                DB::raw('COUNT(*) as total_sesi'),
+                DB::raw("SUM(CASE WHEN jadwals.status_kehadiran_murid = 'Hadir' THEN 1 ELSE 0 END) as total_hadir"),
+                DB::raw("SUM(CASE WHEN jadwals.status_kehadiran_murid = 'Tidak Hadir' THEN 1 ELSE 0 END) as total_absen"),
+                DB::raw('SUM(CASE WHEN jadwals.status_kehadiran_murid IS NULL THEN 1 ELSE 0 END) as belum_diisi')
+            )
+            ->groupBy('spps.id_murid');
 
-            $murid->total_sesi    = $jadwals->count();
-            $murid->total_hadir   = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-            $murid->total_absen   = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
-            $murid->belum_diisi   = $jadwals->whereNull('status_kehadiran_murid')->count();
-            $murid->persen_hadir  = $murid->total_sesi > 0
-                ? round(($murid->total_hadir / $murid->total_sesi) * 100, 1)
-                : 0;
-            return $murid;
-        });
+        $murids = Murid::where('status_aktif', true)
+            ->leftJoinSub($attendanceSub, 'att', 'murids.id_murid', '=', 'att.id_murid')
+            ->select(
+                'murids.*',
+                DB::raw('COALESCE(att.total_sesi, 0)   as total_sesi'),
+                DB::raw('COALESCE(att.total_hadir, 0)  as total_hadir'),
+                DB::raw('COALESCE(att.total_absen, 0)  as total_absen'),
+                DB::raw('COALESCE(att.belum_diisi, 0)  as belum_diisi'),
+                DB::raw(
+                    'CASE WHEN COALESCE(att.total_sesi, 0) > 0'
+                    . ' THEN ROUND(COALESCE(att.total_hadir, 0) / att.total_sesi * 100, 1)'
+                    . ' ELSE 0 END as persen_hadir'
+                )
+            )
+            ->get();
 
         return view('admin.laporan.absensi', compact('murids', 'bulan'));
     }

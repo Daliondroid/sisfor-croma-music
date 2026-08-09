@@ -10,6 +10,7 @@ use App\Models\Jadwal;
 use App\Models\HonorGuru;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -17,21 +18,30 @@ class DashboardController extends Controller
     {
         $bulanIni = now()->format('Y-m');
 
-        // ── Statistik utama ────────────────────────────────────────
-        $totalMurid = Murid::where('status_aktif', true)->count();
-        $totalGuru  = Guru::where('status_aktif', true)->count();
+        // ── Statistik utama (cached 5 menit per bulan) ─────────────
+        // These counts change infrequently and are expensive on every load.
+        // Cache keys include the current month so they invalidate naturally.
+        $totalMurid = Cache::remember("dash_total_murid", 300, fn () =>
+            Murid::where('status_aktif', true)->count()
+        );
 
-        // SPP belum lunas bulan ini
-        $belumBayar = Spp::where('status_bayar', 'Belum Lunas')
-            ->whereYear('periode_tagihan', now()->year)
-            ->whereMonth('periode_tagihan', now()->month)
-            ->count();
+        $totalGuru = Cache::remember("dash_total_guru", 300, fn () =>
+            Guru::where('status_aktif', true)->count()
+        );
 
-        // Total pemasukan bulan ini (SPP yang sudah lunas)
-        $totalPemasukanBulanIni = Spp::where('status_bayar', 'Lunas')
-            ->whereYear('periode_tagihan', now()->year)
-            ->whereMonth('periode_tagihan', now()->month)
-            ->sum('nominal_tagihan');
+        $belumBayar = Cache::remember("dash_belum_bayar_{$bulanIni}", 300, fn () =>
+            Spp::where('status_bayar', 'Belum Lunas')
+                ->whereYear('periode_tagihan', now()->year)
+                ->whereMonth('periode_tagihan', now()->month)
+                ->count()
+        );
+
+        $totalPemasukanBulanIni = Cache::remember("dash_pemasukan_{$bulanIni}", 300, fn () =>
+            Spp::where('status_bayar', 'Lunas')
+                ->whereYear('periode_tagihan', now()->year)
+                ->whereMonth('periode_tagihan', now()->month)
+                ->sum('nominal_tagihan')
+        );
 
         // ── 5 tagihan SPP belum bayar (terlama) ───────────────────
         $sppBelumBayar = Spp::with('murid')
