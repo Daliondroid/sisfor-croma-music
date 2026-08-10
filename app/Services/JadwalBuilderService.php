@@ -79,37 +79,11 @@ class JadwalBuilderService
 
             // Check Time Clashes for Guru and Murid
             foreach ($generatedSessions as $session) {
-                $clashGuru = Jadwal::where('id_guru', $data['id_guru'])
-                    ->whereDate('tanggal', $session['tanggal'])
-                    ->where('is_active', true)
-                    ->where(fn($q) => $q
-                        ->whereBetween('jam_mulai', [$session['jam_mulai'], $session['jam_selesai']])
-                        ->orWhereBetween('jam_selesai', [$session['jam_mulai'], $session['jam_selesai']])
-                        ->orWhere(fn($q2) => $q2
-                            ->where('jam_mulai', '<=', $session['jam_mulai'])
-                            ->where('jam_selesai', '>=', $session['jam_selesai'])
-                        )
-                    )->exists();
-
-                if ($clashGuru) {
+                if (Jadwal::hasGuruClash($data['id_guru'], $session['tanggal'], $session['jam_mulai'], $session['jam_selesai'])) {
                     throw new \Exception('Guru sudah memiliki jadwal pada ' . $session['tanggal'] . ' jam ' . substr($session['jam_mulai'], 0, 5) . '.');
                 }
 
-                $clashMurid = Jadwal::whereHas('spp', function($q) use ($data) {
-                        $q->where('id_murid', $data['id_murid']);
-                    })
-                    ->whereDate('tanggal', $session['tanggal'])
-                    ->where('is_active', true)
-                    ->where(fn($q) => $q
-                        ->whereBetween('jam_mulai', [$session['jam_mulai'], $session['jam_selesai']])
-                        ->orWhereBetween('jam_selesai', [$session['jam_mulai'], $session['jam_selesai']])
-                        ->orWhere(fn($q2) => $q2
-                            ->where('jam_mulai', '<=', $session['jam_mulai'])
-                            ->where('jam_selesai', '>=', $session['jam_selesai'])
-                        )
-                    )->exists();
-
-                if ($clashMurid) {
+                if (Jadwal::hasMuridClash($data['id_murid'], $session['tanggal'], $session['jam_mulai'], $session['jam_selesai'], null, true)) {
                     throw new \Exception('Murid sudah memiliki jadwal pada ' . $session['tanggal'] . ' jam ' . substr($session['jam_mulai'], 0, 5) . '.');
                 }
             }

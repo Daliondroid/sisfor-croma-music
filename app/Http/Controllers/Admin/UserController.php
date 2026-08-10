@@ -13,13 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // ══════════════════════════════════════════════════════════════
-    //  MURID
-    // ══════════════════════════════════════════════════════════════
-
     public function indexMurid(Request $request)
     {
-        $murids = Murid::with(['user', 'spps'])  // tambah 'spps'
+        $murids = Murid::with(['user', 'spps'])
             ->when(
                 $request->search,
                 fn($q) => $q->where('nama_murid', 'like', "%{$request->search}%")
@@ -128,13 +124,9 @@ class UserController extends Controller
             ->with('success', "Akun murid \"{$nama}\" berhasil dinonaktifkan.");
     }
 
-    // ══════════════════════════════════════════════════════════════
-    //  GURU
-    // ══════════════════════════════════════════════════════════════
-
     public function indexGuru(Request $request)
     {
-        $gurus = Guru::with(['user', 'spesialisasis', 'jadwals'])  // tambah 'jadwals'
+        $gurus = Guru::with(['user', 'spesialisasis', 'jadwals'])
             ->when(
                 $request->search,
                 fn($q) => $q->where('nama_guru', 'like', "%{$request->search}%")

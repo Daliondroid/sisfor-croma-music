@@ -31,7 +31,8 @@ RUN apk add --no-cache \
     bash \
     curl \
     unzip \
-    shadow
+    shadow \
+    mariadb-client
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd \

@@ -44,6 +44,48 @@ class Jadwal extends Model
         ];
     }
 
+    /**
+     * Check if a teacher has a schedule conflict on a specific date and time slot.
+     */
+    public static function hasGuruClash(int $idGuru, string $tanggal, string $jamMulai, string $jamSelesai, ?int $excludeJadwalId = null): bool
+    {
+        return static::where('id_guru', $idGuru)
+            ->whereDate('tanggal', $tanggal)
+            ->where('is_active', true)
+            ->when($excludeJadwalId, fn($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
+            ->where(fn($q) => $q
+                ->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
+                ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai])
+                ->orWhere(fn($q2) => $q2
+                    ->where('jam_mulai', '<=', $jamMulai)
+                    ->where('jam_selesai', '>=', $jamSelesai)
+                )
+            )->exists();
+    }
+
+    /**
+     * Check if a student has a schedule conflict on a specific date and time slot.
+     */
+    public static function hasMuridClash(int $idSppOrMurid, string $tanggal, string $jamMulai, string $jamSelesai, ?int $excludeJadwalId = null, bool $isMuridId = false): bool
+    {
+        return static::whereDate('tanggal', $tanggal)
+            ->where('is_active', true)
+            ->when($excludeJadwalId, fn($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
+            ->when($isMuridId, function ($q) use ($idSppOrMurid) {
+                $q->whereHas('spp', fn($sq) => $sq->where('id_murid', $idSppOrMurid));
+            }, function ($q) use ($idSppOrMurid) {
+                $q->where('id_spp', $idSppOrMurid);
+            })
+            ->where(fn($q) => $q
+                ->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
+                ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai])
+                ->orWhere(fn($q2) => $q2
+                    ->where('jam_mulai', '<=', $jamMulai)
+                    ->where('jam_selesai', '>=', $jamSelesai)
+                )
+            )->exists();
+    }
+
     // ── Relasi ─────────────────────────────────────────────────
 
     public function admin(): BelongsTo

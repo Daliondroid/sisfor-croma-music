@@ -46,12 +46,12 @@ class MonthlyReportController extends Controller
                     ->where('is_active', true)
                     ->get();
 
-                $spp->total_sesi  = $jadwals->count();
-                $spp->hadir_murid = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+                $stats = Jadwal::calculateAttendanceStats($jadwals);
+
+                $spp->total_sesi  = $stats['total_sesi'];
+                $spp->hadir_murid = $stats['hadir'];
                 $spp->hadir_guru  = $jadwals->where('status_kehadiran_guru', 'Hadir')->count();
-                $spp->persen      = $spp->total_sesi > 0
-                    ? round(($spp->hadir_murid / $spp->total_sesi) * 100)
-                    : 0;
+                $spp->persen      = $stats['persen_hadir'];
 
                 // Cek apakah report sudah dibuat
                 $spp->report = MonthlyReport::where('id_spp', $spp->id_spp)
@@ -97,10 +97,10 @@ class MonthlyReportController extends Controller
             ->first();
 
         // Auto-hitung skor dari kehadiran
-        $totalSesi  = $jadwals->count();
-        $totalHadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-        $persen     = $totalSesi > 0 ? round(($totalHadir / $totalSesi) * 100) : 0;
-
+        $stats        = Jadwal::calculateAttendanceStats($jadwals);
+        $totalSesi    = $stats['total_sesi'];
+        $totalHadir   = $stats['hadir'];
+        $persen       = $stats['persen_hadir'];
         $skorOtomatis = MonthlyReport::calculateScore($persen);
 
         return view('guru.monthly_report.create', compact(

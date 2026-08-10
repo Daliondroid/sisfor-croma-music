@@ -1,38 +1,64 @@
-# Dependencies
-/vendor
-/node_modules
+# Version Control
+/.git/
+/.gitignore
+/.gitattributes
 
-# Compiled assets (built inside Docker)
-/public/build
-/public/hot
-
-# Environment files
+# Environment Files & Secrets
 .env
 .env.*
 !.env.docker
+/auth.json
+/storage/*.key
 
-# Git history
-/.git
-/.gitignore
+# Dependencies (Installed fresh in Docker container)
+/vendor/
+/node_modules/
 
-# Local development artifacts
-/.agents
-/storage/logs/*.log
-/storage/debugbar
-/storage/clockwork
+# Local Build Outputs & Asset Hashes
+/public/build/
+/public/hot/
+/public/storage/
 
-# SQLite databases
+# Local Storage & Framework Caches
+/storage/app/*
+!/storage/app/.gitignore
+!/storage/app/public/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/pail/
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
+
+# Local Databases
 *.sqlite
 *.sqlite-journal
 
-# OS files
+# Documentation & Customization Tooling
+/DOCKER.md
+/README.md
+/.agents/
+
+# Local Testing & Development Scripts
+e2e_test.py
+test_results.txt
+*.log
+*.tmp
+.phpunit.result.cache
+/.phpunit.cache/
+
+# IDE & OS Artifacts
+/.idea/
+/.vscode/
+/.cursor/
+/.zed/
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Test and IDE files
-e2e_test.py
-test_results.txt
-.phpunit.result.cache
-/.idea
-/.vscode

@@ -19,20 +19,16 @@ class HonorGuruController extends Controller
     {
         $query = HonorGuru::with(['guru', 'jadwals.spp.murid', 'admin']);
 
-        // Filter berdasarkan Guru
         if ($request->filled('id_guru')) {
             $query->where('id_guru', $request->id_guru);
         }
 
-        // Filter berdasarkan Status Pembayaran
         if ($request->filled('status')) {
             $query->where('status_bayar', $request->status);
         }
 
-        // Urutkan dari yang terbaru (draft baru akan muncul di atas)
         $honors = $query->latest('created_at')->paginate(20)->withQueryString();
-        
-        $gurus = Guru::where('status_aktif', true)->get();
+        $gurus  = Guru::where('status_aktif', true)->get();
 
         return view('admin.honor_guru.index', compact('honors', 'gurus'));
     }
@@ -42,7 +38,6 @@ class HonorGuruController extends Controller
      */
     public function edit(HonorGuru $honorGuru)
     {
-        // Muat relasi untuk menampilkan konteks mengajar pada form edit
         $honorGuru->load(['guru', 'jadwals.spp.murid', 'jadwals.spp.programKursus', 'admin']);
         
         return view('admin.honor_guru.edit', compact('honorGuru'));
@@ -69,16 +64,13 @@ class HonorGuruController extends Controller
             'catatan'      => $request->catatan,
         ];
 
-        // Jika status diubah menjadi Lunas, otomatis catat tanggal pencairan
         if ($request->status_bayar === 'Lunas' && !$honorGuru->tanggal_pencairan) {
             $dataUpdate['tanggal_pencairan'] = now()->toDateString();
         } elseif ($request->status_bayar !== 'Lunas') {
-            $dataUpdate['tanggal_pencairan'] = null; // Reset jika status dikembalikan
+            $dataUpdate['tanggal_pencairan'] = null;
         }
 
-        // Proses unggah file bukti transfer jika ada
         if ($request->hasFile('file_bukti_transfer')) {
-            // Hapus file lama jika ada
             if ($honorGuru->file_bukti_transfer && Storage::disk('public')->exists($honorGuru->file_bukti_transfer)) {
                 Storage::disk('public')->delete($honorGuru->file_bukti_transfer);
             }
@@ -104,7 +96,6 @@ class HonorGuruController extends Controller
             Storage::disk('public')->delete($honorGuru->file_bukti_transfer);
         }
 
-        // Hapus kaitan id_honor di tabel jadwal sebelum menghapus honor
         \App\Models\Jadwal::where('id_honor', $honorGuru->id_honor)->update(['id_honor' => null]);
         
         $honorGuru->delete();

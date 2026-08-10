@@ -6,9 +6,14 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Guru;
 use App\Http\Controllers\Murid;
 use App\Http\Controllers\NotifikasiController;
+use App\Http\Controllers\PublicController;
 
-// ── Landing Page ─────────────────────────────────────────────
+// ── Public MPA Web Layer ─────────────────────────────────────
 Route::get('/', fn() => view('index'))->name('home');
+Route::get('/instruments', [PublicController::class, 'instruments'])->name('instruments.index');
+Route::get('/instruments/{slug}', [PublicController::class, 'instrumentDetail'])->name('instruments.show');
+Route::get('/mentors', [PublicController::class, 'mentors'])->name('mentors.index');
+Route::get('/mentors/{slug}', [PublicController::class, 'mentorProfile'])->name('mentors.show');
 
 // ── Redirect dashboard berdasarkan role ──────────────────────
 Route::get('/dashboard', [AuthController::class, 'redirectAfterLogin'])

@@ -54,14 +54,8 @@ class JadwalController extends Controller
      */
     public function create()
     {
-        // Mengambil master data untuk kebutuhan dropdown
-        $murids = \App\Models\Murid::all(); 
-        
-        // UBAH 'is_active' MENJADI 'status_aktif' DI BARIS BAWAH INI:
-        $gurus = \App\Models\Guru::where('status_aktif', true)->get(); 
-        
-        // Catatan tambahan: Pastikan juga tabel ProgramKursus memang menggunakan kolom 'is_active'.
-        // Jika ProgramKursus juga menggunakan 'status_aktif', Anda harus mengubahnya juga di baris bawah ini.
+        $murids   = \App\Models\Murid::all();
+        $gurus    = \App\Models\Guru::where('status_aktif', true)->get();
         $programs = \App\Models\ProgramKursus::where('is_active', true)->get();
 
         return view('admin.jadwals.create', compact('murids', 'gurus', 'programs'));
@@ -152,39 +146,13 @@ class JadwalController extends Controller
             substr($jadwal->jam_selesai, 0, 5) != $request->jam_selesai;
 
         // ── Cek time-clash guru (kecualikan jadwal ini sendiri) ────
-        $clashGuru = Jadwal::where('id_guru', $request->id_guru)
-            ->whereDate('tanggal', $request->tanggal)
-            ->where('is_active', true)
-            ->where('id_jadwal', '!=', $jadwal->id_jadwal)
-            ->where(fn($q) => $q
-                ->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
-                ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
-                ->orWhere(fn($q2) => $q2
-                    ->where('jam_mulai', '<=', $request->jam_mulai)
-                    ->where('jam_selesai', '>=', $request->jam_selesai)
-                )
-            )->exists();
-
-        if ($clashGuru) {
+        if (Jadwal::hasGuruClash($request->id_guru, $request->tanggal, $request->jam_mulai, $request->jam_selesai, $jadwal->id_jadwal)) {
             return back()->withInput()
                 ->withErrors(['jam_mulai' => 'Guru sudah memiliki jadwal pada slot waktu tersebut.']);
         }
 
         // ── Cek time-clash murid ───────────────────────────────────
-        $clashMurid = Jadwal::where('id_spp', $request->id_spp)
-            ->whereDate('tanggal', $request->tanggal)
-            ->where('is_active', true)
-            ->where('id_jadwal', '!=', $jadwal->id_jadwal)
-            ->where(fn($q) => $q
-                ->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
-                ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
-                ->orWhere(fn($q2) => $q2
-                    ->where('jam_mulai', '<=', $request->jam_mulai)
-                    ->where('jam_selesai', '>=', $request->jam_selesai)
-                )
-            )->exists();
-
-        if ($clashMurid) {
+        if (Jadwal::hasMuridClash($request->id_spp, $request->tanggal, $request->jam_mulai, $request->jam_selesai, $jadwal->id_jadwal)) {
             return back()->withInput()
                 ->withErrors(['jam_mulai' => 'Murid sudah memiliki jadwal pada slot waktu tersebut.']);
         }

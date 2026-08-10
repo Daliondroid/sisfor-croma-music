@@ -542,7 +542,7 @@ img {
 
 .nav-container {
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 	align-items: center;
 	width: 100%;
 	position: relative;
@@ -557,12 +557,10 @@ img {
 	font-weight: 800;
 	color: var(--bg-white);
 	letter-spacing: -0.01em;
-	margin: 0 auto;
+	margin: 0;
 }
 
 .nav-actions {
-	position: absolute;
-	right: var(--container-padding);
 	display: flex;
 }
 
@@ -1120,4 +1118,689 @@ img {
 
 .back-to-home-link:hover {
 	color: var(--primary-navy);
+}
+
+/* --- 12. MPA PUBLIC LAYER & OVERHAUL STYLES --- */
+
+/* Public Navigation Header */
+.public-nav {
+	display: flex;
+	align-items: center;
+}
+
+.nav-links {
+	display: flex;
+	align-items: center;
+	gap: clamp(1rem, 2.5vw, 2rem);
+	list-style: none;
+}
+
+.nav-links a {
+	font-family: var(--font-heading);
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: rgba(255, 255, 255, 0.88);
+	position: relative;
+	padding: 0.5rem 0;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+	color: var(--accent-gold);
+}
+
+.nav-links a.active::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: var(--accent-gold);
+	border-radius: var(--radius-pill);
+}
+
+.header.scrolled .nav-links a {
+	color: var(--primary-navy);
+}
+
+.header.scrolled .nav-links a:hover,
+.header.scrolled .nav-links a.active {
+	color: var(--accent-gold-hover);
+}
+
+/* Light-first Page Header (Default state for non-hero light pages) */
+.header.header-light:not(.scrolled) .logo,
+.header.header-light:not(.scrolled) .logo span {
+	color: var(--primary-navy) !important;
+}
+
+.header.header-light:not(.scrolled) .logo-img {
+	border-color: var(--primary-navy) !important;
+}
+
+.header.header-light:not(.scrolled) .nav-links a {
+	color: var(--primary-navy) !important;
+}
+
+.header.header-light:not(.scrolled) .nav-links a:hover,
+.header.header-light:not(.scrolled) .nav-links a.active {
+	color: var(--accent-gold-hover) !important;
+}
+
+.header.header-light:not(.scrolled) .btn-outline {
+	border-color: var(--primary-navy) !important;
+	color: var(--primary-navy) !important;
+	background: transparent !important;
+}
+
+.header.header-light:not(.scrolled) .btn-outline:hover {
+	background: var(--primary-navy) !important;
+	color: var(--bg-white) !important;
+}
+
+/* Eyebrow Labels (Clean Minimal Typography replacing floating bubble badges) */
+.eyebrow {
+	display: block;
+	font-family: var(--font-heading);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--accent-gold-hover);
+	margin-bottom: 0.35rem;
+}
+
+.eyebrow-light {
+	display: block;
+	font-family: var(--font-heading);
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--accent-gold);
+	margin-bottom: 0.35rem;
+}
+
+.page-header {
+	padding-top: calc(var(--header-height) + clamp(2rem, 4vw, 3.5rem)) !important;
+}
+
+/* Utility Helpers */
+.bg-navy { background-color: var(--primary-navy-dark) !important; color: var(--bg-white) !important; }
+.text-center { text-align: center !important; }
+.text-white { color: var(--bg-white) !important; }
+.align-left { text-align: left !important; }
+.margin-top-sm { margin-top: 0.75rem !important; }
+.margin-top-md { margin-top: 1.5rem !important; }
+.margin-top-lg { margin-top: 2.5rem !important; }
+.full-width { width: 100% !important; justify-content: center !important; }
+
+.btn-sm {
+	padding: 0.45rem 1.15rem !important;
+	font-size: 0.85rem !important;
+}
+
+/* How It Works Section */
+.how-it-works-grid {
+	margin-top: 1rem;
+}
+
+.step-card {
+	position: relative;
+	padding: clamp(1.75rem, 4vw, 2.5rem) 1.5rem;
+	text-align: center;
+}
+
+.step-number {
+	position: absolute;
+	top: 1rem;
+	right: 1.25rem;
+	font-family: var(--font-heading);
+	font-size: 2.25rem;
+	font-weight: 800;
+	color: rgba(15, 44, 89, 0.1);
+}
+
+.step-card h3 {
+	font-size: 1.2rem;
+	margin-top: 1rem;
+	margin-bottom: 0.5rem;
+	color: var(--primary-navy);
+}
+
+.step-card p {
+	font-size: 0.925rem;
+	color: var(--text-muted);
+}
+
+/* Why Us Section */
+.why-us-grid {
+	align-items: center;
+	gap: clamp(2rem, 5vw, 4rem);
+}
+
+.stat-card-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1.25rem;
+}
+
+.stat-item {
+	padding: 1.75rem 1.25rem;
+	text-align: center;
+	background: var(--bg-white);
+	border: 1px solid var(--border-light);
+}
+
+.stat-value {
+	display: block;
+	font-family: var(--font-heading);
+	font-size: clamp(2rem, 4vw, 2.75rem);
+	font-weight: 800;
+	color: var(--primary-navy);
+	line-height: 1;
+	margin-bottom: 0.5rem;
+}
+
+.stat-label {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--text-muted);
+}
+
+.differentiator-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	margin-top: 1.5rem;
+}
+
+.differentiator-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.differentiator-item i {
+	font-size: 1.35rem;
+	margin-top: 0.2rem;
+	flex-shrink: 0;
+}
+
+.differentiator-item strong {
+	display: block;
+	font-size: 1.05rem;
+	color: var(--primary-navy);
+	margin-bottom: 0.25rem;
+}
+
+.differentiator-item p {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+}
+
+/* Pricing Section */
+.pricing-grid {
+	max-width: 62rem;
+	margin: 1.5rem auto 0;
+	gap: clamp(2rem, 5vw, 3.5rem);
+	align-items: stretch;
+}
+
+.pricing-card {
+	padding: clamp(2rem, 4vw, 2.75rem);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.pricing-header {
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+.pricing-icon {
+	width: 3.5rem;
+	height: 3.5rem;
+	background: rgba(15, 44, 89, 0.06);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	color: var(--primary-navy);
+	margin: 0 auto 1rem;
+}
+
+.pricing-subtitle {
+	font-size: 0.875rem;
+	color: var(--text-muted);
+}
+
+.pricing-price {
+	text-align: center;
+	margin-bottom: 1.75rem;
+	padding-bottom: 1.5rem;
+	border-bottom: 1px dashed var(--border-light);
+}
+
+.pricing-price .currency {
+	display: block;
+	font-size: 0.85rem;
+	color: var(--text-muted);
+}
+
+.pricing-price .amount {
+	font-family: var(--font-heading);
+	font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+	font-weight: 800;
+	color: var(--primary-navy);
+}
+
+.pricing-price .period {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+}
+
+.pricing-benefits {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 0.875rem;
+	margin-bottom: 2rem;
+}
+
+.pricing-benefits li {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	font-size: 0.925rem;
+	color: var(--text-dark);
+}
+
+/* FAQ Accordion */
+.faq-accordion {
+	max-width: 52rem;
+	margin: 1.5rem auto 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.faq-item {
+	background: var(--bg-white);
+	border: 1px solid var(--border-light);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	transition: all 0.3s ease;
+}
+
+.faq-item summary {
+	padding: 1.25rem 1.5rem;
+	font-family: var(--font-heading);
+	font-weight: 700;
+	font-size: 1.05rem;
+	color: var(--primary-navy);
+	cursor: pointer;
+	outline: none;
+	list-style: none;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+	content: "\f078";
+	font-family: "Font Awesome 6 Free";
+	font-weight: 900;
+	font-size: 0.9rem;
+	color: var(--text-muted);
+	transition: transform 0.3s ease;
+}
+
+.faq-item[open] summary::after {
+	transform: rotate(180deg);
+	color: var(--accent-gold-hover);
+}
+
+.faq-item[open] {
+	box-shadow: var(--shadow-sm);
+}
+
+.faq-content {
+	padding: 0 1.5rem 1.25rem;
+	font-size: 0.95rem;
+	color: var(--text-muted);
+	line-height: 1.6;
+}
+
+/* Instrument Catalog Page */
+.instrument-catalog-grid {
+	margin-top: 1.5rem;
+	gap: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.instrument-card {
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.instrument-card .card-body {
+	padding: clamp(1.25rem, 2.5vw, 1.65rem);
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.instrument-card h3 {
+	font-size: 1.25rem;
+	color: var(--primary-navy);
+	margin: 0;
+}
+
+.instrument-img-wrapper {
+	height: 13rem;
+	position: relative;
+	overflow: hidden;
+}
+
+.instrument-img-wrapper img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.5s ease;
+}
+
+.instrument-card:hover img {
+	transform: scale(1.06);
+}
+
+.family-badge {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	background: rgba(15, 44, 89, 0.85);
+	color: var(--bg-white);
+	backdrop-filter: blur(4px);
+}
+
+.genre-text {
+	font-size: 0.875rem;
+	color: var(--accent-gold-hover);
+	font-weight: 600;
+}
+
+.level-text {
+	font-size: 0.825rem;
+	color: var(--text-muted);
+	margin-bottom: 0.5rem;
+}
+
+.card-action-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 0.875rem;
+	border-top: 1px solid var(--border-light);
+	font-size: 0.875rem;
+	margin-top: auto;
+}
+
+.mentor-count {
+	color: var(--text-muted);
+	font-weight: 600;
+	font-size: 0.825rem;
+}
+
+.badge-text {
+	font-size: 0.825rem;
+	color: var(--text-muted);
+	font-weight: 600;
+}
+
+.btn-text {
+	font-family: var(--font-heading);
+	font-weight: 700;
+	color: var(--primary-navy);
+	font-size: 0.9rem;
+}
+
+.btn-text:hover {
+	color: var(--accent-gold-hover);
+}
+
+/* Instrument Detail Page */
+.instrument-detail-hero {
+	padding: calc(var(--header-height) + clamp(2.5rem, 5vw, 4rem)) 0 clamp(3rem, 6vw, 4.5rem);
+	text-align: center;
+}
+
+.hero-subtext {
+	font-size: 1.05rem;
+	opacity: 0.9;
+	max-width: 38rem;
+	margin: 0.5rem auto 1.5rem;
+}
+
+.detail-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+	gap: clamp(2.5rem, 6vw, 4rem);
+	align-items: flex-start;
+}
+
+.detail-block + .detail-block {
+	margin-top: 2rem;
+}
+
+@media (min-width: 48rem) {
+	.detail-block + .detail-block {
+		margin-top: 0;
+	}
+}
+
+.curriculum-track {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	margin-top: 1.75rem;
+}
+
+.curriculum-step {
+	background: var(--bg-light);
+	padding: 1.5rem 1.75rem;
+	border-radius: var(--radius-md);
+	border-left: none;
+}
+
+.step-badge {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--accent-gold-hover);
+	letter-spacing: 0.05em;
+	margin-bottom: 0.25rem;
+}
+
+.curriculum-step h4 {
+	font-size: 1.1rem;
+	color: var(--primary-navy);
+	margin-bottom: 0.35rem;
+}
+
+.requirement-card {
+	padding: 2rem;
+}
+
+.requirement-card h3 {
+	font-size: 1.25rem;
+	color: var(--primary-navy);
+	margin-bottom: 1.25rem;
+}
+
+.check-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.check-list li {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.875rem;
+	font-size: 0.95rem;
+	color: var(--text-dark);
+}
+
+.check-list i {
+	margin-top: 0.25rem;
+	flex-shrink: 0;
+}
+
+/* Mentor Profile Page */
+.mentor-profile-header {
+	padding: calc(var(--header-height) + clamp(2.5rem, 5vw, 4rem)) 0 clamp(2.5rem, 5vw, 4rem);
+}
+
+.profile-hero-flex {
+	display: flex;
+	align-items: center;
+	gap: clamp(2rem, 5vw, 3.5rem);
+}
+
+.profile-avatar-box {
+	width: clamp(8rem, 20vw, 12rem);
+	height: clamp(8rem, 20vw, 12rem);
+	border-radius: 50%;
+	overflow: hidden;
+	border: 4px solid var(--accent-gold);
+	flex-shrink: 0;
+}
+
+.profile-avatar-box img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.profile-hero-info h1 {
+	color: var(--bg-white);
+	font-size: clamp(2rem, 4vw, 3rem);
+	margin: 0.35rem 0 0.25rem;
+}
+
+.mentor-tagline {
+	font-size: 1.05rem;
+	opacity: 0.9;
+	margin-bottom: 1.25rem;
+}
+
+.profile-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.p-badge {
+	background: rgba(255, 255, 255, 0.1);
+	color: var(--bg-white);
+	padding: 0.35rem 0.875rem;
+	border-radius: var(--radius-pill);
+	font-size: 0.85rem;
+	font-weight: 600;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-content-grid {
+	gap: clamp(2rem, 4vw, 3rem);
+	align-items: flex-start;
+}
+
+.content-card {
+	padding: 2rem;
+	margin-bottom: 1.75rem;
+}
+
+.content-card h3 {
+	font-size: 1.25rem;
+	color: var(--primary-navy);
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.625rem;
+}
+
+.booking-widget-card {
+	padding: 2rem;
+	text-align: center;
+	position: sticky;
+	top: calc(var(--header-height) + 1.5rem);
+}
+
+.booking-widget-card h3 {
+	font-size: 1.2rem;
+	color: var(--primary-navy);
+	margin-bottom: 0.5rem;
+}
+
+.booking-widget-card p {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+	margin-bottom: 1.5rem;
+}
+
+.apply-card {
+	padding: 2rem;
+	text-align: center;
+}
+
+.apply-card h3 {
+	font-size: 1.25rem;
+	color: var(--primary-navy);
+	margin-bottom: 0.5rem;
+}
+
+.apply-card p {
+	font-size: 0.925rem;
+	color: var(--text-muted);
+	margin-bottom: 1.5rem;
+}
+
+.card-action-wrap {
+	display: flex;
+	justify-content: center;
+}
+
+/* Responsive Overrides for Section 12 */
+@media (max-width: 968px) {
+	.public-nav {
+		display: none; /* Hide top inline links on mobile */
+	}
+	
+	.profile-hero-flex {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.profile-badges {
+		justify-content: center;
+	}
+
+	.stat-card-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.stat-card-grid {
+		grid-template-columns: 1fr;
+	}
 }
