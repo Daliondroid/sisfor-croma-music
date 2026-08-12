@@ -38,11 +38,11 @@ class ProfilController extends Controller
             ->firstOrFail();
 
         $request->validate([
-            'nama_guru'      => 'required|string|max:100',
-            'nomor_hp'       => 'nullable|string|max:20',
-            'spesialisasi'   => 'nullable|array',
+            'nama_guru' => 'required|string|max:100',
+            'nomor_hp' => 'nullable|string|max:20',
+            'spesialisasi' => 'nullable|array',
             'spesialisasi.*' => 'string|max:100',
-            'foto_profil'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto_profil' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         DB::transaction(function () use ($request, $guru) {
@@ -63,7 +63,7 @@ class ProfilController extends Controller
             if ($request->filled('password')) {
                 $request->validate([
                     'current_password' => 'required|current_password',
-                    'password'         => 'min:8|confirmed',
+                    'password' => 'min:8|confirmed',
                 ]);
                 $userData['password'] = Hash::make($request->password);
             }
@@ -80,7 +80,7 @@ class ProfilController extends Controller
                     continue;
                 }
                 GuruSpesialisasi::create([
-                    'id_guru'           => $guru->id_guru,
+                    'id_guru' => $guru->id_guru,
                     'nama_spesialisasi' => trim($nama),
                 ]);
             }

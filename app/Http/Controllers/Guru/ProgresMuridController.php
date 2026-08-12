@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jadwal;
 use App\Models\Guru;
+use App\Models\Jadwal;
 use App\Models\ProgresMurid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,15 +24,15 @@ class ProgresMuridController extends Controller
 
         // Ambil semua jadwal milik guru yang sudah ada progres
         $query = ProgresMurid::with(['jadwal.spp.murid', 'jadwal.spp.programKursus'])
-            ->whereHas('jadwal', fn($q) => $q->where('id_guru', $guru->id_guru));
+            ->whereHas('jadwal', fn ($q) => $q->where('id_guru', $guru->id_guru));
 
         if ($request->filled('id_spp')) {
-            $query->whereHas('jadwal', fn($q) => $q->where('id_spp', $request->id_spp));
+            $query->whereHas('jadwal', fn ($q) => $q->where('id_spp', $request->id_spp));
         }
 
         if ($request->filled('bulan')) {
             [$tahun, $bln] = explode('-', $request->bulan);
-            $query->whereHas('jadwal', fn($q) => $q
+            $query->whereHas('jadwal', fn ($q) => $q
                 ->whereYear('tanggal', $tahun)
                 ->whereMonth('tanggal', $bln)
             );
@@ -57,7 +57,7 @@ class ProgresMuridController extends Controller
      */
     public function create(Request $request)
     {
-        $guru   = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $jadwal = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
             ->where('id_jadwal', $request->id_jadwal)
             ->where('id_guru', $guru->id_guru)
@@ -85,13 +85,13 @@ class ProgresMuridController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_jadwal'            => 'required|exists:jadwals,id_jadwal',
-            'materi_diajarkan'     => 'required|string|max:1000',
+            'id_jadwal' => 'required|exists:jadwals,id_jadwal',
+            'materi_diajarkan' => 'required|string|max:1000',
             'catatan_perkembangan' => 'required|string|max:2000',
-            'url_foto'             => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'url_foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
-        $guru   = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
             ->where('id_guru', $guru->id_guru)
             ->firstOrFail();
@@ -112,10 +112,10 @@ class ProgresMuridController extends Controller
         }
 
         ProgresMurid::create([
-            'id_jadwal'            => $jadwal->id_jadwal,
-            'materi_diajarkan'     => $request->materi_diajarkan,
+            'id_jadwal' => $jadwal->id_jadwal,
+            'materi_diajarkan' => $request->materi_diajarkan,
             'catatan_perkembangan' => $request->catatan_perkembangan,
-            'url_foto'             => $fotoPath,
+            'url_foto' => $fotoPath,
         ]);
 
         return redirect()
@@ -130,7 +130,7 @@ class ProgresMuridController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
 
-        if (!$progresMurid->jadwal) {
+        if (! $progresMurid->jadwal) {
             abort(404, 'Data jadwal untuk laporan KBM ini tidak ditemukan.');
         }
 
@@ -151,14 +151,14 @@ class ProgresMuridController extends Controller
     public function update(Request $request, ProgresMurid $progresMurid)
     {
         $request->validate([
-            'materi_diajarkan'     => 'required|string|max:1000',
+            'materi_diajarkan' => 'required|string|max:1000',
             'catatan_perkembangan' => 'required|string|max:2000',
-            'url_foto'             => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'url_foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
 
-        if (!$progresMurid->jadwal) {
+        if (! $progresMurid->jadwal) {
             abort(404, 'Data jadwal untuk laporan KBM ini tidak ditemukan.');
         }
 
@@ -199,14 +199,13 @@ class ProgresMuridController extends Controller
 
         abort_if($jadwals->isEmpty(), 404);
 
-        $murid   = $jadwals->first()->spp?->murid;
+        $murid = $jadwals->first()->spp?->murid;
         $program = $jadwals->first()->spp?->programKursus;
 
         // Filter per bulan opsional
         if ($request->filled('bulan')) {
             [$tahun, $bln] = explode('-', $request->bulan);
-            $jadwals = $jadwals->filter(fn($j) =>
-                $j->tanggal->year == $tahun && $j->tanggal->month == $bln
+            $jadwals = $jadwals->filter(fn ($j) => $j->tanggal->year == $tahun && $j->tanggal->month == $bln
             );
         }
 

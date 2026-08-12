@@ -21,9 +21,11 @@
 		/>
 
 		<link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+		@stack('preload')
 		@stack('styles')
 	</head>
 	<body id="top">
+		<a href="#main-content" class="skip-to-content">Lewati ke konten utama</a>
 		<header class="header @yield('header-class')">
 			<div class="container nav-container">
 				<a href="{{ route('home') }}" class="logo" aria-label="Croma Music Beranda">
@@ -45,11 +47,51 @@
 
 				<div class="nav-actions">
 					<a href="{{ route('login') }}" class="btn btn-outline">Login</a>
+					<button
+						class="mobile-nav-toggle"
+						id="mobile-nav-toggle"
+						aria-label="Buka menu navigasi"
+						aria-expanded="false"
+						aria-controls="mobile-nav-panel"
+					>
+						<i class="fa-solid fa-bars" id="mobile-nav-icon"></i>
+					</button>
 				</div>
 			</div>
 		</header>
 
-		<main>
+		{{-- Mobile Navigation Panel (visible only on ≤968px) --}}
+		<div
+			class="mobile-nav-panel"
+			id="mobile-nav-panel"
+			role="navigation"
+			aria-label="Navigasi Mobile"
+			aria-hidden="true"
+		>
+			<ul class="mobile-nav-links">
+				<li>
+					<a href="{{ route('home') }}" class="mobile-nav-link {{ request()->routeIs('home') ? 'active' : '' }}">
+						<i class="fa-solid fa-house"></i> Beranda
+					</a>
+				</li>
+				<li>
+					<a href="{{ route('instruments.index') }}" class="mobile-nav-link {{ request()->routeIs('instruments.*') ? 'active' : '' }}">
+						<i class="fa-solid fa-guitar"></i> Instrumen
+					</a>
+				</li>
+				<li>
+					<a href="{{ route('mentors.index') }}" class="mobile-nav-link {{ request()->routeIs('mentors.*') ? 'active' : '' }}">
+						<i class="fa-solid fa-user-tie"></i> Mentor
+					</a>
+				</li>
+			</ul>
+			<div class="mobile-nav-divider"></div>
+			<a href="{{ route('login') }}" class="btn btn-primary mobile-nav-cta">
+				<i class="fa-solid fa-right-to-bracket"></i> Masuk ke Sistem
+			</a>
+		</div>
+
+		<main id="main-content">
 			@yield('content')
 		</main>
 
@@ -61,7 +103,7 @@
 						<p>Asah bakat musikmu bersama kami. Platform musik terintegrasi di Jabodetabek.</p>
 					</div>
 					<div class="footer-links">
-						<h4>Navigasi Public</h4>
+						<h4>Navigasi</h4>
 						<ul>
 							<li><a href="{{ route('home') }}">Beranda</a></li>
 							<li><a href="{{ route('instruments.index') }}">Katalog Instrumen</a></li>
@@ -72,18 +114,27 @@
 					<div class="footer-contact">
 						<h4>Hubungi Kami</h4>
 						<p>
-							<i class="fa-brands fa-whatsapp"></i> 0812-3456-7890
+							{{-- TODO: Replace # with real WhatsApp link e.g. https://wa.me/628XXXXXXXXXX --}}
+							<a href="#" target="_blank" rel="noopener noreferrer">
+								<i class="fa-brands fa-whatsapp"></i> 0812-3456-7890
+							</a>
 						</p>
 						<p>
-							<i class="fa-brands fa-instagram"></i>
-							@cromamusic.id
+							{{-- TODO: Replace # with real Instagram URL e.g. https://instagram.com/cromamusic.id --}}
+							<a href="#" target="_blank" rel="noopener noreferrer">
+								<i class="fa-brands fa-instagram"></i> @cromamusic.id
+							</a>
 						</p>
 						<p>
-							<i class="fa-solid fa-envelope"></i>
-							admin@cromamusic.id
+							<a href="mailto:admin@cromamusic.id">
+								<i class="fa-solid fa-envelope"></i> admin@cromamusic.id
+							</a>
 						</p>
 						<p>
-							<i class="fa-solid fa-location-dot"></i> Bekasi, Jawa Barat
+							{{-- TODO: Replace # with real Google Maps URL --}}
+							<a href="#" target="_blank" rel="noopener noreferrer">
+								<i class="fa-solid fa-location-dot"></i> Bekasi, Jawa Barat
+							</a>
 						</p>
 					</div>
 				</div>

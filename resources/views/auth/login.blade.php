@@ -101,6 +101,14 @@
 						/>
 						<span>Ingat saya di perangkat ini</span>
 					</label>
+					@if (Route::has('password.request'))
+						<a
+							href="{{ route('password.request') }}"
+							style="color: var(--primary-navy); font-weight: 600; transition: color 0.2s ease;"
+							onmouseover="this.style.color='var(--accent-gold-hover)'"
+							onmouseout="this.style.color='var(--primary-navy)'"
+						>Lupa kata sandi?</a>
+					@endif
 				</div>
 
 				<button type="submit" class="btn-login">

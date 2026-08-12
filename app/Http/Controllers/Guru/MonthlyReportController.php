@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\Jadwal;
-use App\Models\Spp;
 use App\Models\MonthlyReport;
+use App\Models\Spp;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class MonthlyReportController extends Controller
 {
@@ -21,7 +21,7 @@ class MonthlyReportController extends Controller
      */
     public function index(Request $request)
     {
-        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
 
         [$tahun, $bln] = explode('-', $bulan);
@@ -48,10 +48,10 @@ class MonthlyReportController extends Controller
 
                 $stats = Jadwal::calculateAttendanceStats($jadwals);
 
-                $spp->total_sesi  = $stats['total_sesi'];
+                $spp->total_sesi = $stats['total_sesi'];
                 $spp->hadir_murid = $stats['hadir'];
-                $spp->hadir_guru  = $jadwals->where('status_kehadiran_guru', 'Hadir')->count();
-                $spp->persen      = $stats['persen_hadir'];
+                $spp->hadir_guru = $jadwals->where('status_kehadiran_guru', 'Hadir')->count();
+                $spp->persen = $stats['persen_hadir'];
 
                 // Cek apakah report sudah dibuat
                 $spp->report = MonthlyReport::where('id_spp', $spp->id_spp)
@@ -70,7 +70,7 @@ class MonthlyReportController extends Controller
      */
     public function create(Request $request)
     {
-        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
@@ -97,10 +97,10 @@ class MonthlyReportController extends Controller
             ->first();
 
         // Auto-hitung skor dari kehadiran
-        $stats        = Jadwal::calculateAttendanceStats($jadwals);
-        $totalSesi    = $stats['total_sesi'];
-        $totalHadir   = $stats['hadir'];
-        $persen       = $stats['persen_hadir'];
+        $stats = Jadwal::calculateAttendanceStats($jadwals);
+        $totalSesi = $stats['total_sesi'];
+        $totalHadir = $stats['hadir'];
+        $persen = $stats['persen_hadir'];
         $skorOtomatis = MonthlyReport::calculateScore($persen);
 
         return view('guru.monthly_report.create', compact(
@@ -116,11 +116,11 @@ class MonthlyReportController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_spp'           => 'required|exists:spps,id_spp',
-            'bulan'            => 'required|date_format:Y-m',
-            'skor'             => 'required|in:A+,A,A-,B+,B,B-,C+,C,C-',
+            'id_spp' => 'required|exists:spps,id_spp',
+            'bulan' => 'required|date_format:Y-m',
+            'skor' => 'required|in:A+,A,A-,B+,B,B-,C+,C,C-',
             'evaluasi_bulanan' => 'required|string|max:3000',
-            'url_video'        => 'nullable|url|max:500',
+            'url_video' => 'nullable|url|max:500',
         ]);
 
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
@@ -140,13 +140,13 @@ class MonthlyReportController extends Controller
 
         MonthlyReport::updateOrCreate(
             [
-                'id_spp'        => $spp->id_spp,
-                'periode_bulan' => $request->bulan . '-01',
+                'id_spp' => $spp->id_spp,
+                'periode_bulan' => $request->bulan.'-01',
             ],
             [
-                'skor'             => $request->skor,
+                'skor' => $request->skor,
                 'evaluasi_bulanan' => $request->evaluasi_bulanan,
-                'url_video'        => $request->url_video,
+                'url_video' => $request->url_video,
             ]
         );
 
@@ -163,7 +163,7 @@ class MonthlyReportController extends Controller
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
 
         // Validasi akses
-        $spp   = $monthlyReport->spp;
+        $spp = $monthlyReport->spp;
         $bulan = $monthlyReport->periode_bulan->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
@@ -179,7 +179,7 @@ class MonthlyReportController extends Controller
 
         abort_if($jadwals->isEmpty(), 403);
 
-        $murid   = $spp->murid;
+        $murid = $spp->murid;
         $program = $spp->programKursus;
 
         return view('guru.monthly_report.show', compact(
@@ -200,7 +200,7 @@ class MonthlyReportController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
 
-        $spp   = $monthlyReport->spp->load(['murid', 'programKursus']);
+        $spp = $monthlyReport->spp->load(['murid', 'programKursus']);
         $bulan = $monthlyReport->periode_bulan->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
@@ -224,8 +224,8 @@ class MonthlyReportController extends Controller
         ))->setPaper('A4', 'portrait');
 
         $namaFile = 'laporan-bulanan-'
-            . str()->slug($spp->murid->nama_murid) . '-'
-            . $bulan . '.pdf';
+            .str()->slug($spp->murid->nama_murid).'-'
+            .$bulan.'.pdf';
 
         return $pdf->download($namaFile);
     }

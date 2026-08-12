@@ -34,9 +34,9 @@
     }
     .db-metric {
         background: var(--card-bg);
-        border-radius: var(--radius);
-        padding: 1.5rem;
-        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--topbar-border);
+        border-radius: 0.5rem;
+        padding: 1.25rem 1.5rem;
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
@@ -68,6 +68,8 @@
     }
     .spp-banner.ok   { background: #dcfce7; border-left: 0.25rem solid #16a34a; }
     .spp-banner.warn { background: #fff7ed; border-left: 0.25rem solid #f97316; }
+    [data-theme="dark"] .spp-banner.ok   { background: #14312a; border-left-color: #4ade80; }
+    [data-theme="dark"] .spp-banner.warn { background: #3d2009; border-left-color: #fb923c; }
     .spp-banner-icon {
         width: 2.5rem; height: 2.5rem; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
@@ -75,11 +77,16 @@
     }
     .spp-banner.ok .spp-banner-icon   { background: #bbf7d0; color: #15803d; }
     .spp-banner.warn .spp-banner-icon { background: #fed7aa; color: #c2410c; }
+    [data-theme="dark"] .spp-banner.ok .spp-banner-icon   { background: #166534; color: #4ade80; }
+    [data-theme="dark"] .spp-banner.warn .spp-banner-icon { background: #7c2d12; color: #fb923c; }
     .spp-banner-body { flex: 1; }
     .spp-banner-title { font-size: .875rem; font-weight: 700; }
     .spp-banner.ok .spp-banner-title   { color: #15803d; }
     .spp-banner.warn .spp-banner-title { color: #c2410c; }
+    [data-theme="dark"] .spp-banner.ok .spp-banner-title   { color: #4ade80; }
+    [data-theme="dark"] .spp-banner.warn .spp-banner-title { color: #fb923c; }
     .spp-banner-sub   { font-size: .75rem; color: var(--text-light); margin-top: 0.125rem; }
+
 
     /* ── Jadwal list ── */
     .jadwal-row {

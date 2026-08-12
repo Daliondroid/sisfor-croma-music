@@ -51,8 +51,8 @@
             --radius: 0.875rem;
             --font-heading: "Outfit", sans-serif;
             --font-body: "Plus Jakarta Sans", sans-serif;
-            --shadow-sm: 0 0.125rem 0.25rem rgba(15, 23, 42, 0.04);
-            --shadow-md: 0 0.625rem 1.5625rem -0.3125rem rgba(15, 23, 42, 0.08);
+            --shadow-sm: none;
+            --shadow-md: none;
         }
         [data-theme="dark"] {
             --primary-navy: #38bdf8;
@@ -132,6 +132,8 @@
         }
         .nav-item.active {
             background:var(--sidebar-active-bg); color:var(--sidebar-active-text); font-weight:600;
+            border-left: 0.1875rem solid var(--sidebar-active-text);
+            padding-left: calc(1rem - 0.1875rem);
         }
         .nav-item i { width:1.25rem; text-align:center; font-size:.9rem; }
         .sidebar-footer { padding:1rem 1.5rem; border-top:1px solid var(--sidebar-border); flex-shrink:0; }
@@ -140,11 +142,17 @@
         .main-wrapper { margin-left:var(--sidebar-width); min-height:100vh; display:flex; flex-direction:column; }
         .topbar {
             height:var(--header-height); background:var(--topbar-bg); border-bottom:1px solid var(--topbar-border);
-            display:flex; align-items:center; justify-content:flex-end;
+            display:flex; align-items:center; justify-content:space-between;
             padding:0 2rem; position:sticky; top:0; z-index:50; transition:background .3s, border-color .3s;
         }
         .topbar-left { display:flex; align-items:center; gap:1rem; }
         .topbar-right { display:flex; align-items:center; gap:0.5rem; }
+        .topbar-page-title {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
 
         /* Notif button */
         .notif-btn {
@@ -243,17 +251,17 @@
         .main-content { flex:1; padding:2.5rem; }
 
         /* ── Cards ── */
-        .card { background:var(--card-bg); border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; }
+        .card { background:transparent; border-radius:0; border:1px solid var(--topbar-border); overflow:hidden; }
         .card-header {
             display:flex; align-items:center; justify-content:space-between;
-            padding:1.5rem; border-bottom:1px solid var(--topbar-border);
+            padding:1.25rem 1.5rem; border-bottom:1px solid var(--topbar-border); background:var(--card-bg);
         }
         .card-header h3 { font-size:1rem; font-weight:600; }
-        .card-body { padding:1.5rem; }
+        .card-body { padding:1.5rem; background:var(--card-bg); }
         .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(12.5rem,1fr)); gap:1.5rem; margin-bottom:2rem; }
         .stat-card {
-            background:var(--card-bg); border-radius:var(--radius); padding:1.5rem 1.5rem;
-            box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:1rem;
+            background:var(--card-bg); border:1px solid var(--topbar-border); border-radius:0.5rem; padding:1.25rem 1.5rem;
+            display:flex; align-items:center; gap:1rem;
         }
         .stat-icon { width:3.5rem; height:3.5rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
         .stat-icon.blue  { background:#eff6ff; color:var(--primary-blue); }
@@ -373,6 +381,16 @@
             .page-header-filters { width:100%; }
             .page-header-filters .form-control { flex:1; min-width:0; }
         }
+        /* Dashboard responsive 2-column grid */
+        .dashboard-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media(max-width:60rem) {
+            .dashboard-grid-2 { grid-template-columns: 1fr; }
+        }
+
         .mobile-menu-btn {
             display:none; width:2.5rem; height:2.5rem; border-radius:0.5rem;
             background:var(--bg-light); border:none; cursor:pointer;
@@ -383,6 +401,7 @@
     @stack('styles')
 </head>
 <body>
+<a href="#main-content" class="skip-to-content" style="position:absolute;top:-100%;left:1rem;z-index:9999;padding:.5rem 1.25rem;background:var(--primary-blue);color:#fff;font-family:var(--font-heading);font-weight:600;font-size:.9rem;border-radius:0 0 .5rem .5rem;text-decoration:none;transition:top .2s ease" onfocus="this.style.top='0'" onblur="this.style.top='-100%'">Lewati ke konten utama</a>
 
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
@@ -395,7 +414,7 @@
         @yield('sidebar-menu')
     </nav>
     <div class="sidebar-footer">
-        <div style="font-size:.65rem;color:var(--sidebar-section-label);text-align:center">
+        <div style="font-size:.75rem;color:var(--sidebar-section-label);text-align:center">
             Croma Music &copy; {{ date('Y') }}
         </div>
     </div>
@@ -405,8 +424,13 @@
     <header class="topbar">
         <div class="topbar-left">
             <button class="mobile-menu-btn" id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+            <span class="topbar-page-title">@yield('page-title')</span>
         </div>
         <div class="topbar-right">
+            {{-- Persistent Dark / Light toggle --}}
+            <button class="theme-toggle-btn" id="theme-toggle-btn" title="Ganti tema" aria-label="Ganti ke mode gelap">
+                <i class="fa-solid fa-moon" id="theme-icon"></i>
+            </button>
             {{-- Notifikasi --}}
             @php $unread = auth()->user()->notifikasis()->where('status_baca','belum_dibaca')->count(); @endphp
             <a href="{{ route('notifikasi.index') }}" class="notif-btn" title="Notifikasi">
@@ -446,17 +470,7 @@
                         </a>
                     @endif
 
-                    {{-- Dark/Light Theme Toggle --}}
-                    <div class="dropdown-theme-row">
-                        <div class="dropdown-theme-row-left">
-                            <i class="fa-solid fa-moon" id="theme-icon"></i>
-                            <span id="theme-label">Mode Gelap</span>
-                        </div>
-                        <label class="theme-switch">
-                            <input type="checkbox" id="theme-toggle-checkbox"/>
-                            <span class="theme-switch-slider"></span>
-                        </label>
-                    </div>
+                    {{-- Dark/Light Theme Toggle removed from dropdown — now in topbar --}}
 
                     <div class="dropdown-divider"></div>
 
@@ -471,7 +485,7 @@
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content" id="main-content">
         @if(session('success'))
             <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
         @endif
@@ -508,17 +522,18 @@
         }
     });
 
-    // ── Dark/Light Theme ──
-    const html      = document.documentElement;
-    const checkbox  = document.getElementById('theme-toggle-checkbox');
+    // ── Dark/Light Theme (persistent topbar button) ──
+    const html = document.documentElement;
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const themeLabel= document.getElementById('theme-label');
 
     function applyTheme(isDark) {
         html.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        checkbox.checked = isDark;
-        themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        themeLabel.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+        if (themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('aria-label', isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap');
+            themeToggleBtn.setAttribute('title', isDark ? 'Mode Terang' : 'Mode Gelap');
+        }
         localStorage.setItem('croma-theme', isDark ? 'dark' : 'light');
     }
 
@@ -527,7 +542,10 @@
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     applyTheme(saved ? saved === 'dark' : prefersDark);
 
-    checkbox?.addEventListener('change', () => applyTheme(checkbox.checked));
+    themeToggleBtn?.addEventListener('click', () => {
+        const isDark = html.getAttribute('data-theme') !== 'dark';
+        applyTheme(isDark);
+    });
 </script>
 @stack('scripts')
 </body>

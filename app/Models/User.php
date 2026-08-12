@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $primaryKey = 'id_user';
 
     protected $fillable = [
-        'username', 'name', 'email', 'password', 'foto_profil', 'role', 'is_active'
+        'username', 'name', 'email', 'password', 'foto_profil', 'role', 'is_active',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -24,14 +24,29 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'is_active'         => 'boolean',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
     // Relasi
-    public function murid()       { return $this->hasOne(Murid::class, 'id_user'); }
-    public function guru()        { return $this->hasOne(Guru::class, 'id_user'); }
-    public function admin()       { return $this->hasOne(Admin::class, 'id_user'); }
-    public function notifikasis() { return $this->hasMany(Notifikasi::class, 'id_user'); }
+    public function murid()
+    {
+        return $this->hasOne(Murid::class, 'id_user');
+    }
+
+    public function guru()
+    {
+        return $this->hasOne(Guru::class, 'id_user');
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class, 'id_user');
+    }
+
+    public function notifikasis()
+    {
+        return $this->hasMany(Notifikasi::class, 'id_user');
+    }
 }

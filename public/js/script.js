@@ -38,55 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.addEventListener("scroll", handleScroll, { passive: true });
 	handleScroll(); // Initial check
 
-	// --- 2. SCROLL ANIMATION (INTERSECTION OBSERVER) ---
-	const observerOptions = {
-		threshold: 0.12,
-		rootMargin: "0px 0px -40px 0px",
-	};
 
-	const observer = new IntersectionObserver((entries, obs) => {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				entry.target.classList.add("show-element");
-				obs.unobserve(entry.target);
-			}
-		});
-	}, observerOptions);
-
-	const hiddenElements = document.querySelectorAll(".hidden-element");
-	hiddenElements.forEach((el) => observer.observe(el));
-
-	// --- 3. CONTINUOUS SEAMLESS AUTO-SCROLLING CAROUSEL ---
-	const carouselTrack = document.getElementById("carousel-track");
-
-	if (carouselTrack) {
-		let isHovered = false;
-		let currentX = 0;
-		const scrollSpeed = 0.8; // Smooth pixels per frame
-
-		const stepScroll = () => {
-			if (!isHovered) {
-				currentX += scrollSpeed;
-				const halfWidth = carouselTrack.scrollWidth / 2;
-
-				if (halfWidth > 0 && currentX >= halfWidth) {
-					currentX %= halfWidth; // Seamless mathematical loop without any jump
-				}
-
-				carouselTrack.style.transform = `translate3d(-${currentX}px, 0, 0)`;
-			}
-			requestAnimationFrame(stepScroll);
-		};
-
-		// Pause auto-scroll when user hovers or touches carousel
-		carouselTrack.addEventListener("mouseenter", () => (isHovered = true));
-		carouselTrack.addEventListener("mouseleave", () => (isHovered = false));
-		carouselTrack.addEventListener("touchstart", () => (isHovered = true), { passive: true });
-		carouselTrack.addEventListener("touchend", () => (isHovered = false), { passive: true });
-
-		// Start auto scroll loop
-		requestAnimationFrame(stepScroll);
-	}
 
 	// --- 3. DYNAMIC VIDEO MODAL POP-UP ---
 	const modal = document.getElementById("video-modal");
@@ -158,12 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (shouldShow) {
 					card.style.display = "";
-					requestAnimationFrame(() => {
-						card.classList.add("show-element");
-					});
 				} else {
 					card.style.display = "none";
-					card.classList.remove("show-element");
 				}
 			});
 
@@ -171,14 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
 			if (toggleWrapper) {
 				if (currentCategory === "all") {
 					toggleWrapper.style.display = "block";
-					if (toggleText && toggleIcon && toggleAllBtn) {
+					if (toggleText && toggleAllBtn) {
 						if (showAllMentors) {
 							toggleText.textContent = "Lihat Lebih Sedikit";
-							toggleIcon.style.transform = "rotate(180deg)";
 							toggleAllBtn.setAttribute("aria-expanded", "true");
 						} else {
 							toggleText.textContent = "Lihat Semua Mentor (24)";
-							toggleIcon.style.transform = "rotate(0deg)";
 							toggleAllBtn.setAttribute("aria-expanded", "false");
 						}
 					}
@@ -212,5 +158,93 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		// Initial display (8 featured mentors)
 		updateMentorVisibility();
+	}
+
+	// --- 5. MOBILE NAVIGATION PANEL ---
+	const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+	const mobileNavPanel  = document.getElementById('mobile-nav-panel');
+	const mobileNavIcon   = document.getElementById('mobile-nav-icon');
+
+	if (mobileNavToggle && mobileNavPanel) {
+		const openPanel = () => {
+			mobileNavPanel.classList.add('open');
+			mobileNavToggle.setAttribute('aria-expanded', 'true');
+			mobileNavPanel.setAttribute('aria-hidden', 'false');
+			if (mobileNavIcon) mobileNavIcon.className = 'fa-solid fa-xmark';
+			document.body.style.overflow = 'hidden';
+		};
+
+		const closePanel = () => {
+			mobileNavPanel.classList.remove('open');
+			mobileNavToggle.setAttribute('aria-expanded', 'false');
+			mobileNavPanel.setAttribute('aria-hidden', 'true');
+			if (mobileNavIcon) mobileNavIcon.className = 'fa-solid fa-bars';
+			document.body.style.overflow = '';
+		};
+
+		mobileNavToggle.addEventListener('click', () => {
+			const isOpen = mobileNavPanel.classList.contains('open');
+			isOpen ? closePanel() : openPanel();
+		});
+
+		// Close on any panel link click
+		mobileNavPanel.querySelectorAll('a').forEach(link => {
+			link.addEventListener('click', closePanel);
+		});
+
+		// Close on Escape key
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && mobileNavPanel.classList.contains('open')) {
+				closePanel();
+				mobileNavToggle.focus();
+			}
+		});
+	}
+
+	// --- 6. INSTRUMENT CATALOG REAL-TIME SEARCH & CATEGORY FILTER ---
+	const instSearchInput = document.getElementById("instrument-search-input");
+	const instFilterPills = document.querySelectorAll(".instrument-filter-pills .filter-pill");
+	const instrumentCards = document.querySelectorAll(".instrument-card");
+
+	if (instrumentCards.length > 0) {
+		let selectedCategory = "all";
+		let searchQuery = "";
+
+		const filterInstruments = () => {
+			instrumentCards.forEach((card) => {
+				const category = card.getAttribute("data-category") || "";
+				const title = card.getAttribute("data-title") || "";
+
+				const matchesCategory = selectedCategory === "all" || category.toLowerCase() === selectedCategory.toLowerCase();
+				const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
+
+				if (matchesCategory && matchesSearch) {
+					card.style.display = "";
+				} else {
+					card.style.display = "none";
+				}
+			});
+		};
+
+		if (instSearchInput) {
+			instSearchInput.addEventListener("input", (e) => {
+				searchQuery = e.target.value.trim();
+				filterInstruments();
+			});
+		}
+
+		instFilterPills.forEach((pill) => {
+			pill.addEventListener("click", () => {
+				selectedCategory = pill.getAttribute("data-category");
+
+				instFilterPills.forEach((p) => {
+					const isSelected = p.getAttribute("data-category") === selectedCategory;
+					p.classList.toggle("active", isSelected);
+					p.setAttribute("aria-selected", isSelected ? "true" : "false");
+				});
+
+				filterInstruments();
+			});
+		});
 	}
 });

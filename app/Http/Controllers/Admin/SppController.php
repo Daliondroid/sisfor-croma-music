@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Murid;
+use App\Models\Notifikasi;
+use App\Models\ProgramKursus;
 use App\Models\Spp;
 use App\Models\Transaksi;
-use App\Models\Notifikasi;
-use App\Models\Murid;
-use App\Models\Admin;
-use App\Models\ProgramKursus;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class SppController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan  = $request->bulan  ?? now()->format('Y-m');
+        $bulan = $request->bulan ?? now()->format('Y-m');
         $status = $request->status ?? '';
 
         $query = Spp::with(['murid', 'programKursus', 'transaksi'])
@@ -35,8 +36,8 @@ class SppController extends Controller
         $spps = $query->latest('tanggal_jatuh_tempo')->paginate(25);
 
         // Ringkasan bulan ini
-        $totalTagihan   = (clone $query->getQuery())->sum('nominal_tagihan');
-        $totalMasuk     = Spp::where('status_bayar', 'Lunas')
+        $totalTagihan = (clone $query->getQuery())->sum('nominal_tagihan');
+        $totalMasuk = Spp::where('status_bayar', 'Lunas')
             ->whereYear('periode_tagihan', substr($bulan, 0, 4))
             ->whereMonth('periode_tagihan', substr($bulan, 5, 2))
             ->sum('nominal_tagihan');
@@ -61,31 +62,31 @@ class SppController extends Controller
     public function generateBulanan(Request $request)
     {
         $request->validate([
-            'bulan'        => 'required|date_format:Y-m',
-            'nominal'      => 'nullable|numeric|min:0',
-            'tipe_les'     => 'required|in:Onsite,Home Private',
-            'id_program'   => 'required|exists:program_kursus,id_program',
+            'bulan' => 'required|date_format:Y-m',
+            'nominal' => 'nullable|numeric|min:0',
+            'tipe_les' => 'required|in:Onsite,Home Private',
+            'id_program' => 'required|exists:program_kursus,id_program',
         ]);
 
         $program = ProgramKursus::findOrFail($request->id_program);
         $nominal = $request->nominal ?? $program->biaya_kursus;
 
-        $murids  = Murid::where('status_aktif', true)->get();
+        $murids = Murid::where('status_aktif', true)->get();
         $created = 0;
 
         DB::transaction(function () use ($murids, $program, $nominal, $request, &$created) {
             foreach ($murids as $murid) {
                 $spp = Spp::firstOrCreate(
                     [
-                        'id_murid'        => $murid->id_murid,
-                        'id_program'      => $program->id_program,
-                        'periode_tagihan' => $request->bulan . '-01',
+                        'id_murid' => $murid->id_murid,
+                        'id_program' => $program->id_program,
+                        'periode_tagihan' => $request->bulan.'-01',
                     ],
                     [
-                        'nominal_tagihan'    => $nominal,
-                        'tanggal_jatuh_tempo'=> now()->parse($request->bulan . '-01')->endOfMonth()->toDateString(),
-                        'tipe_les'           => $request->tipe_les,
-                        'status_bayar'       => 'Belum Lunas',
+                        'nominal_tagihan' => $nominal,
+                        'tanggal_jatuh_tempo' => now()->parse($request->bulan.'-01')->endOfMonth()->toDateString(),
+                        'tipe_les' => $request->tipe_les,
+                        'status_bayar' => 'Belum Lunas',
                     ]
                 );
 
@@ -125,9 +126,9 @@ class SppController extends Controller
 
             // Update transaksi: isi admin, tanggal konfirmasi, catatan
             $transaksi->update([
-                'id_admin'           => $admin->id_admin,
+                'id_admin' => $admin->id_admin,
                 'tanggal_konfirmasi' => now()->toDateString(),
-                'catatan_admin'      => $request->catatan_admin,
+                'catatan_admin' => $request->catatan_admin,
             ]);
         });
 
@@ -169,28 +170,28 @@ class SppController extends Controller
         if ($spp->status_bayar === 'Lunas') {
             return back()->with('error', 'SPP ini sudah lunas, notifikasi tidak perlu dikirim.');
         }
- 
+
         $murid = $spp->murid;
- 
-        if (!$murid || !$murid->id_user) {
+
+        if (! $murid || ! $murid->id_user) {
             return back()->with('error', 'Data murid tidak ditemukan.');
         }
- 
-        $periode  = \Carbon\Carbon::parse($spp->periode_tagihan)->translatedFormat('F Y');
-        $nominal  = 'Rp ' . number_format($spp->nominal_tagihan, 0, ',', '.');
+
+        $periode = Carbon::parse($spp->periode_tagihan)->translatedFormat('F Y');
+        $nominal = 'Rp '.number_format($spp->nominal_tagihan, 0, ',', '.');
         $jatuhTempo = $spp->tanggal_jatuh_tempo->format('d/m/Y');
- 
+
         $pesanDefault = "Halo {$murid->nama_murid}, mohon segera melunasi tagihan SPP bulan {$periode} sebesar {$nominal} sebelum {$jatuhTempo}.";
         $pesan = $request->filled('pesan') ? $request->pesan : $pesanDefault;
- 
+
         Notifikasi::create([
-            'id_user'          => $murid->id_user,
+            'id_user' => $murid->id_user,
             'jenis_notifikasi' => 'tagihan_spp',
-            'pesan'            => $pesan,
-            'status_baca'      => 'belum_dibaca',
-            'id_referensi'     => $spp->id_spp,
+            'pesan' => $pesan,
+            'status_baca' => 'belum_dibaca',
+            'id_referensi' => $spp->id_spp,
         ]);
- 
+
         return back()->with('success', "Notifikasi berhasil dikirim ke {$murid->nama_murid}.");
     }
 
@@ -208,15 +209,15 @@ class SppController extends Controller
 
         abort_unless($path && Storage::disk('local')->exists($path), 404, 'File bukti transfer tidak ditemukan.');
 
-        $mimeType  = Storage::disk('local')->mimeType($path);
+        $mimeType = Storage::disk('local')->mimeType($path);
         $extension = pathinfo($path, PATHINFO_EXTENSION);
 
         return response()->stream(function () use ($path) {
             echo Storage::disk('local')->get($path);
         }, 200, [
-            'Content-Type'        => $mimeType,
-            'Content-Disposition' => 'inline; filename="bukti_transfer.' . $extension . '"',
-            'Cache-Control'       => 'private, no-store',
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="bukti_transfer.'.$extension.'"',
+            'Cache-Control' => 'private, no-store',
             'X-Content-Type-Options' => 'nosniff',
         ]);
     }

@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class MonthlyReport extends Model
 {
     protected $table = 'monthly_reports';
+
     protected $primaryKey = 'id_report';
 
     protected $fillable = [
-        'id_spp', 'periode_bulan', 'url_video', 'skor', 'evaluasi_bulanan'
+        'id_spp', 'periode_bulan', 'url_video', 'skor', 'evaluasi_bulanan',
     ];
 
     protected $casts = [
@@ -33,7 +34,7 @@ class MonthlyReport extends Model
             $persen >= 70 => 'B-',
             $persen >= 65 => 'C+',
             $persen >= 60 => 'C',
-            default       => 'C-',
+            default => 'C-',
         };
     }
 

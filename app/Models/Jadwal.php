@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Jadwal extends Model
 {
     protected $table = 'jadwals';
+
     protected $primaryKey = 'id_jadwal';
 
     protected $fillable = [
@@ -19,10 +20,10 @@ class Jadwal extends Model
     ];
 
     protected $casts = [
-        'tanggal'              => 'date',
+        'tanggal' => 'date',
         'waktu_presensi_diisi' => 'datetime',
-        'verified_at'          => 'datetime',
-        'is_active'            => 'boolean',
+        'verified_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -30,16 +31,16 @@ class Jadwal extends Model
      */
     public static function calculateAttendanceStats($jadwals): array
     {
-        $total      = $jadwals->count();
-        $hadir      = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+        $total = $jadwals->count();
+        $hadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
         $tidakHadir = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
         $belumDiisi = $jadwals->whereNull('status_kehadiran_murid')->count();
 
         return [
-            'total_sesi'   => $total,
-            'hadir'        => $hadir,
-            'tidak_hadir'  => $tidakHadir,
-            'belum_diisi'  => $belumDiisi,
+            'total_sesi' => $total,
+            'hadir' => $hadir,
+            'tidak_hadir' => $tidakHadir,
+            'belum_diisi' => $belumDiisi,
             'persen_hadir' => $total > 0 ? round(($hadir / $total) * 100) : 0,
         ];
     }
@@ -52,11 +53,11 @@ class Jadwal extends Model
         return static::where('id_guru', $idGuru)
             ->whereDate('tanggal', $tanggal)
             ->where('is_active', true)
-            ->when($excludeJadwalId, fn($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
-            ->where(fn($q) => $q
+            ->when($excludeJadwalId, fn ($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
+            ->where(fn ($q) => $q
                 ->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
                 ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai])
-                ->orWhere(fn($q2) => $q2
+                ->orWhere(fn ($q2) => $q2
                     ->where('jam_mulai', '<=', $jamMulai)
                     ->where('jam_selesai', '>=', $jamSelesai)
                 )
@@ -70,16 +71,16 @@ class Jadwal extends Model
     {
         return static::whereDate('tanggal', $tanggal)
             ->where('is_active', true)
-            ->when($excludeJadwalId, fn($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
+            ->when($excludeJadwalId, fn ($q) => $q->where('id_jadwal', '!=', $excludeJadwalId))
             ->when($isMuridId, function ($q) use ($idSppOrMurid) {
-                $q->whereHas('spp', fn($sq) => $sq->where('id_murid', $idSppOrMurid));
+                $q->whereHas('spp', fn ($sq) => $sq->where('id_murid', $idSppOrMurid));
             }, function ($q) use ($idSppOrMurid) {
                 $q->where('id_spp', $idSppOrMurid);
             })
-            ->where(fn($q) => $q
+            ->where(fn ($q) => $q
                 ->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
                 ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai])
-                ->orWhere(fn($q2) => $q2
+                ->orWhere(fn ($q2) => $q2
                     ->where('jam_mulai', '<=', $jamMulai)
                     ->where('jam_selesai', '>=', $jamSelesai)
                 )

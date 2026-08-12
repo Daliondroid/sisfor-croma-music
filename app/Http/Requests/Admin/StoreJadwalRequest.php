@@ -14,12 +14,12 @@ class StoreJadwalRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'id_murid'      => 'required|exists:murids,id_murid',
-            'id_program'    => 'required|exists:program_kursus,id_program',
-            'id_guru'       => 'required|exists:gurus,id_guru',
-            'total_sesi'    => 'required|integer|in:4,8,12,16,20,24',
-            'tipe_les'      => 'required|in:Onsite,Home Private',
-            'tipe_jadwal'   => 'required|in:tetap,pola,manual',
+            'id_murid' => 'required|exists:murids,id_murid',
+            'id_program' => 'required|exists:program_kursus,id_program',
+            'id_guru' => 'required|exists:gurus,id_guru',
+            'total_sesi' => 'required|integer|in:4,8,12,16,20,24',
+            'tipe_les' => 'required|in:Onsite,Home Private',
+            'tipe_jadwal' => 'required|in:tetap,pola,manual',
             'tanggal_mulai' => 'required|date',
         ];
 

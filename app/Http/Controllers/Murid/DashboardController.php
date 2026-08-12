@@ -14,7 +14,7 @@ class DashboardController extends Controller
             ->with(['jadwals.guru', 'jadwals.spp'])
             ->firstOrFail();
 
-        $sppBulanIni    = $murid->sppBulanIni();
+        $sppBulanIni = $murid->sppBulanIni();
         $reportTerakhir = $murid->monthlyReports()->latest()->first();
 
         // Mengambil riwayat jadwal pelajaran yang sudah diisi presensinya pada bulan ini

@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Murid;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Murid\UploadBuktiSppRequest;
+use App\Models\Murid;
 use App\Models\Spp;
 use App\Models\Transaksi;
-use App\Models\Murid;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SppController extends Controller
 {
@@ -16,20 +17,21 @@ class SppController extends Controller
     public function index()
     {
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
-        $spps  = $murid->spps()->with('transaksi')->latest()->paginate(12);
+        $spps = $murid->spps()->with('transaksi')->latest()->paginate(12);
+
         return view('murid.spp.index', compact('spps'));
     }
 
     // Upload bukti transfer
-    public function uploadBukti(\App\Http\Requests\Murid\UploadBuktiSppRequest $request, Spp $spp)
+    public function uploadBukti(UploadBuktiSppRequest $request, Spp $spp)
     {
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
 
         // Pastikan SPP milik murid ini
         abort_unless($spp->id_murid === $murid->id_murid, 403, 'Akses ditolak: Data SPP ini bukan milik Anda.');
 
-        $file     = $request->file('bukti_transfer');
-        $filename = 'bukti_' . $spp->id_spp . '_' . time() . '_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
+        $file = $request->file('bukti_transfer');
+        $filename = 'bukti_'.$spp->id_spp.'_'.time().'_'.Str::random(8).'.'.$file->getClientOriginalExtension();
 
         // Store in PRIVATE disk — inaccessible via direct public URL.
         // Admins view files through an authenticated streamed route.
@@ -45,11 +47,11 @@ class SppController extends Controller
         }
 
         Transaksi::create([
-            'id_spp'              => $spp->id_spp,
-            'id_admin'            => null,
+            'id_spp' => $spp->id_spp,
+            'id_admin' => null,
             'file_bukti_transfer' => $path,
-            'nominal_bayar'       => $request->nominal_bayar,
-            'tanggal_bayar'       => $request->tanggal_bayar,
+            'nominal_bayar' => $request->nominal_bayar,
+            'tanggal_bayar' => $request->tanggal_bayar,
         ]);
 
         return back()->with('success', 'Bukti transfer berhasil diunggah. Menunggu konfirmasi admin.');

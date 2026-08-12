@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Spp;
 use App\Models\HonorGuru;
 use App\Models\Murid;
+use App\Models\Spp;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -15,9 +15,9 @@ class LaporanReportService
      */
     public function resolveDateRange(?string $bulanInput, ?string $startDateInput, ?string $endDateInput): array
     {
-        $bulan     = $bulanInput ?? now()->format('Y-m');
-        $startDate = $startDateInput ?? Carbon::parse($bulan . '-01')->startOfMonth()->format('Y-m-d');
-        $endDate   = $endDateInput   ?? Carbon::parse($bulan . '-01')->endOfMonth()->format('Y-m-d');
+        $bulan = $bulanInput ?? now()->format('Y-m');
+        $startDate = $startDateInput ?? Carbon::parse($bulan.'-01')->startOfMonth()->format('Y-m-d');
+        $endDate = $endDateInput ?? Carbon::parse($bulan.'-01')->endOfMonth()->format('Y-m-d');
 
         return [$bulan, $startDate, $endDate];
     }
@@ -35,8 +35,8 @@ class LaporanReportService
             ->latest('periode_tagihan')
             ->get();
 
-        $totalMasuk     = $spps->where('status_bayar', 'Lunas')->sum('nominal_tagihan');
-        $totalTagihan   = $spps->sum('nominal_tagihan');
+        $totalMasuk = $spps->where('status_bayar', 'Lunas')->sum('nominal_tagihan');
+        $totalTagihan = $spps->sum('nominal_tagihan');
         $totalTunggakan = $totalTagihan - $totalMasuk;
 
         return compact('spps', 'totalMasuk', 'totalTagihan', 'totalTunggakan');
@@ -73,8 +73,8 @@ class LaporanReportService
                 DB::raw('COALESCE(att.belum_diisi, 0)  as belum_diisi'),
                 DB::raw(
                     'CASE WHEN COALESCE(att.total_sesi, 0) > 0'
-                    . ' THEN ROUND(COALESCE(att.total_hadir, 0) / att.total_sesi * 100, 1)'
-                    . ' ELSE 0 END as persen_hadir'
+                    .' THEN ROUND(COALESCE(att.total_hadir, 0) / att.total_sesi * 100, 1)'
+                    .' ELSE 0 END as persen_hadir'
                 )
             )
             ->get();
@@ -97,12 +97,12 @@ class LaporanReportService
 
         $ringkasanGuru = $honors->groupBy('id_guru')->map(function ($items) {
             return [
-                'guru'            => $items->first()->guru,
-                'total_honor'     => $items->sum('jumlah_honor'),
+                'guru' => $items->first()->guru,
+                'total_honor' => $items->sum('jumlah_honor'),
                 'total_pertemuan' => $items->sum('jumlah_pertemuan'),
-                'total_lunas'     => $items->where('status_bayar', 'Lunas')->sum('jumlah_honor'),
-                'total_pending'   => $items->whereIn('status_bayar', ['Belum Lunas', 'Siap Dibayar'])->sum('jumlah_honor'),
-                'records'         => $items,
+                'total_lunas' => $items->where('status_bayar', 'Lunas')->sum('jumlah_honor'),
+                'total_pending' => $items->whereIn('status_bayar', ['Belum Lunas', 'Siap Dibayar'])->sum('jumlah_honor'),
+                'records' => $items,
             ];
         })->values();
 

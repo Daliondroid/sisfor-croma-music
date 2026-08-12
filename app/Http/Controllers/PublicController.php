@@ -53,6 +53,7 @@ class PublicController extends Controller
     public function instruments()
     {
         $programs = $this->getProgramsData();
+
         return view('public.instruments.index', compact('programs'));
     }
 
@@ -60,9 +61,9 @@ class PublicController extends Controller
     {
         $programs = collect($this->getProgramsData());
         $instrument = $programs->firstWhere('slug', $slug) ?? $programs->first();
-        
+
         $mentors = collect($this->getMentorsData())
-            ->filter(fn($m) => strtolower($m['category']) === strtolower($instrument['slug']) || $instrument['slug'] === 'piano' && $m['category'] === 'piano')
+            ->filter(fn ($m) => strtolower($m['category']) === strtolower($instrument['slug']) || $instrument['slug'] === 'piano' && $m['category'] === 'piano')
             ->values()
             ->all();
 
@@ -76,6 +77,7 @@ class PublicController extends Controller
     public function mentors(Request $request)
     {
         $mentors = $this->getMentorsData();
+
         return view('public.mentors.index', compact('mentors'));
     }
 

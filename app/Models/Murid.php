@@ -13,12 +13,12 @@ class Murid extends Model
 
     protected $fillable = [
         'id_user', 'nama_murid', 'tanggal_lahir', 'alamat',
-        'nomor_hp', 'nama_orang_tua', 'status_aktif'
+        'nomor_hp', 'nama_orang_tua', 'status_aktif',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
-        'status_aktif'  => 'boolean',
+        'status_aktif' => 'boolean',
     ];
 
     // ── Relasi langsung ────────────────────────────────────────
@@ -77,7 +77,7 @@ class Murid extends Model
      * Ambil SPP pada bulan/periode tertentu (atau bulan ini jika tidak diisi).
      * Dipakai di dashboard: $murid->sppBulanIni()
      *
-     * @param string|null $bulan  format 'Y-m', default bulan ini
+     * @param  string|null  $bulan  format 'Y-m', default bulan ini
      */
     public function sppBulanIni(?string $bulan = null): ?Spp
     {

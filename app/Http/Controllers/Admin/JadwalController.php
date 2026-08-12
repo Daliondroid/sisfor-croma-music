@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StoreJadwalRequest;
+use App\Models\Guru;
 use App\Models\Jadwal;
 use App\Models\Murid;
-use App\Models\HonorGuru;
-use App\Models\Guru;
 use App\Models\ProgramKursus;
 use App\Models\Spp;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Services\JadwalBuilderService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JadwalController extends Controller
@@ -26,8 +25,8 @@ class JadwalController extends Controller
 
         // Filter pencarian nama murid
         if ($request->filled('search')) {
-            $query->whereHas('spp.murid', function($q) use ($request) {
-                $q->where('nama_murid', 'like', '%' . $request->search . '%');
+            $query->whereHas('spp.murid', function ($q) use ($request) {
+                $q->where('nama_murid', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -49,14 +48,15 @@ class JadwalController extends Controller
 
         return view('admin.jadwals.index', compact('jadwals', 'gurus'));
     }
+
     /**
      * Form buat jadwal baru.
      */
     public function create()
     {
-        $murids   = \App\Models\Murid::all();
-        $gurus    = \App\Models\Guru::where('status_aktif', true)->get();
-        $programs = \App\Models\ProgramKursus::where('is_active', true)->get();
+        $murids = Murid::all();
+        $gurus = Guru::where('status_aktif', true)->get();
+        $programs = ProgramKursus::where('is_active', true)->get();
 
         return view('admin.jadwals.create', compact('murids', 'gurus', 'programs'));
     }
@@ -64,11 +64,11 @@ class JadwalController extends Controller
     /**
      * Simpan jadwal baru using JadwalBuilderService.
      */
-    public function store(\App\Http\Requests\Admin\StoreJadwalRequest $request, \App\Services\JadwalBuilderService $builderService)
+    public function store(StoreJadwalRequest $request, JadwalBuilderService $builderService)
     {
         try {
             $admin = Auth::user()->admin;
-            if (!$admin) {
+            if (! $admin) {
                 throw new \Exception('Akses ditolak: User tidak memiliki profil Admin.');
             }
 
@@ -77,28 +77,28 @@ class JadwalController extends Controller
             return redirect()->route('admin.jadwals.index')
                 ->with('success', "Berhasil menjadwalkan {$count} pertemuan KBM. Sistem juga telah membuat Tagihan SPP otomatis dan Draft Gaji Guru.");
         } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Proses pembuatan jadwal gagal: ' . $e->getMessage()]);
+            return back()->withInput()->withErrors(['error' => 'Proses pembuatan jadwal gagal: '.$e->getMessage()]);
         }
     }
 
     // Fungsi Endpoint API untuk mengecek riwayat sesi secara asinkronus (Realtime UX)
     public function cekSesi(Request $request)
     {
-        $spp = \App\Models\Spp::where('id_murid', $request->id_murid)
+        $spp = Spp::where('id_murid', $request->id_murid)
             ->where('id_program', $request->id_program)
             ->latest('id_spp')
             ->first();
 
         if ($spp) {
-            $lastSesi = \App\Models\Jadwal::where('id_spp', $spp->id_spp)->max('sesi_ke') ?? 0;
+            $lastSesi = Jadwal::where('id_spp', $spp->id_spp)->max('sesi_ke') ?? 0;
+
             return response()->json(['last_sesi' => $lastSesi]);
         }
 
         return response()->json(['last_sesi' => 0]);
     }
 
-
-/**
+    /**
      * Tampilkan detail jadwal spesifik.
      */
     public function show(Jadwal $jadwal)
@@ -115,34 +115,34 @@ class JadwalController extends Controller
     public function edit(Jadwal $jadwal)
     {
         $gurus = Guru::where('status_aktif', true)->with('spesialisasis')->get();
-        $spps  = Spp::with('murid')
-            ->whereHas('murid', fn($q) => $q->where('status_aktif', true))
+        $spps = Spp::with('murid')
+            ->whereHas('murid', fn ($q) => $q->where('status_aktif', true))
             ->latest()
             ->get();
 
         return view('admin.jadwals.edit', compact('jadwal', 'gurus', 'spps'));
     }
 
-/**
+    /**
      * Update jadwal.
      * Jika tanggal/jam/guru berubah → status = 'Reschedule' & reset presensi.
      */
     public function update(Request $request, Jadwal $jadwal)
     {
         $request->validate([
-            'id_guru'    => 'required|exists:gurus,id_guru',
-            'id_spp'     => 'required|exists:spps,id_spp',
-            'tanggal'    => 'required|date',
-            'jam_mulai'  => 'required|date_format:H:i',
-            'jam_selesai'=> 'required|date_format:H:i|after:jam_mulai',
-            'sesi_ke'    => 'required|integer|min:1',
+            'id_guru' => 'required|exists:gurus,id_guru',
+            'id_spp' => 'required|exists:spps,id_spp',
+            'tanggal' => 'required|date',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'sesi_ke' => 'required|integer|min:1',
         ]);
 
         // ── Deteksi perubahan parameter penjadwalan ────────────────
         $adaPerubahan =
-            $jadwal->id_guru     != $request->id_guru    ||
+            $jadwal->id_guru != $request->id_guru ||
             $jadwal->tanggal->toDateString() != $request->tanggal ||
-            substr($jadwal->jam_mulai, 0, 5)  != $request->jam_mulai  ||
+            substr($jadwal->jam_mulai, 0, 5) != $request->jam_mulai ||
             substr($jadwal->jam_selesai, 0, 5) != $request->jam_selesai;
 
         // ── Cek time-clash guru (kecualikan jadwal ini sendiri) ────
@@ -159,12 +159,12 @@ class JadwalController extends Controller
 
         // ── Siapkan Data Update ────────────────────────────────────
         $dataUpdate = [
-            'id_guru'      => $request->id_guru,
-            'id_spp'       => $request->id_spp,
-            'tanggal'      => $request->tanggal,
-            'jam_mulai'    => $request->jam_mulai,
-            'jam_selesai'  => $request->jam_selesai,
-            'sesi_ke'      => $request->sesi_ke,
+            'id_guru' => $request->id_guru,
+            'id_spp' => $request->id_spp,
+            'tanggal' => $request->tanggal,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'sesi_ke' => $request->sesi_ke,
         ];
 
         // Jika jadwal berubah, ubah status dan bersihkan data presensi

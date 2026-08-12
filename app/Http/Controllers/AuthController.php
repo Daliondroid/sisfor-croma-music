@@ -12,9 +12,9 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
-        return match($user->role) {
+        return match ($user->role) {
             'admin' => redirect()->route('admin.dashboard'),
-            'guru'  => redirect()->route('guru.dashboard'),
+            'guru' => redirect()->route('guru.dashboard'),
             'murid' => redirect()->route('murid.dashboard'),
             default => redirect('/'),
         };
@@ -25,6 +25,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }

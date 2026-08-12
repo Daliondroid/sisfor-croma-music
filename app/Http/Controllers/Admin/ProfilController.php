@@ -15,7 +15,7 @@ class ProfilController extends Controller
     public function edit()
     {
         /** @var User $user */ // Bagian ini ditambahkan
-        $user  = Auth::user();
+        $user = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 
         return view('admin.profil', compact('user', 'admin'));
@@ -24,17 +24,17 @@ class ProfilController extends Controller
     public function update(Request $request)
     {
         /** @var User $user */ // Bagian ini ditambahkan
-        $user  = Auth::user();
+        $user = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 
         $request->validate([
-            'nama_admin'  => 'required|string|max:100',
-            'email'       => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
+            'nama_admin' => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email,'.$user->id_user.',id_user',
             'foto_profil' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $userData = [
-            'name'  => $request->nama_admin,
+            'name' => $request->nama_admin,
             'email' => $request->email,
         ];
 
@@ -49,7 +49,7 @@ class ProfilController extends Controller
         if ($request->filled('password')) {
             $request->validate([
                 'current_password' => 'required|current_password',
-                'password'         => 'min:8|confirmed',
+                'password' => 'min:8|confirmed',
             ]);
             $userData['password'] = Hash::make($request->password);
         }

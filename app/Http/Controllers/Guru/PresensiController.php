@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jadwal;
 use App\Models\Guru;
+use App\Models\Jadwal;
 use App\Models\Spp;
-use App\Models\ProgresMurid;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class PresensiController extends Controller
 {
@@ -20,7 +19,7 @@ class PresensiController extends Controller
      */
     public function index(Request $request)
     {
-        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
         [$tahun, $bln] = explode('-', $bulan);
 
@@ -33,7 +32,7 @@ class PresensiController extends Controller
             ->orderBy('jam_mulai')
             ->get();
 
-        $jadwalGrouped = $jadwals->groupBy(fn($j) => $j->tanggal->format('Y-m-d'));
+        $jadwalGrouped = $jadwals->groupBy(fn ($j) => $j->tanggal->format('Y-m-d'));
 
         $selectedJadwal = null;
         if ($request->filled('jadwal')) {
@@ -51,7 +50,7 @@ class PresensiController extends Controller
      */
     public function rekap(Request $request)
     {
-        $guru  = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
 
         [$tahun, $bln] = explode('-', $bulan);
@@ -77,20 +76,20 @@ class PresensiController extends Controller
                     ->orderBy('tanggal')
                     ->get();
 
-                $total       = $jadwals->count();
-                $hadir       = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
-                $tidakHadir  = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
-                $belumDiisi  = $jadwals->whereNull('status_kehadiran_murid')->count();
+                $total = $jadwals->count();
+                $hadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+                $tidakHadir = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
+                $belumDiisi = $jadwals->whereNull('status_kehadiran_murid')->count();
 
                 return (object) [
-                    'spp'          => $spp,
-                    'murid'        => $spp->murid,
-                    'program'      => $spp->programKursus,
-                    'jadwals'      => $jadwals,
-                    'total_sesi'   => $total,
-                    'hadir'        => $hadir,
-                    'tidak_hadir'  => $tidakHadir,
-                    'belum_diisi'  => $belumDiisi,
+                    'spp' => $spp,
+                    'murid' => $spp->murid,
+                    'program' => $spp->programKursus,
+                    'jadwals' => $jadwals,
+                    'total_sesi' => $total,
+                    'hadir' => $hadir,
+                    'tidak_hadir' => $tidakHadir,
+                    'belum_diisi' => $belumDiisi,
                     'persen_hadir' => $total > 0 ? round(($hadir / $total) * 100) : 0,
                 ];
             })
@@ -99,7 +98,7 @@ class PresensiController extends Controller
 
         // Detail per sesi jika ada filter murid
         $detailJadwals = collect();
-        $selectedSpp   = null;
+        $selectedSpp = null;
 
         if ($request->filled('id_spp')) {
             $selectedSpp = Spp::with(['murid', 'programKursus'])->find($request->id_spp);
@@ -117,7 +116,7 @@ class PresensiController extends Controller
         }
 
         // Statistik keseluruhan
-        $totalSesiAll  = $rekapAbsensi->sum('total_sesi');
+        $totalSesiAll = $rekapAbsensi->sum('total_sesi');
         $totalHadirAll = $rekapAbsensi->sum('hadir');
         $totalAbsenAll = $rekapAbsensi->sum('tidak_hadir');
         $totalBelumAll = $rekapAbsensi->sum('belum_diisi');
@@ -136,24 +135,24 @@ class PresensiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_jadwal'              => 'required|exists:jadwals,id_jadwal',
+            'id_jadwal' => 'required|exists:jadwals,id_jadwal',
             'status_kehadiran_murid' => 'required|in:Hadir,Tidak Hadir',
-            'status_kehadiran_guru'  => 'required|in:Hadir,Tidak Hadir',
+            'status_kehadiran_guru' => 'required|in:Hadir,Tidak Hadir',
         ]);
 
-        $guru   = Guru::where('id_user', Auth::id())->firstOrFail();
+        $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
             ->where('id_guru', $guru->id_guru)
             ->firstOrFail();
 
         // ── BARU: tolak jika jam mulai belum tiba ──────────────
-        $jadwalMulai = \Carbon\Carbon::parse(
-            $jadwal->tanggal->format('Y-m-d') . ' ' . $jadwal->jam_mulai
+        $jadwalMulai = Carbon::parse(
+            $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai
         );
         if (now()->lt($jadwalMulai)) {
             return back()->with('error',
                 'Presensi belum bisa diisi sebelum jadwal dimulai pukul '
-                . substr($jadwal->jam_mulai, 0, 5) . '.'
+                .substr($jadwal->jam_mulai, 0, 5).'.'
             );
         }
         // ───────────────────────────────────────────────────────
@@ -164,9 +163,9 @@ class PresensiController extends Controller
 
         $jadwal->update([
             'status_kehadiran_murid' => $request->status_kehadiran_murid,
-            'status_kehadiran_guru'  => $request->status_kehadiran_guru,
-            'waktu_presensi_diisi'   => now(),
-            'presensi_diisi_oleh'    => 'Guru',
+            'status_kehadiran_guru' => $request->status_kehadiran_guru,
+            'waktu_presensi_diisi' => now(),
+            'presensi_diisi_oleh' => 'Guru',
         ]);
 
         return redirect()

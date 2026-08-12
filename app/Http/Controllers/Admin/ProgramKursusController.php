@@ -26,17 +26,17 @@ class ProgramKursusController extends Controller
     {
         $request->validate([
             'nama_program' => 'required|string|max:100',
-            'deskripsi'    => 'nullable|string',
-            'tipe_les'     => 'required|in:onsite,home_private,keduanya',
+            'deskripsi' => 'nullable|string',
+            'tipe_les' => 'required|in:onsite,home_private,keduanya',
             'biaya_kursus' => 'required|numeric|min:0',
         ]);
 
         ProgramKursus::create([
             'nama_program' => $request->nama_program,
-            'deskripsi'    => $request->deskripsi,
-            'tipe_les'     => $request->tipe_les,
+            'deskripsi' => $request->deskripsi,
+            'tipe_les' => $request->tipe_les,
             'biaya_kursus' => $request->biaya_kursus,
-            'is_active'    => true,
+            'is_active' => true,
         ]);
 
         return redirect()->route('admin.program-kursus.index')
@@ -52,17 +52,17 @@ class ProgramKursusController extends Controller
     {
         $request->validate([
             'nama_program' => 'required|string|max:100',
-            'deskripsi'    => 'nullable|string',
-            'tipe_les'     => 'required|in:onsite,home_private,keduanya',
+            'deskripsi' => 'nullable|string',
+            'tipe_les' => 'required|in:onsite,home_private,keduanya',
             'biaya_kursus' => 'required|numeric|min:0',
         ]);
 
         $programKursus->update([
             'nama_program' => $request->nama_program,
-            'deskripsi'    => $request->deskripsi,
-            'tipe_les'     => $request->tipe_les,
+            'deskripsi' => $request->deskripsi,
+            'tipe_les' => $request->tipe_les,
             'biaya_kursus' => $request->biaya_kursus,
-            'is_active'    => $request->boolean('is_active'),
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         return redirect()->route('admin.program-kursus.index')

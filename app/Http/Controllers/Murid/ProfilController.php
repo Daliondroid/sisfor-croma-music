@@ -13,6 +13,7 @@ class ProfilController extends Controller
     public function edit()
     {
         $murid = Murid::where('id_user', Auth::id())->with('user')->firstOrFail();
+
         return view('murid.profil', compact('murid'));
     }
 
@@ -20,9 +21,9 @@ class ProfilController extends Controller
     {
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
         $request->validate([
-            'nama_murid'     => 'required|string',
-            'nomor_hp'       => 'nullable|string|max:20',
-            'alamat'         => 'nullable|string',
+            'nama_murid' => 'required|string',
+            'nomor_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
             'nama_orang_tua' => 'nullable|string',
         ]);
 

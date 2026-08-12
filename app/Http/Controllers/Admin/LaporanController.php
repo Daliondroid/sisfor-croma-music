@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\LaporanReportService;
 use App\Services\LaporanExcelService;
-use Illuminate\Http\Request;
+use App\Services\LaporanReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
@@ -32,7 +32,7 @@ class LaporanController extends Controller
     public function absensi(Request $request)
     {
         $bulan = $request->bulan ?? now()->format('Y-m');
-        $data  = $this->reportService->getAbsensiData($bulan);
+        $data = $this->reportService->getAbsensiData($bulan);
 
         return view('admin.laporan.absensi', array_merge($data, compact('bulan')));
     }
@@ -56,7 +56,7 @@ class LaporanController extends Controller
     {
         $request->validate([
             'start_date' => 'nullable|date',
-            'end_date'   => 'nullable|date|after_or_equal:start_date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ], [
             'end_date.after_or_equal' => 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.',
         ]);
@@ -64,10 +64,10 @@ class LaporanController extends Controller
         [$bulan, $startDate, $endDate] = $this->reportService->resolveDateRange($request->bulan, $request->start_date, $request->end_date);
 
         [$data, $namaFile] = match ($jenis) {
-            'keuangan' => [$this->reportService->getKeuanganData($startDate, $endDate), 'laporan-keuangan-' . $startDate . '-sd-' . $endDate],
-            'absensi'  => [$this->reportService->getAbsensiData($bulan), 'rekap-absensi-' . $bulan],
-            'gaji'     => [$this->reportService->getGajiData($startDate, $endDate), 'rekap-gaji-guru-' . $startDate . '-sd-' . $endDate],
-            default    => abort(404, 'Jenis laporan tidak dikenali.'),
+            'keuangan' => [$this->reportService->getKeuanganData($startDate, $endDate), 'laporan-keuangan-'.$startDate.'-sd-'.$endDate],
+            'absensi' => [$this->reportService->getAbsensiData($bulan), 'rekap-absensi-'.$bulan],
+            'gaji' => [$this->reportService->getGajiData($startDate, $endDate), 'rekap-gaji-guru-'.$startDate.'-sd-'.$endDate],
+            default => abort(404, 'Jenis laporan tidak dikenali.'),
         };
 
         $pdf = Pdf::loadView("admin.laporan.pdf.{$jenis}", array_merge(
@@ -86,7 +86,7 @@ class LaporanController extends Controller
     {
         $request->validate([
             'start_date' => 'nullable|date',
-            'end_date'   => 'nullable|date|after_or_equal:start_date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
         ], [
             'end_date.after_or_equal' => 'Tanggal akhir tidak boleh lebih awal dari tanggal mulai.',
         ]);
@@ -95,9 +95,9 @@ class LaporanController extends Controller
 
         return match ($jenis) {
             'keuangan' => $this->excelService->generateKeuanganXlsx($this->reportService->getKeuanganData($startDate, $endDate), $startDate, $endDate),
-            'gaji'     => $this->excelService->generateGajiXlsx($this->reportService->getGajiData($startDate, $endDate), $startDate, $endDate),
-            'absensi'  => $this->excelService->generateAbsensiXlsx($this->reportService->getAbsensiData($bulan), $bulan),
-            default    => abort(404, 'Jenis laporan tidak dikenali.'),
+            'gaji' => $this->excelService->generateGajiXlsx($this->reportService->getGajiData($startDate, $endDate), $startDate, $endDate),
+            'absensi' => $this->excelService->generateAbsensiXlsx($this->reportService->getAbsensiData($bulan), $bulan),
+            default => abort(404, 'Jenis laporan tidak dikenali.'),
         };
     }
 }

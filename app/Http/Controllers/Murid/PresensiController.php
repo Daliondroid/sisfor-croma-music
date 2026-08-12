@@ -25,7 +25,7 @@ class PresensiController extends Controller
 
         // Pastikan jadwal ini memang milik murid (lewat relasi SPP)
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
-            ->whereHas('spp', fn($q) => $q->where('id_murid', $murid->id_murid))
+            ->whereHas('spp', fn ($q) => $q->where('id_murid', $murid->id_murid))
             ->firstOrFail();
 
         // Tolak jika sudah diisi
@@ -40,8 +40,8 @@ class PresensiController extends Controller
 
         $jadwal->update([
             'status_kehadiran_murid' => 'Hadir',
-            'waktu_presensi_diisi'   => now(),
-            'presensi_diisi_oleh'    => 'Murid',
+            'waktu_presensi_diisi' => now(),
+            'presensi_diisi_oleh' => 'Murid',
         ]);
 
         return back()->with('success', 'Kehadiran berhasil diajukan! Menunggu konfirmasi guru.');

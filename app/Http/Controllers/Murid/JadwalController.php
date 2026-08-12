@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Murid;
 
 use App\Http\Controllers\Controller;
 use App\Models\Murid;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class JadwalController extends Controller
 {
@@ -17,14 +17,14 @@ class JadwalController extends Controller
         $availableMonths = $murid->jadwals()
             ->where('is_active', true)
             ->pluck('tanggal')
-            ->map(fn($t) => \Carbon\Carbon::parse($t)->format('Y-m'))
+            ->map(fn ($t) => Carbon::parse($t)->format('Y-m'))
             ->unique()
             ->sortDesc()
             ->values();
 
         $selectedMonth = $request->get('bulan', now()->format('Y-m'));
 
-        if ($availableMonths->isNotEmpty() && !$availableMonths->contains($selectedMonth)) {
+        if ($availableMonths->isNotEmpty() && ! $availableMonths->contains($selectedMonth)) {
             $selectedMonth = $availableMonths->first();
         }
 
@@ -41,15 +41,15 @@ class JadwalController extends Controller
             ->get();
 
         // Statistik kehadiran bulan ini
-        $totalSesi    = $jadwals->count();
-        $totalHadir   = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
+        $totalSesi = $jadwals->count();
+        $totalHadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
         $pctKehadiran = $totalSesi > 0 ? round(($totalHadir / $totalSesi) * 100) : 0;
 
         // Filter
         $filter = $request->get('filter', 'semua');
-        $jadwalsFiltered = match($filter) {
-            'belum' => $jadwals->filter(fn($j) => $j->status_kehadiran_murid === null && !$j->tanggal->isFuture()),
-            'hadir' => $jadwals->filter(fn($j) => $j->status_kehadiran_murid === 'Hadir'),
+        $jadwalsFiltered = match ($filter) {
+            'belum' => $jadwals->filter(fn ($j) => $j->status_kehadiran_murid === null && ! $j->tanggal->isFuture()),
+            'hadir' => $jadwals->filter(fn ($j) => $j->status_kehadiran_murid === 'Hadir'),
             default => $jadwals,
         };
 

@@ -15,8 +15,8 @@ class NotifikasiController extends Controller
 
         // Tandai hanya yang tampil di halaman ini sebagai sudah dibaca
         $ids = $notifikasis->modelKeys();
-        if (!empty($ids)) {
-            Notifikasi::whereIn((new Notifikasi())->getKeyName(), $ids)
+        if (! empty($ids)) {
+            Notifikasi::whereIn((new Notifikasi)->getKeyName(), $ids)
                 ->where('status_baca', 'belum_dibaca')
                 ->update(['status_baca' => 'sudah_dibaca']);
         }

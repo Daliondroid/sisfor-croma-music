@@ -13,7 +13,7 @@ return new class extends Migration
             // Relasi ke tabel gurus
             $table->foreignId('id_guru')->constrained('gurus', 'id_guru')->cascadeOnDelete();
             // Langsung simpan nama spesialisasi sesuai ERD v12
-            $table->string('nama_spesialisasi'); 
+            $table->string('nama_spesialisasi');
             $table->timestamps();
         });
     }

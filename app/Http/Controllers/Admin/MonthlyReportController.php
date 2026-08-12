@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jadwal;
 use App\Models\MonthlyReport;
 use App\Models\Murid;
 use App\Models\Spp;
-use App\Models\Jadwal;
 use Illuminate\Http\Request;
 
 class MonthlyReportController extends Controller
@@ -18,12 +18,12 @@ class MonthlyReportController extends Controller
     {
         $bulan = $request->bulan ?? now()->format('Y-m');
         $tahun = substr($bulan, 0, 4);
-        $bln   = substr($bulan, 5, 2);
+        $bln = substr($bulan, 5, 2);
 
         $murids = Murid::where('status_aktif', true)
             ->with([
                 'user',
-                'monthlyReports' => fn($q) => $q
+                'monthlyReports' => fn ($q) => $q
                     ->whereYear('periode_bulan', $tahun)
                     ->whereMonth('periode_bulan', $bln),
             ])
@@ -43,17 +43,17 @@ class MonthlyReportController extends Controller
 
         $murids->transform(function (Murid $murid) use ($sppsGrouped, $jadwalsGrouped) {
             $userSpps = $sppsGrouped->get($murid->id_murid, collect());
-            $jadwals  = collect();
+            $jadwals = collect();
             foreach ($userSpps as $spp) {
                 $jadwals = $jadwals->merge($jadwalsGrouped->get($spp->id_spp, collect()));
             }
 
             $stats = Jadwal::calculateAttendanceStats($jadwals);
-            $murid->total_sesi   = $stats['total_sesi'];
-            $murid->total_hadir  = $stats['hadir'];
-            $murid->total_absen  = $stats['tidak_hadir'];
+            $murid->total_sesi = $stats['total_sesi'];
+            $murid->total_hadir = $stats['hadir'];
+            $murid->total_absen = $stats['tidak_hadir'];
             $murid->persen_hadir = $stats['persen_hadir'];
-            $murid->report       = $murid->monthlyReports->first();
+            $murid->report = $murid->monthlyReports->first();
 
             return $murid;
         });
@@ -68,8 +68,8 @@ class MonthlyReportController extends Controller
     {
         $request->validate(['bulan' => 'required|date_format:Y-m']);
 
-        $tahun  = substr($request->bulan, 0, 4);
-        $bln    = substr($request->bulan, 5, 2);
+        $tahun = substr($request->bulan, 0, 4);
+        $bln = substr($request->bulan, 5, 2);
         $murids = Murid::where('status_aktif', true)->get();
 
         $spps = Spp::whereIn('id_murid', $murids->pluck('id_murid'))
@@ -94,16 +94,16 @@ class MonthlyReportController extends Controller
             }
 
             $jadwals = $jadwalsGrouped->get($spp->id_spp, collect());
-            $stats   = Jadwal::calculateAttendanceStats($jadwals);
-            $skor    = MonthlyReport::calculateScore($stats['persen_hadir']);
+            $stats = Jadwal::calculateAttendanceStats($jadwals);
+            $skor = MonthlyReport::calculateScore($stats['persen_hadir']);
 
             MonthlyReport::updateOrCreate(
                 [
-                    'id_spp'        => $spp->id_spp,
-                    'periode_bulan' => $request->bulan . '-01',
+                    'id_spp' => $spp->id_spp,
+                    'periode_bulan' => $request->bulan.'-01',
                 ],
                 [
-                    'skor'             => $skor,
+                    'skor' => $skor,
                     'evaluasi_bulanan' => "Kehadiran {$stats['persen_hadir']}% ({$stats['hadir']}/{$stats['total_sesi']} sesi).",
                 ]
             );
@@ -134,7 +134,7 @@ class MonthlyReportController extends Controller
         // Jadwal + progres murid bulan ini
         $jadwals = Jadwal::with(['guru', 'progresMurid'])
             ->where('is_active', true)
-            ->when($spp, fn($q) => $q->where('id_spp', $spp->id_spp))
+            ->when($spp, fn ($q) => $q->where('id_spp', $spp->id_spp))
             ->whereYear('tanggal', substr($bulan, 0, 4))
             ->whereMonth('tanggal', substr($bulan, 5, 2))
             ->orderBy('tanggal')
@@ -150,9 +150,9 @@ class MonthlyReportController extends Controller
     public function update(Request $request, MonthlyReport $monthlyReport)
     {
         $request->validate([
-            'skor'             => 'required|in:A+,A,A-,B+,B,B-,C+,C,C-',
+            'skor' => 'required|in:A+,A,A-,B+,B,B-,C+,C,C-',
             'evaluasi_bulanan' => 'required|string|max:2000',
-            'url_video'        => 'nullable|url',
+            'url_video' => 'nullable|url',
         ]);
 
         $monthlyReport->update($request->only(['skor', 'evaluasi_bulanan', 'url_video']));

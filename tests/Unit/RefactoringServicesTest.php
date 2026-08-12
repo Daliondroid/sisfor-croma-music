@@ -2,14 +2,14 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use App\Services\LaporanReportService;
+use PHPUnit\Framework\TestCase;
 
 class RefactoringServicesTest extends TestCase
 {
     public function test_laporan_report_service_date_resolution(): void
     {
-        $service = new LaporanReportService();
+        $service = new LaporanReportService;
 
         [$bulan, $start, $end] = $service->resolveDateRange('2026-05', null, null);
         $this->assertEquals('2026-05', $bulan);

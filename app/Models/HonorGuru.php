@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class HonorGuru extends Model
 {
     protected $table = 'honor_gurus';
+
     protected $primaryKey = 'id_honor';
 
     protected $fillable = [
-        'id_guru', 'id_admin', 'tanggal_pencairan', 'jumlah_pertemuan', 
-        'jumlah_honor', 'file_bukti_transfer', 'status_bayar', 'catatan'
+        'id_guru', 'id_admin', 'tanggal_pencairan', 'jumlah_pertemuan',
+        'jumlah_honor', 'file_bukti_transfer', 'status_bayar', 'catatan',
     ];
 
     public function guru(): BelongsTo

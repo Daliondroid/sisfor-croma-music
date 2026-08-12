@@ -34,13 +34,13 @@ class JadwalController extends Controller
             ->get();
 
         // Statistik cepat
-        $totalJadwal   = $jadwals->count();
-        $jadwalHariIni = $jadwals->filter(fn($j) => $j->tanggal->isToday())->count();
+        $totalJadwal = $jadwals->count();
+        $jadwalHariIni = $jadwals->filter(fn ($j) => $j->tanggal->isToday())->count();
         $sudahPresensi = $jadwals->whereNotNull('waktu_presensi_diisi')->count();
         $belumPresensi = $totalJadwal - $sudahPresensi;
 
         // Group per tanggal untuk tampilan kalender-list
-        $jadwalGrouped = $jadwals->groupBy(fn($j) => $j->tanggal->format('Y-m-d'));
+        $jadwalGrouped = $jadwals->groupBy(fn ($j) => $j->tanggal->format('Y-m-d'));
 
         return view('guru.jadwal.index', compact(
             'guru', 'jadwals', 'jadwalGrouped', 'bulan',

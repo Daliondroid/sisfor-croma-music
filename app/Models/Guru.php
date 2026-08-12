@@ -11,7 +11,7 @@ class Guru extends Model
     protected $primaryKey = 'id_guru';
 
     protected $fillable = [
-        'id_user', 'nama_guru', 'nomor_hp', 'status_aktif'
+        'id_user', 'nama_guru', 'nomor_hp', 'status_aktif',
     ];
 
     protected $casts = [

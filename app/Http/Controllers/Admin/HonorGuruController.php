@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\HonorGuru;
-use App\Models\Guru;
 use App\Models\Admin;
+use App\Models\Guru;
+use App\Models\HonorGuru;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -28,7 +29,7 @@ class HonorGuruController extends Controller
         }
 
         $honors = $query->latest('created_at')->paginate(20)->withQueryString();
-        $gurus  = Guru::where('status_aktif', true)->get();
+        $gurus = Guru::where('status_aktif', true)->get();
 
         return view('admin.honor_guru.index', compact('honors', 'gurus'));
     }
@@ -39,7 +40,7 @@ class HonorGuruController extends Controller
     public function edit(HonorGuru $honorGuru)
     {
         $honorGuru->load(['guru', 'jadwals.spp.murid', 'jadwals.spp.programKursus', 'admin']);
-        
+
         return view('admin.honor_guru.edit', compact('honorGuru'));
     }
 
@@ -49,22 +50,22 @@ class HonorGuruController extends Controller
     public function update(Request $request, HonorGuru $honorGuru)
     {
         $request->validate([
-            'jumlah_honor'        => 'required|numeric|min:0',
-            'status_bayar'        => 'required|in:Belum Lunas,Siap Dibayar,Lunas',
-            'catatan'             => 'nullable|string|max:500',
+            'jumlah_honor' => 'required|numeric|min:0',
+            'status_bayar' => 'required|in:Belum Lunas,Siap Dibayar,Lunas',
+            'catatan' => 'nullable|string|max:500',
             'file_bukti_transfer' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $admin = Admin::where('id_user', Auth::id())->firstOrFail();
 
         $dataUpdate = [
-            'id_admin'     => $admin->id_admin,
+            'id_admin' => $admin->id_admin,
             'jumlah_honor' => $request->jumlah_honor,
             'status_bayar' => $request->status_bayar,
-            'catatan'      => $request->catatan,
+            'catatan' => $request->catatan,
         ];
 
-        if ($request->status_bayar === 'Lunas' && !$honorGuru->tanggal_pencairan) {
+        if ($request->status_bayar === 'Lunas' && ! $honorGuru->tanggal_pencairan) {
             $dataUpdate['tanggal_pencairan'] = now()->toDateString();
         } elseif ($request->status_bayar !== 'Lunas') {
             $dataUpdate['tanggal_pencairan'] = null;
@@ -80,7 +81,7 @@ class HonorGuruController extends Controller
         $honorGuru->update($dataUpdate);
 
         return redirect()->route('admin.honor-guru.index')
-                         ->with('success', 'Data Gaji Guru berhasil diperbarui.');
+            ->with('success', 'Data Gaji Guru berhasil diperbarui.');
     }
 
     /**
@@ -96,8 +97,8 @@ class HonorGuruController extends Controller
             Storage::disk('public')->delete($honorGuru->file_bukti_transfer);
         }
 
-        \App\Models\Jadwal::where('id_honor', $honorGuru->id_honor)->update(['id_honor' => null]);
-        
+        Jadwal::where('id_honor', $honorGuru->id_honor)->update(['id_honor' => null]);
+
         $honorGuru->delete();
 
         return back()->with('success', 'Draft Gaji Guru berhasil dihapus.');

@@ -6,13 +6,12 @@
 @section('content')
 <section class="page-header section bg-light">
     <div class="container">
-        <div class="section-header text-center hidden-element">
-            <span class="eyebrow">Tim Pengajar</span>
+        <div class="section-header text-center">
             <h2>Direktori Mentor Musik</h2>
-            <p>Pengajar berpengalaman, praktisi, dan akademisi musik siap membimbing minat musikmu.</p>
+            <p class="subtitle-text">Pengajar berpengalaman, praktisi, dan akademisi musik siap membimbing minat musikmu.</p>
             
             <div class="mentor-filter-pills" role="tablist" aria-label="Filter Category Mentor">
-                <button type="button" class="filter-pill active" data-filter="all" role="tab" aria-selected="true">Semua</button>
+                <button type="button" class="filter-pill active" data-filter="all" role="tab" aria-selected="true">Semua Kategori</button>
                 <button type="button" class="filter-pill" data-filter="piano" role="tab" aria-selected="false">Piano</button>
                 <button type="button" class="filter-pill" data-filter="vocal" role="tab" aria-selected="false">Vokal</button>
                 <button type="button" class="filter-pill" data-filter="guitar" role="tab" aria-selected="false">Gitar</button>
@@ -31,23 +30,22 @@
         <div class="grid-4 program-flex" id="mentor-grid">
             @foreach($mentors as $mentor)
                 <div
-                    class="card tutor-card hidden-element {{ $mentor['delay'] }}"
+                    class="card tutor-card"
                     data-category="{{ $mentor['category'] }}"
                     data-featured="{{ $mentor['featured'] ? 'true' : 'false' }}"
                 >
                     <div class="tutor-img-wrapper">
-                        <img
-                            src="{{ asset('images/croma_logo.jpg') }}"
-                            alt="Foto {{ $mentor['name'] }} - {{ $mentor['badge'] }}"
-                            loading="lazy"
-                        />
-                    </div>
+						{{-- TODO: Replace placeholder below with real mentor photo <img> when client provides assets --}}
+						<div class="tutor-avatar-placeholder" aria-label="Foto {{ $mentor['name'] }}" role="img">
+							{{ strtoupper(substr($mentor['name'], 0, 1)) }}
+						</div>
+					</div>
                     <div class="card-body">
                         <h4>{{ $mentor['name'] }}</h4>
                         <span class="badge-text">{{ $mentor['badge'] }}</span>
                         <div class="card-action-wrap margin-top-sm">
-                            <a href="{{ route('mentors.show', $mentor['slug']) }}" class="btn btn-outline-dark btn-sm">
-                                Lihat Profil
+                            <a href="{{ route('mentors.show', $mentor['slug']) }}" class="btn btn-outline-dark btn-sm full-width">
+                                Lihat Profil <i class="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -59,15 +57,14 @@
 
 <section id="pricing" class="section bg-light">
 	<div class="container">
-		<div class="section-header text-center hidden-element">
-			<span class="eyebrow">Transparansi Biaya</span>
+		<div class="section-header text-center">
 			<h2>Pilihan Paket Kursus</h2>
-			<p>Pilih metode pembelajaran yang paling sesuai dengan kebutuhanmu.</p>
+			<p class="subtitle-text">Pilih metode pembelajaran yang paling sesuai dengan kebutuhanmu.</p>
 		</div>
 
 		<div class="grid-2 pricing-grid">
 			<!-- TODO: Update pricing figures when finalized -->
-			<div class="card pricing-card hidden-element delay-100">
+			<div class="card pricing-card">
 				<div class="pricing-header">
 					<div class="pricing-icon"><i class="fa-solid fa-building-columns"></i></div>
 					<h3>Program Onsite</h3>
@@ -84,17 +81,17 @@
 					<li><i class="fa-solid fa-check text-gold"></i> Jadwal latihan mingguan tetap</li>
 					<li><i class="fa-solid fa-check text-gold"></i> Akses modul & partitur digital</li>
 				</ul>
-				<a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20tanya%20paket%20Onsite" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark full-width">
+				<a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20tanya%20paket%20Onsite" target="_blank" rel="noopener noreferrer" class="btn btn-primary full-width">
 					Konsultasi Paket Onsite
 				</a>
 			</div>
 
 			<!-- TODO: Update pricing figures when finalized -->
-			<div class="card pricing-card hidden-element delay-200">
+			<div class="card pricing-card">
 				<div class="pricing-header">
 					<div class="pricing-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
 					<h3>Program Home Visit</h3>
-					<p class="pricing-subtitle">Mentor datang langsung ke rumahmu</p>
+					<p class="pricing-subtitle">Mentor datang langsung to rumahmu</p>
 				</div>
 				<div class="pricing-price">
 					<span class="currency">Mulai dari</span>
@@ -117,13 +114,12 @@
 
 <section id="faq" class="section">
 	<div class="container">
-		<div class="section-header text-center hidden-element">
-			<span class="eyebrow">Informasi Informasi</span>
+		<div class="section-header text-center">
 			<h2>Pertanyaan Umum (FAQ)</h2>
-			<p>Jawaban atas pertanyaan yang paling sering diajukan calon murid.</p>
+			<p class="subtitle-text">Jawaban atas pertanyaan yang paling sering diajukan calon murid.</p>
 		</div>
 
-		<div class="faq-accordion hidden-element">
+		<div class="faq-accordion">
 			<details class="faq-item">
 				<summary>Apakah saya harus memiliki instrumen musik sendiri terlebih dahulu?</summary>
 				<div class="faq-content">

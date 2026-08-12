@@ -14,7 +14,7 @@ class RoleMiddleware
         if ($request->user() && $request->user()->role === $role) {
             return $next($request);
         }
-        
-        abort(403, 'Akses Ditolak: Anda bukan ' . $role);
+
+        abort(403, 'Akses Ditolak: Anda bukan '.$role);
     }
 }

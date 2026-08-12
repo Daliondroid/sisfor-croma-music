@@ -10,21 +10,23 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Spp extends Model
 {
     protected $table = 'spps';
+
     protected $primaryKey = 'id_spp';
 
     protected $fillable = [
         'id_murid', 'id_program', 'periode_tagihan', 'nominal_tagihan',
-        'tanggal_jatuh_tempo', 'tipe_les', 'status_bayar'
+        'tanggal_jatuh_tempo', 'tipe_les', 'status_bayar',
     ];
 
     protected $casts = [
-        'periode_tagihan'    => 'date',
-        'tanggal_jatuh_tempo'=> 'date',
-        'nominal_tagihan'    => 'decimal:2',
+        'periode_tagihan' => 'date',
+        'tanggal_jatuh_tempo' => 'date',
+        'nominal_tagihan' => 'decimal:2',
     ];
 
     // ── Nilai enum status_bayar (sesuai ERD v12 & migration) ──
-    const STATUS_LUNAS      = 'Lunas';
+    const STATUS_LUNAS = 'Lunas';
+
     const STATUS_BELUM_LUNAS = 'Belum Lunas';
 
     // ── Helper method ──────────────────────────────────────────
@@ -66,7 +68,7 @@ class Spp extends Model
     {
         // $bulan format 'Y-m', cocokkan ke kolom date periode_tagihan
         return $query->whereYear('periode_tagihan', substr($bulan, 0, 4))
-                     ->whereMonth('periode_tagihan', substr($bulan, 5, 2));
+            ->whereMonth('periode_tagihan', substr($bulan, 5, 2));
     }
 
     // ── Relasi ─────────────────────────────────────────────────

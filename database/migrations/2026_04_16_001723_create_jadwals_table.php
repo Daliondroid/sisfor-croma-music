@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('id_spp')->constrained('spps', 'id_spp')->cascadeOnDelete();
             $table->foreignId('id_honor')->nullable()->constrained('honor_gurus', 'id_honor'); // Bisa diisi nanti saat payout
             $table->foreignId('id_report')->nullable()->constrained('monthly_reports', 'id_report'); // Bisa diisi saat akhir bulan
-            
+
             $table->date('tanggal');
             $table->time('jam_mulai');
             $table->time('jam_selesai');

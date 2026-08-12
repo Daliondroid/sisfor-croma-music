@@ -49,7 +49,7 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+<div class="dashboard-grid-2">
     <!-- SPP Belum Bayar -->
     <div class="card">
         <div class="card-header">
