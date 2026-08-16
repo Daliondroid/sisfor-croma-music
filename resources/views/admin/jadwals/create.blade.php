@@ -1,31 +1,40 @@
 @extends('layouts.app')
 @section('title', 'Tambah Jadwal KBM')
 @section('page-title', 'Tambah Jadwal KBM')
+
+@section('breadcrumb')
+    <span class="crumb-root">Akademik</span>
+    <span class="crumb-sep">/</span>
+    <a href="{{ route('admin.jadwals.index') }}" class="crumb-root">Jadwal KBM</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Tambah Jadwal</span>
+@endsection
+
 @section('sidebar-menu') @include('admin.partials.sidebar') @endsection
 
 @section('content')
 <style>
     .radio-toggle {
         display: inline-flex;
-        border-radius: 0.375rem;
+        border-radius: 0.25rem;
         border: 1px solid #cbd5e1;
         overflow: hidden;
         background-color: #f8fafc;
     }
     .radio-toggle input[type="radio"] { display: none; }
     .radio-toggle label {
-        padding: 0.5rem 1.5rem;
+        padding: 0.45rem 1.25rem;
         color: #475569;
         cursor: pointer;
         border-right: 1px solid #cbd5e1;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         margin: 0;
-        transition: background-color 0.2s, color 0.2s;
+        transition: background-color 0.15s, color 0.15s;
         white-space: nowrap;
     }
     .radio-toggle label:last-of-type { border-right: none; }
     .radio-toggle input[type="radio"]:checked + label {
-        background-color: #3b82f6; 
+        background-color: var(--primary-navy); 
         color: #ffffff;
         font-weight: 600;
     }
@@ -38,17 +47,13 @@
 <div class="page-header" style="margin-bottom: 1.5rem;">
     <div>
         <h2>Buat Jadwal Baru</h2>
-        <div class="breadcrumb">Admin / Jadwal / <span>Tambah</span></div>
     </div>
-    <a href="{{ route('admin.jadwals.index') }}" class="btn btn-secondary">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 </div>
 
-<div class="card" style="padding: 2rem; border-radius: 0.5rem; border: 1px solid #e2e8f0;">
+<div class="card" style="padding: 1.5rem;">
     @if ($errors->any())
-        <div class="alert alert-danger" style="margin-bottom: 1.5rem; color: #dc2626; background: #fef2f2; padding: 1rem; border-radius: 0.375rem;">
-            <ul style="margin: 0; padding-left: 1.5rem;">
+        <div class="alert alert-danger" style="margin-bottom: 1.25rem;">
+            <ul style="margin: 0; padding-left: 1.25rem;">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -118,7 +123,7 @@
             <div>
                 <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Tanggal Acuan Pertama <span style="color: red;">*</span></label>
                 <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" required>
-                <small style="color: #64748b; display: block; margin-top: 0.25rem;">Tanggal dasar untuk tagihan dan minggu pertama.</small>
+                <small style="color: #64748b; display: block; margin-top: 0.25rem;">Tanggal dasar untuk minggu pertama. Pendaftaran pada minggu ke 2–4 (tanggal > 7) akan otomatis dialihkan untuk mulai pada bulan berikutnya.</small>
             </div>
             
         </div>
@@ -188,11 +193,11 @@
             </div>
         </div>
 
-        <div style="display: flex; gap: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1.5rem; margin-top: 1rem;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">
-                <i class="fa-solid fa-save"></i> Proses Jadwal
+        <div style="display: flex; gap: 0.75rem; border-top: 1px solid #e2e8f0; padding-top: 1.25rem; margin-top: 1rem;">
+            <button type="submit" class="btn btn-primary btn-sm">
+                Proses Jadwal
             </button>
-            <a href="{{ route('admin.jadwals.index') }}" class="btn btn-secondary" style="padding: 0.5rem 1.5rem;">Batal</a>
+            <a href="{{ route('admin.jadwals.index') }}" class="btn btn-outline btn-sm">Kembali</a>
         </div>
     </form>
 </div>

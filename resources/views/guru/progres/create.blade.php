@@ -2,15 +2,7 @@
 @section('title', 'Input Laporan KBM')
 @section('page-title', 'Input Laporan KBM')
 
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('guru.dashboard') }}"            class="nav-item {{ request()->routeIs('guru.dashboard')       ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('guru.jadwal.index') }}"         class="nav-item {{ request()->routeIs('guru.jadwal*')         ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('guru.absensi.index') }}"        class="nav-item {{ request()->routeIs('guru.absensi*')        ? 'active' : '' }}"><i class="fa-solid fa-chart-bar"></i> Data Absensi</a>
-    <a href="{{ route('guru.presensi.index') }}"       class="nav-item {{ request()->routeIs('guru.presensi*')       ? 'active' : '' }}"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
-    <a href="{{ route('guru.progres.index') }}"        class="nav-item {{ request()->routeIs('guru.progres*')        ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan KBM</a>
-    <a href="{{ route('guru.monthly-report.index') }}" class="nav-item {{ request()->routeIs('guru.monthly-report*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Laporan Bulanan</a>
-@endsection
+@section('sidebar-menu') @include('guru.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
@@ -18,36 +10,33 @@
         <h2>Input Laporan KBM Harian</h2>
         <div class="breadcrumb">Guru / Laporan KBM / <span>Input</span></div>
     </div>
-    <a href="{{ route('guru.progres.index') }}" class="btn btn-outline btn-sm">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 </div>
 
 {{-- Info Jadwal --}}
 <div class="card" style="margin-bottom:1.5rem">
-    <div class="card-body" style="padding:1rem 1.5rem;background:#f8faff">
-        <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+    <div class="card-body" style="padding:1rem 1.5rem;background:var(--bg-light)">
+        <div style="display:flex;gap:2rem;flex-wrap:wrap">
             <div>
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600">Murid</div>
-                <div style="font-weight:700;margin-top:0.125rem">{{ $jadwal->spp->murid->nama_murid ?? '-' }}</div>
+                <div style="font-size:.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;font-weight:700">Murid</div>
+                <div style="font-weight:700;margin-top:0.25rem;color:var(--text-dark)">{{ $jadwal->spp->murid->nama_murid ?? '-' }}</div>
             </div>
             <div>
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600">Program</div>
-                <div style="font-weight:700;margin-top:0.125rem">{{ $jadwal->spp->programKursus->nama_program ?? '-' }}</div>
+                <div style="font-size:.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;font-weight:700">Program</div>
+                <div style="font-weight:700;margin-top:0.25rem;color:var(--text-dark)">{{ $jadwal->spp->programKursus->nama_program ?? '-' }}</div>
             </div>
             <div>
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600">Tanggal</div>
-                <div style="font-weight:700;margin-top:0.125rem">{{ $jadwal->tanggal->translatedFormat('l, d M Y') }}</div>
+                <div style="font-size:.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;font-weight:700">Tanggal</div>
+                <div style="font-weight:700;margin-top:0.25rem;color:var(--text-dark)">{{ $jadwal->tanggal->translatedFormat('l, d M Y') }}</div>
             </div>
             <div>
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600">Jam</div>
-                <div style="font-weight:700;margin-top:0.125rem">{{ substr($jadwal->jam_mulai, 0, 5) }} – {{ substr($jadwal->jam_selesai, 0, 5) }}</div>
+                <div style="font-size:.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;font-weight:700">Jam</div>
+                <div style="font-weight:700;margin-top:0.25rem;color:var(--text-dark);font-variant-numeric:tabular-nums">{{ substr($jadwal->jam_mulai, 0, 5) }} – {{ substr($jadwal->jam_selesai, 0, 5) }}</div>
             </div>
             <div>
-                <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.03125rem;font-weight:600">Kehadiran</div>
-                <div style="margin-top:0.125rem">
+                <div style="font-size:.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;font-weight:700">Kehadiran</div>
+                <div style="margin-top:0.25rem">
                     <span class="badge {{ $jadwal->status_kehadiran_murid === 'Hadir' ? 'badge-success' : 'badge-danger' }}">
-                        Murid: {{ $jadwal->status_kehadiran_murid }}
+                        MURID: {{ strtoupper($jadwal->status_kehadiran_murid) }}
                     </span>
                 </div>
             </div>
@@ -57,11 +46,11 @@
 
 <div class="card">
     <div class="card-header">
-        <h3><i class="fa-solid fa-book-open" style="color:var(--primary-blue);margin-right:0.5rem"></i>Form Laporan KBM</h3>
+        <h3>Form Laporan KBM</h3>
     </div>
     <div class="card-body">
         @if($errors->any())
-            <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
+            <div class="alert alert-danger">{{ $errors->first() }}</div>
         @endif
 
         <form method="POST" action="{{ route('guru.progres.store') }}" enctype="multipart/form-data">
@@ -88,11 +77,11 @@
                 <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">JPG/PNG, maks 5MB</div>
             </div>
 
-            <div style="display:flex;gap:1rem;margin-top:0.5rem">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Laporan KBM
+            <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Simpan Laporan KBM
                 </button>
-                <a href="{{ route('guru.progres.index') }}" class="btn btn-outline">Batal</a>
+                <a href="{{ route('guru.progres.index') }}" class="btn btn-outline btn-sm">Kembali</a>
             </div>
         </form>
     </div>

@@ -32,7 +32,8 @@ RUN apk add --no-cache \
     curl \
     unzip \
     shadow \
-    mariadb-client
+    mariadb-client \
+    fcgi
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd \
@@ -82,6 +83,9 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
+
+# Graceful shutdown for PHP-FPM child workers
+STOPSIGNAL SIGQUIT
 
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]

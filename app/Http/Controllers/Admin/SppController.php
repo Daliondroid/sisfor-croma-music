@@ -24,10 +24,11 @@ class SppController extends Controller
     {
         $bulan = $request->bulan ?? now()->format('Y-m');
         $status = $request->status ?? '';
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
         $query = Spp::with(['murid', 'programKursus', 'transaksi'])
-            ->whereYear('periode_tagihan', substr($bulan, 0, 4))
-            ->whereMonth('periode_tagihan', substr($bulan, 5, 2));
+            ->whereBetween('periode_tagihan', [$startDate, $endDate]);
 
         if ($status !== '') {
             $query->where('status_bayar', $status);
@@ -38,12 +39,10 @@ class SppController extends Controller
         // Ringkasan bulan ini
         $totalTagihan = (clone $query->getQuery())->sum('nominal_tagihan');
         $totalMasuk = Spp::where('status_bayar', 'Lunas')
-            ->whereYear('periode_tagihan', substr($bulan, 0, 4))
-            ->whereMonth('periode_tagihan', substr($bulan, 5, 2))
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->sum('nominal_tagihan');
         $totalTunggakan = Spp::where('status_bayar', 'Belum Lunas')
-            ->whereYear('periode_tagihan', substr($bulan, 0, 4))
-            ->whereMonth('periode_tagihan', substr($bulan, 5, 2))
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->sum('nominal_tagihan');
 
         return view('admin.spp.index', compact(
@@ -108,21 +107,23 @@ class SppController extends Controller
     {
         $request->validate(['catatan_admin' => 'nullable|string|max:500']);
 
-        if ($spp->status_bayar === 'Lunas') {
-            return back()->with('error', 'SPP ini sudah lunas.');
-        }
-
-        $transaksi = $spp->transaksi()->latest()->first();
-
-        if (! $transaksi) {
-            return back()->with('error', 'Belum ada bukti transfer yang diunggah murid.');
-        }
-
         $admin = Admin::where('id_user', Auth::id())->firstOrFail();
 
-        DB::transaction(function () use ($spp, $transaksi, $admin, $request) {
+        $result = DB::transaction(function () use ($spp, $admin, $request) {
+            $lockedSpp = Spp::where('id_spp', $spp->id_spp)->lockForUpdate()->firstOrFail();
+
+            if ($lockedSpp->status_bayar === 'Lunas') {
+                return ['status' => 'error', 'message' => 'SPP ini sudah lunas.'];
+            }
+
+            $transaksi = $lockedSpp->transaksi()->lockForUpdate()->first();
+
+            if (! $transaksi) {
+                return ['status' => 'error', 'message' => 'Belum ada bukti transfer yang diunggah murid.'];
+            }
+
             // Update status SPP
-            $spp->update(['status_bayar' => 'Lunas']);
+            $lockedSpp->update(['status_bayar' => 'Lunas']);
 
             // Update transaksi: isi admin, tanggal konfirmasi, catatan
             $transaksi->update([
@@ -130,9 +131,11 @@ class SppController extends Controller
                 'tanggal_konfirmasi' => now()->toDateString(),
                 'catatan_admin' => $request->catatan_admin,
             ]);
+
+            return ['status' => 'success', 'message' => 'Pembayaran berhasil divalidasi dan SPP ditandai Lunas.'];
         });
 
-        return back()->with('success', 'Pembayaran berhasil divalidasi dan SPP ditandai Lunas.');
+        return back()->with($result['status'], $result['message']);
     }
 
     /**
@@ -142,22 +145,25 @@ class SppController extends Controller
     {
         $request->validate(['catatan_admin' => 'nullable|string|max:500']);
 
-        $transaksi = $spp->transaksi()->latest()->first();
+        $result = DB::transaction(function () use ($spp) {
+            $lockedSpp = Spp::where('id_spp', $spp->id_spp)->lockForUpdate()->firstOrFail();
+            $transaksi = $lockedSpp->transaksi()->lockForUpdate()->first();
 
-        if (! $transaksi) {
-            return back()->with('error', 'Tidak ada transaksi untuk ditolak.');
-        }
+            if (! $transaksi) {
+                return ['status' => 'error', 'message' => 'Tidak ada transaksi untuk ditolak.'];
+            }
 
-        DB::transaction(function () use ($transaksi) {
             // Hapus bukti transfer dari private storage
             if ($transaksi->file_bukti_transfer) {
                 Storage::disk('local')->delete($transaksi->file_bukti_transfer);
             }
 
             $transaksi->delete();
+
+            return ['status' => 'success', 'message' => 'Bukti transfer ditolak dan dihapus. Murid dapat mengunggah ulang.'];
         });
 
-        return back()->with('success', 'Bukti transfer ditolak dan dihapus. Murid dapat mengunggah ulang.');
+        return back()->with($result['status'], $result['message']);
     }
 
     /**

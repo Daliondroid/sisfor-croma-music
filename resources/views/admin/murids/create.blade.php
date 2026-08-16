@@ -1,17 +1,22 @@
 @extends('layouts.app')
 @section('title', 'Tambah Murid')
 @section('page-title', 'Tambah Murid')
+
+@section('breadcrumb')
+    <span class="crumb-root">Akademik</span>
+    <span class="crumb-sep">/</span>
+    <a href="{{ route('admin.murids.index') }}" class="crumb-root">Data Murid</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Tambah Murid</span>
+@endsection
+
 @section('sidebar-menu') @include('admin.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
     <div>
         <h2>Tambah Murid</h2>
-        <div class="breadcrumb">Admin / Murid / <span>Tambah</span></div>
     </div>
-    <a href="{{ route('admin.murids.index') }}" class="btn btn-outline">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 </div>
 
 <div class="card" style="max-width:48.75rem">
@@ -21,13 +26,12 @@
             @csrf
             @if($errors->any())
                 <div class="alert alert-danger">
-                    <i class="fa-solid fa-circle-xmark"></i>
                     <div>{{ $errors->first() }}</div>
                 </div>
             @endif
 
-            <div style="font-weight:600;margin-bottom:1rem;color:var(--primary-blue)">
-                <i class="fa-solid fa-lock" style="margin-right:0.25rem"></i>Data Login
+            <div style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;color:var(--text-light)">
+                Data Login
             </div>
             <div class="form-grid">
                 <div class="form-group">
@@ -46,16 +50,11 @@
                     <label class="form-label">Konfirmasi Password <span style="color:red">*</span></label>
                     <input type="password" name="password_confirmation" class="form-control" required/>
                 </div>
-                {{-- <div class="form-group">
-                    <label class="form-label">Foto Profil</label>
-                    <input type="file" name="foto_profil" class="form-control" accept="image/*"/>
-                    <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Format: JPG, PNG. Maks: 2MB</div>
-                </div> --}}
             </div>
 
-            <hr style="border:none;border-top:1px solid #f0f0f0;margin:1.5rem 0"/>
-            <div style="font-weight:600;margin-bottom:1rem;color:var(--primary-blue)">
-                <i class="fa-solid fa-user" style="margin-right:0.25rem"></i>Data Pribadi
+            <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.25rem 0"/>
+            <div style="font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;color:var(--text-light)">
+                Data Pribadi
             </div>
             <div class="form-grid">
                 <div class="form-group">
@@ -77,14 +76,14 @@
             </div>
             <div class="form-group">
                 <label class="form-label">Alamat</label>
-                <textarea name="alamat" class="form-control" rows="3">{{ old('alamat') }}</textarea>
+                <textarea name="alamat" class="form-control" rows="3" style="height:auto">{{ old('alamat') }}</textarea>
             </div>
 
-            <div style="display:flex;gap:1rem;margin-top:0.5rem">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan
+            <div style="display:flex;gap:0.75rem;margin-top:0.5rem">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    Simpan
                 </button>
-                <a href="{{ route('admin.murids.index') }}" class="btn btn-outline">Batal</a>
+                <a href="{{ route('admin.murids.index') }}" class="btn btn-outline btn-sm">Kembali</a>
             </div>
         </form>
     </div>

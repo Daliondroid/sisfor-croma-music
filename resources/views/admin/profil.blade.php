@@ -1,75 +1,80 @@
 @extends('layouts.app')
 @section('title', 'Profil Saya')
 @section('page-title', 'Profil Saya')
+
+@section('breadcrumb')
+    <span class="crumb-root">Utama</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Profil Saya</span>
+@endsection
+
 @section('sidebar-menu') @include('admin.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
     <div>
         <h2>Profil Saya</h2>
-        <div class="breadcrumb">Admin / <span>Profil</span></div>
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:18.75rem 1fr;gap:1.5rem;align-items:start">
+<div style="display:grid;grid-template-columns:18.75rem 1fr;gap:1.25rem;align-items:start">
 
     {{-- Kartu Info Kiri --}}
-    <div class="card" style="text-align:center;padding:2rem 1.5rem">
+    <div class="card" style="text-align:center;padding:1.5rem 1.25rem">
         <div style="position:relative;display:inline-block;margin-bottom:1rem">
             @if($user->foto_profil)
                 <img src="{{ asset('storage/' . $user->foto_profil) }}"
-                     style="width:6rem;height:6rem;border-radius:50%;object-fit:cover;border:0.1875rem solid var(--primary-blue)">
+                     style="width:5.5rem;height:5.5rem;border-radius:0.25rem;object-fit:cover;border:1px solid var(--topbar-border)">
             @else
-                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-blue);
+                <div style="width:5.5rem;height:5.5rem;border-radius:0.25rem;background:var(--primary-navy);
                             display:flex;align-items:center;justify-content:center;
-                            font-size:2.2rem;font-weight:700;color:#fff;margin:0 auto;
-                            border:0.1875rem solid var(--primary-blue)">
+                            font-size:2rem;font-weight:700;color:#fff;margin:0 auto">
                     {{ strtoupper(substr($user->name ?? $user->username, 0, 1)) }}
                 </div>
             @endif
         </div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.25rem">{{ $user->name ?? $user->username }}</div>
-        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:1rem">{{ $user->email }}</div>
-        <span class="badge badge-info" style="font-size:.75rem;padding:0.25rem 1rem">
-            <i class="fa-solid fa-shield-halved" style="margin-right:0.25rem"></i>Administrator
+        <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem">{{ $user->name ?? $user->username }}</div>
+        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:0.75rem">{{ $user->email }}</div>
+        <span class="badge badge-info">
+            ADMINISTRATOR
         </span>
 
-        <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.5rem 0">
+        <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.25rem 0">
 
         <div style="text-align:left">
-            <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;
-                        letter-spacing:0.05rem;font-weight:600;margin-bottom:0.5rem">Info Akun</div>
+            <div style="font-size:.7rem;color:var(--text-light);text-transform:uppercase;
+                        letter-spacing:0.06em;font-weight:700;margin-bottom:0.5rem">Info Akun</div>
             <div style="display:flex;flex-direction:column;gap:0.5rem">
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-user" style="width:1rem;color:var(--text-light)"></i>
-                    <span>{{ $user->username }}</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Username</span>
+                    <strong>{{ $user->username }}</strong>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-calendar-plus" style="width:1rem;color:var(--text-light)"></i>
-                    <span>Bergabung {{ $user->created_at->translatedFormat('M Y') }}</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Bergabung</span>
+                    <strong style="font-variant-numeric:tabular-nums">{{ $user->created_at->translatedFormat('M Y') }}</strong>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-circle" style="width:1rem;color:#16a34a;font-size:.5rem"></i>
-                    <span style="color:#16a34a;font-weight:600">Akun Aktif</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Status</span>
+                    <span class="badge badge-success">AKTIF</span>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Form Kanan --}}
-    <div style="display:flex;flex-direction:column;gap:1.5rem">
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
 
         @if(session('success'))
-            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if($errors->any())
-            <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
+            <div class="alert alert-danger">{{ $errors->first() }}</div>
         @endif
 
         {{-- Data Profil --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-user-tie" style="color:var(--primary-blue);margin-right:0.5rem"></i>Data Profil</h3>
+                <h3>Data Profil</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('admin.profil.update') }}" enctype="multipart/form-data">
@@ -97,8 +102,8 @@
                             <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">JPG/PNG, maks 2MB</div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Simpan Perubahan
                     </button>
                 </form>
             </div>
@@ -107,12 +112,11 @@
         {{-- Ganti Password --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-lock" style="color:var(--primary-blue);margin-right:0.5rem"></i>Ganti Password</h3>
+                <h3>Ganti Password</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('admin.profil.update') }}" enctype="multipart/form-data">
                     @csrf @method('PUT')
-                    {{-- Kirim nama & email supaya validasi tidak gagal --}}
                     <input type="hidden" name="nama_admin" value="{{ $admin->nama_admin }}"/>
                     <input type="hidden" name="email"      value="{{ $user->email }}"/>
                     <div class="form-grid">
@@ -133,8 +137,8 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-outline" style="margin-top:0.5rem">
-                        <i class="fa-solid fa-key"></i> Update Password
+                    <button type="submit" class="btn btn-outline btn-sm" style="margin-top:0.5rem">
+                        Update Password
                     </button>
                 </form>
             </div>

@@ -7,6 +7,7 @@ use App\Models\Jadwal;
 use App\Models\Murid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PresensiController extends Controller
 {
@@ -23,27 +24,32 @@ class PresensiController extends Controller
 
         $murid = Murid::where('id_user', Auth::id())->firstOrFail();
 
-        // Pastikan jadwal ini memang milik murid (lewat relasi SPP)
-        $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
-            ->whereHas('spp', fn ($q) => $q->where('id_murid', $murid->id_murid))
-            ->firstOrFail();
+        $result = DB::transaction(function () use ($request, $murid) {
+            // Pastikan jadwal ini memang milik murid (lewat relasi SPP) with row lock
+            $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
+                ->whereHas('spp', fn ($q) => $q->where('id_murid', $murid->id_murid))
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        // Tolak jika sudah diisi
-        if ($jadwal->status_kehadiran_murid !== null) {
-            return back()->with('error', 'Kehadiran untuk sesi ini sudah pernah diajukan.');
-        }
+            // Tolak jika sudah diisi
+            if ($jadwal->status_kehadiran_murid !== null) {
+                return ['status' => 'error', 'message' => 'Kehadiran untuk sesi ini sudah pernah diajukan.'];
+            }
 
-        // Tolak jika jadwal bukan hari ini atau masa lalu
-        if ($jadwal->tanggal->isFuture()) {
-            return back()->with('error', 'Belum bisa mengajukan kehadiran untuk jadwal yang akan datang.');
-        }
+            // Tolak jika jadwal bukan hari ini atau masa lalu
+            if ($jadwal->tanggal->isFuture()) {
+                return ['status' => 'error', 'message' => 'Belum bisa mengajukan kehadiran untuk jadwal yang akan datang.'];
+            }
 
-        $jadwal->update([
-            'status_kehadiran_murid' => 'Hadir',
-            'waktu_presensi_diisi' => now(),
-            'presensi_diisi_oleh' => 'Murid',
-        ]);
+            $jadwal->update([
+                'status_kehadiran_murid' => 'Hadir',
+                'waktu_presensi_diisi' => now(),
+                'presensi_diisi_oleh' => 'Murid',
+            ]);
 
-        return back()->with('success', 'Kehadiran berhasil diajukan! Menunggu konfirmasi guru.');
+            return ['status' => 'success', 'message' => 'Kehadiran berhasil diajukan! Menunggu konfirmasi guru.'];
+        });
+
+        return back()->with($result['status'], $result['message']);
     }
 }

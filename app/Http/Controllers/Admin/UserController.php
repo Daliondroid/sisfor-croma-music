@@ -15,7 +15,11 @@ class UserController extends Controller
 {
     public function indexMurid(Request $request)
     {
-        $murids = Murid::with(['user', 'spps'])
+        $murids = Murid::with(['user'])
+            ->withCount([
+                'spps',
+                'spps as spp_lunas_count' => fn ($q) => $q->where('status_bayar', 'Lunas'),
+            ])
             ->when(
                 $request->search,
                 fn ($q) => $q->where('nama_murid', 'like', "%{$request->search}%")
@@ -127,7 +131,11 @@ class UserController extends Controller
 
     public function indexGuru(Request $request)
     {
-        $gurus = Guru::with(['user', 'spesialisasis', 'jadwals'])
+        $gurus = Guru::with(['user', 'spesialisasis'])
+            ->withCount([
+                'jadwals',
+                'jadwals as jadwal_aktif_count' => fn ($q) => $q->where('is_active', true),
+            ])
             ->when(
                 $request->search,
                 fn ($q) => $q->where('nama_guru', 'like', "%{$request->search}%")

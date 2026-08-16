@@ -1,24 +1,37 @@
 @extends('layouts.app')
 @section('title', 'Program Kursus')
 @section('page-title', 'Program Kursus')
+
+@section('breadcrumb')
+    <span class="crumb-root">Akademik</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Program Kursus</span>
+@endsection
+
 @section('sidebar-menu') @include('admin.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
     <h2>Program Kursus</h2>
-    <div class="breadcrumb">Admin / Akademik / <span>Program Kursus</span></div>
     <div class="page-header-filters">
-        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-plus"></i> Tambah Program
+        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-yellow btn-sm">
+            + Tambah Program
         </a>
     </div>
 </div>
 
 <div class="card">
     <div class="table-wrap">
-        <table>
+        <table style="table-layout:fixed;width:100%">
             <thead>
-                <tr><th>#</th><th>Nama Program</th><th>Tipe</th><th>Jumlah Kelas</th><th>Status</th><th>Aksi</th></tr>
+                <tr>
+                    <th style="width:5%">#</th>
+                    <th style="width:35%">Nama Program</th>
+                    <th style="width:20%">Tipe</th>
+                    <th style="width:15%">Jumlah Kelas</th>
+                    <th style="width:12%">Status</th>
+                    <th style="width:13%;text-align:right">Aksi</th>
+                </tr>
             </thead>
             <tbody>
             @forelse($programs as $i => $p)
@@ -32,43 +45,74 @@
                     </td>
                     <td>
                         <span class="badge {{ $p->tipe_les=='keduanya' ? 'badge-success' : ($p->tipe_les=='onsite'?'badge-info':'badge-warning') }}">
-                            {{ $p->tipe_les=='keduanya' ? 'Onsite & Home' : ($p->tipe_les=='onsite'?'Onsite':'Home Private') }}
+                            {{ $p->tipe_les=='keduanya' ? 'ONSITE & HOME' : ($p->tipe_les=='onsite'?'ONSITE':'HOME PRIVATE') }}
                         </span>
                     </td>
                     <td>{{ $p->kelas_count }} kelas</td>
                     <td>
                         <span class="badge {{ $p->is_active ? 'badge-success' : 'badge-gray' }}">
-                            {{ $p->is_active ? 'Aktif' : 'Non-aktif' }}
+                            {{ $p->is_active ? 'AKTIF' : 'NONAKTIF' }}
                         </span>
                     </td>
-                    <td>
-                        <div style="display:flex;gap:0.25rem">
-                            <a href="{{ route('admin.program-kursus.edit', $p) }}" class="btn btn-sm btn-outline">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
-                            <form method="POST" action="{{ route('admin.program-kursus.destroy', $p) }}"
-                                  onsubmit="return confirm('Hapus program ini?')">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
-                            </form>
+                    <td style="text-align:right">
+                        <div class="action-dropdown-wrap">
+                            <button type="button" class="btn-action-dropdown" onclick="toggleActionDropdown(this, event)">
+                                Kelola ▾
+                            </button>
+                            <div class="action-dropdown-menu">
+                                <a href="{{ route('admin.program-kursus.edit', $p) }}" class="action-dropdown-item">
+                                    Edit Data
+                                </a>
+                                <div class="action-dropdown-divider"></div>
+                                <button type="button" class="action-dropdown-item danger"
+                                    onclick="openDeleteModal('{{ route('admin.program-kursus.destroy', $p) }}','{{ addslashes($p->nama_program) }}')">
+                                    Hapus
+                                </button>
+                            </div>
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr><td colspan="6">
                     <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="16" width="40" height="52" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><rect x="30" y="12" width="40" height="52" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--card-bg)"/><path d="M40 28h20M40 38h14M40 48h18" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>
-                        </div>
                         <div class="empty-state-title">Belum ada program kursus.</div>
                         <div class="empty-state-description">Mulai dengan menambahkan program kursus baru.</div>
-                        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Program</a>
+                        <a href="{{ route('admin.program-kursus.create') }}" class="btn btn-yellow btn-sm">+ Tambah Program</a>
                     </div>
                 </td></tr>
             @endforelse
             </tbody>
         </table>
     </div>
-    @if($programs->hasPages())<div style="padding:1rem 1.5rem">{{ $programs->links() }}</div>@endif
+    @if($programs->hasPages())<div style="padding:0.75rem 1.25rem;border-top:1px solid var(--topbar-border)">{{ $programs->links() }}</div>@endif
 </div>
+
+{{-- Modal Konfirmasi Hapus --}}
+<div class="delete-modal-backdrop" id="delete-modal-backdrop">
+    <div class="delete-modal">
+        <h3>Hapus Program Kursus?</h3>
+        <p>Apakah Anda yakin ingin menghapus program kursus <strong id="delete-item-name"></strong>? Tindakan ini tidak dapat dibatalkan.</p>
+        <form id="delete-form" method="POST" action="">
+            @csrf
+            @method('DELETE')
+            <div class="delete-modal-actions">
+                <button type="button" class="btn btn-outline btn-sm" onclick="closeDeleteModal()">Batal</button>
+                <button type="submit" class="btn btn-danger btn-sm">Ya, Hapus</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    function openDeleteModal(actionUrl, itemName) {
+        document.getElementById('delete-form').action = actionUrl;
+        document.getElementById('delete-item-name').textContent = itemName;
+        document.getElementById('delete-modal-backdrop').classList.add('open');
+    }
+    function closeDeleteModal() {
+        document.getElementById('delete-modal-backdrop').classList.remove('open');
+    }
+</script>
+@endpush
 @endsection

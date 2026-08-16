@@ -2,13 +2,7 @@
 @section('title', 'Detail Laporan Bulanan')
 @section('page-title', 'Laporan Bulanan')
 
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('murid.dashboard') }}"     class="nav-item {{ request()->routeIs('murid.dashboard')  ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('murid.jadwal.index') }}"  class="nav-item {{ request()->routeIs('murid.jadwal*')    ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*')   ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan Bulanan</a>
-    <a href="{{ route('murid.spp.index') }}"     class="nav-item {{ request()->routeIs('murid.spp*')       ? 'active' : '' }}"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
-@endsection
+@section('sidebar-menu') @include('murid.partials.sidebar') @endsection
 
 @push('styles')
 <style>
@@ -18,7 +12,7 @@
     width: 100%;
     padding-bottom: 56.25%;
     background: #000;
-    border-radius: 0 0 var(--radius) var(--radius);
+    border-radius: 0 0 0.25rem 0.25rem;
     overflow: hidden;
 }
 .video-container iframe {
@@ -36,10 +30,9 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: rgba(255,255,255,.5);
+    color: rgba(255,255,255,.6);
     font-size: .875rem;
 }
-.video-placeholder i { font-size: 2.5rem; opacity: .4; }
 
 /* ── Skor badge besar ── */
 .skor-big {
@@ -47,7 +40,7 @@
     align-items: center;
     justify-content: center;
     width: 4rem; height: 4rem;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
     font-size: 1.6rem;
     font-weight: 800;
     flex-shrink: 0;
@@ -55,16 +48,13 @@
 .skor-A-plus, .skor-A, .skor-A-minus { background:#dcfce7; color:#15803d; }
 .skor-B-plus, .skor-B, .skor-B-minus { background:#dbeafe; color:#1d4ed8; }
 .skor-C-plus, .skor-C, .skor-C-minus { background:#fef9c3; color:#a16207; }
-.skor-none { background:var(--bg-light); color:var(--text-light); }
-[data-theme="dark"] .skor-A-plus,[data-theme="dark"] .skor-A,[data-theme="dark"] .skor-A-minus{ background:#14312a;color:#4ade80; }
-[data-theme="dark"] .skor-B-plus,[data-theme="dark"] .skor-B,[data-theme="dark"] .skor-B-minus{ background:#1e3a5f;color:#60a5fa; }
-[data-theme="dark"] .skor-C-plus,[data-theme="dark"] .skor-C,[data-theme="dark"] .skor-C-minus{ background:#3d2e0a;color:#fbbf24; }
+.skor-none { background:var(--bg-light); color:var(--text-light); border: 1px solid var(--topbar-border); }
 
 /* ── Evaluasi box ── */
 .eval-box {
     background: var(--bg-light);
-    border-left: 0.25rem solid var(--primary-blue);
-    border-radius: 0 0.5rem 0.5rem 0;
+    border: 1px solid var(--topbar-border);
+    border-radius: 0.25rem;
     padding: 1rem 1rem;
     font-size: .875rem;
     line-height: 1.7;
@@ -79,8 +69,8 @@
     padding: 1.5rem 1.5rem;
 }
 .skor-card-info { flex: 1; }
-.skor-label { font-size: .72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.025rem; margin-bottom: 0.25rem; }
-.skor-period { font-size: 1.05rem; font-weight: 700; }
+.skor-label { font-size: .72rem; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem; }
+.skor-period { font-size: 1.05rem; font-weight: 700; color: var(--text-dark); }
 .skor-sub { font-size: .78rem; color: var(--text-light); margin-top: 0.125rem; }
 </style>
 @endpush
@@ -105,9 +95,7 @@
         if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $m)) {
             $videoEmbed = 'https://www.youtube.com/embed/' . $m[1];
         } elseif (str_contains($url, 'drive.google.com')) {
-            // Ubah /view atau /view?usp=... ke /preview agar bisa di-embed
             $videoEmbed = preg_replace('/\/view(\?.*)?$/', '/preview', $url);
-            // Kalau format /file/d/{id}/... belum punya /view, pastikan pakai /preview
             if (!str_contains($videoEmbed, '/preview')) {
                 $videoEmbed = rtrim($videoEmbed, '/') . '/preview';
             }
@@ -121,13 +109,18 @@
     <div>
         <h2>Laporan {{ $bulanLabel }}</h2>
         <div class="breadcrumb">
-            <a href="{{ route('murid.laporan.index') }}" style="color:var(--primary-blue)">Laporan Bulanan</a>
+            <a href="{{ route('murid.laporan.index') }}" style="color:var(--text-dark);font-weight:600">Laporan Bulanan</a>
             / <span>{{ $bulanLabel }}</span>
         </div>
     </div>
-    <a href="{{ route('murid.laporan.pdf', $report) }}" class="btn btn-primary" target="_blank">
-        <i class="fa-solid fa-file-pdf"></i> Download PDF
-    </a>
+    <div style="display:flex;gap:0.5rem">
+        <a href="{{ route('murid.laporan.pdf', $report) }}" class="btn btn-primary btn-sm" target="_blank">
+            Export PDF
+        </a>
+        <a href="{{ route('murid.laporan.index') }}" class="btn btn-outline btn-sm">
+            Kembali
+        </a>
+    </div>
 </div>
 
 <div style="display:flex;flex-direction:column;gap:1.5rem">
@@ -151,10 +144,10 @@
     {{-- Video Pembelajaran --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-film" style="color:var(--primary-blue);margin-right:0.5rem"></i>Video Pembelajaran</h3>
+            <h3>Video Pembelajaran</h3>
             @if($report->url_video)
                 <a href="{{ $report->url_video }}" target="_blank" class="btn btn-sm btn-outline">
-                    <i class="fa-solid fa-external-link-alt"></i> Buka di tab baru
+                    Buka di Tab Baru
                 </a>
             @endif
         </div>
@@ -168,7 +161,6 @@
                 </iframe>
             @else
                 <div class="video-placeholder">
-                    <i class="fa-solid fa-circle-play"></i>
                     <span>Video belum tersedia untuk bulan ini.</span>
                 </div>
             @endif
@@ -179,7 +171,7 @@
     @if($report->evaluasi_bulanan)
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-comment-dots" style="color:var(--primary-blue);margin-right:0.5rem"></i>Kesimpulan Pembelajaran</h3>
+            <h3>Kesimpulan Pembelajaran</h3>
         </div>
         <div class="card-body">
             <div class="eval-box">{{ $report->evaluasi_bulanan }}</div>

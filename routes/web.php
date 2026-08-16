@@ -63,6 +63,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/honor-guru/{honorGuru}/edit', [Admin\HonorGuruController::class, 'edit'])->name('honor-guru.edit');
     Route::put('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'update'])->name('honor-guru.update');
     Route::delete('/honor-guru/{honorGuru}', [Admin\HonorGuruController::class, 'destroy'])->name('honor-guru.destroy');
+    Route::get('/honor-guru/{honorGuru}/bukti', [Admin\HonorGuruController::class, 'viewBukti'])->name('honor-guru.bukti');
 
     // Laporan
     Route::get('/laporan/keuangan', [Admin\LaporanController::class, 'keuangan'])->name('laporan.keuangan');
@@ -70,17 +71,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/laporan/gaji', [Admin\LaporanController::class, 'gajiGuru'])->name('laporan.gaji');
 
     // Ekspor PDF & XLSX
-    Route::get('/laporan/export/pdf/{jenis}', [Admin\LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');
-    Route::get('/laporan/export/xlsx/{jenis}', [Admin\LaporanController::class, 'exportXlsx'])->name('laporan.export.xlsx');
+    Route::get('/laporan/export/pdf/{jenis}', [Admin\LaporanController::class, 'exportPdf'])
+        ->middleware('throttle:10,1')->name('laporan.export.pdf');
+    Route::get('/laporan/export/xlsx/{jenis}', [Admin\LaporanController::class, 'exportXlsx'])
+        ->middleware('throttle:10,1')->name('laporan.export.xlsx');
 
     // Monthly Report
     Route::get('/monthly-report', [Admin\MonthlyReportController::class, 'index'])->name('monthly_report.index');
     Route::post('/monthly-report/generate', [Admin\MonthlyReportController::class, 'generate'])->name('report.generate');
     Route::get('/monthly-report/{murid}/{bulan}', [Admin\MonthlyReportController::class, 'show'])->name('report.show');
+    Route::put('/monthly-report/{monthlyReport}', [Admin\MonthlyReportController::class, 'update'])->name('report.update');
 
     // Program Kursus
     Route::resource('program-kursus', Admin\ProgramKursusController::class)
-        ->names('program-kursus');
+        ->names('program-kursus')
+        ->parameters(['program-kursus' => 'programKursus']);
 
     // Profil Admin
     Route::get('/profil', [Admin\ProfilController::class, 'edit'])->name('profil.edit');
@@ -114,7 +119,8 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::get('/monthly-report/create', [Guru\MonthlyReportController::class, 'create'])->name('monthly-report.create');
     Route::post('/monthly-report', [Guru\MonthlyReportController::class, 'store'])->name('monthly-report.store');
     Route::get('/monthly-report/{monthlyReport}', [Guru\MonthlyReportController::class, 'show'])->name('monthly-report.show');
-    Route::get('/monthly-report/{monthlyReport}/pdf', [Guru\MonthlyReportController::class, 'exportPdf'])->name('monthly-report.pdf');
+    Route::get('/monthly-report/{monthlyReport}/pdf', [Guru\MonthlyReportController::class, 'exportPdf'])
+        ->middleware('throttle:10,1')->name('monthly-report.pdf');
 
     // Profil Guru
     Route::get('/profil', [Guru\ProfilController::class, 'edit'])->name('profil.edit');
@@ -126,13 +132,15 @@ Route::middleware(['auth', 'role:murid'])->prefix('murid')->name('murid.')->grou
     Route::get('/dashboard', [Murid\DashboardController::class, 'index'])->name('dashboard');
     Route::post('/presensi', [Murid\PresensiController::class, 'store'])->name('presensi.store');
     Route::get('/spp', [Murid\SppController::class, 'index'])->name('spp.index');
+    Route::get('/spp/{spp}/bukti', [Murid\SppController::class, 'viewBukti'])->name('spp.view-bukti');
     // Rate-limited to 5 uploads per minute per authenticated user
     Route::post('/spp/{spp}/bukti', [Murid\SppController::class, 'uploadBukti'])->name('spp.bukti')->middleware('throttle:5,1');
     Route::get('/profil', [Murid\ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil', [Murid\ProfilController::class, 'update'])->name('profil.update');
     Route::get('/laporan', [Murid\MonthlyReportController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/{report}', [Murid\MonthlyReportController::class, 'show'])->name('laporan.show');
-    Route::get('/laporan/{report}/pdf', [Murid\MonthlyReportController::class, 'exportPdf'])->name('laporan.pdf');
+    Route::get('/laporan/{report}/pdf', [Murid\MonthlyReportController::class, 'exportPdf'])
+        ->middleware('throttle:10,1')->name('laporan.pdf');
     Route::get('/jadwal', [Murid\JadwalController::class, 'index'])->name('jadwal.index');
 });
 

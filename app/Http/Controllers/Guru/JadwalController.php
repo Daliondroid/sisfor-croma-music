@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
 use App\Models\Jadwal;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,14 +22,14 @@ class JadwalController extends Controller
             ->firstOrFail();
 
         $bulan = $request->bulan ?? now()->format('Y-m');
-        [$tahun, $bln] = explode('-', $bulan);
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
         // Jadwal bulan ini
-        $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus'])
+        $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
             ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->orderBy('tanggal')
             ->orderBy('jam_mulai')
             ->get();

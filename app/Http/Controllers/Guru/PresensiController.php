@@ -9,6 +9,7 @@ use App\Models\Spp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PresensiController extends Controller
 {
@@ -21,13 +22,13 @@ class PresensiController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
-        [$tahun, $bln] = explode('-', $bulan);
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
         $jadwals = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
             ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->orderBy('tanggal')
             ->orderBy('jam_mulai')
             ->get();
@@ -52,30 +53,23 @@ class PresensiController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
-        [$tahun, $bln] = explode('-', $bulan);
-
-        // Semua id_spp yang diajar guru di bulan ini
-        $sppIds = Jadwal::where('id_guru', $guru->id_guru)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+        // Batch load all jadwals for this teacher in the given month (0 N+1)
+        $allJadwals = Jadwal::where('id_guru', $guru->id_guru)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->where('is_active', true)
-            ->pluck('id_spp')
-            ->unique();
+            ->orderBy('tanggal')
+            ->get()
+            ->groupBy('id_spp');
 
         // Rekap per murid
         $rekapAbsensi = Spp::with(['murid', 'programKursus'])
-            ->whereIn('id_spp', $sppIds)
+            ->whereIn('id_spp', $allJadwals->keys())
             ->get()
-            ->map(function (Spp $spp) use ($guru, $tahun, $bln) {
-                $jadwals = Jadwal::where('id_guru', $guru->id_guru)
-                    ->where('id_spp', $spp->id_spp)
-                    ->whereYear('tanggal', $tahun)
-                    ->whereMonth('tanggal', $bln)
-                    ->where('is_active', true)
-                    ->orderBy('tanggal')
-                    ->get();
-
+            ->map(function (Spp $spp) use ($allJadwals) {
+                $jadwals = $allJadwals->get($spp->id_spp, collect());
                 $total = $jadwals->count();
                 $hadir = $jadwals->where('status_kehadiran_murid', 'Hadir')->count();
                 $tidakHadir = $jadwals->where('status_kehadiran_murid', 'Tidak Hadir')->count();
@@ -106,8 +100,7 @@ class PresensiController extends Controller
                 $detailJadwals = Jadwal::with('progresMurid')
                     ->where('id_guru', $guru->id_guru)
                     ->where('id_spp', $request->id_spp)
-                    ->whereYear('tanggal', $tahun)
-                    ->whereMonth('tanggal', $bln)
+                    ->whereBetween('tanggal', [$startDate, $endDate])
                     ->where('is_active', true)
                     ->orderBy('tanggal')
                     ->orderBy('jam_mulai')
@@ -141,35 +134,51 @@ class PresensiController extends Controller
         ]);
 
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
-        $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
-            ->where('id_guru', $guru->id_guru)
-            ->firstOrFail();
 
-        // ── BARU: tolak jika jam mulai belum tiba ──────────────
-        $jadwalMulai = Carbon::parse(
-            $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai
-        );
-        if (now()->lt($jadwalMulai)) {
-            return back()->with('error',
-                'Presensi belum bisa diisi sebelum jadwal dimulai pukul '
-                .substr($jadwal->jam_mulai, 0, 5).'.'
+        $result = DB::transaction(function () use ($request, $guru) {
+            $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
+                ->where('id_guru', $guru->id_guru)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Validasi jadwal sudah dimulai
+            $jadwalMulai = Carbon::parse(
+                $jadwal->tanggal->format('Y-m-d').' '.$jadwal->jam_mulai
             );
-        }
-        // ───────────────────────────────────────────────────────
+            if (now()->lt($jadwalMulai)) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Presensi belum bisa diisi sebelum jadwal dimulai pukul '.substr($jadwal->jam_mulai, 0, 5).'.',
+                ];
+            }
 
-        if ($jadwal->waktu_presensi_diisi !== null) {
-            return back()->with('error', 'Presensi jadwal ini sudah diisi dan tidak dapat diubah lagi.');
-        }
+            if ($jadwal->waktu_presensi_diisi !== null) {
+                return [
+                    'status' => 'error',
+                    'message' => 'Presensi jadwal ini sudah diisi dan tidak dapat diubah lagi.',
+                ];
+            }
 
-        $jadwal->update([
-            'status_kehadiran_murid' => $request->status_kehadiran_murid,
-            'status_kehadiran_guru' => $request->status_kehadiran_guru,
-            'waktu_presensi_diisi' => now(),
-            'presensi_diisi_oleh' => 'Guru',
-        ]);
+            $jadwal->update([
+                'status_kehadiran_murid' => $request->status_kehadiran_murid,
+                'status_kehadiran_guru' => $request->status_kehadiran_guru,
+                'waktu_presensi_diisi' => now(),
+                'presensi_diisi_oleh' => 'Guru',
+            ]);
+
+            return [
+                'status' => 'success',
+                'message' => 'Presensi berhasil dicatat.',
+                'tanggal' => $jadwal->tanggal->format('Y-m-d'),
+            ];
+        });
+
+        if ($result['status'] === 'error') {
+            return back()->with('error', $result['message']);
+        }
 
         return redirect()
-            ->route('guru.presensi.index', ['tanggal' => $jadwal->tanggal->format('Y-m-d')])
-            ->with('success', 'Presensi berhasil dicatat.');
+            ->route('guru.presensi.index', ['tanggal' => $result['tanggal']])
+            ->with('success', $result['message']);
     }
 }

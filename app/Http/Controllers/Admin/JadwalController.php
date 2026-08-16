@@ -12,6 +12,7 @@ use App\Models\Spp;
 use App\Services\JadwalBuilderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class JadwalController extends Controller
 {
@@ -76,16 +77,30 @@ class JadwalController extends Controller
 
             return redirect()->route('admin.jadwals.index')
                 ->with('success', "Berhasil menjadwalkan {$count} pertemuan KBM. Sistem juga telah membuat Tagihan SPP otomatis dan Draft Gaji Guru.");
-        } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['error' => 'Proses pembuatan jadwal gagal: '.$e->getMessage()]);
+        } catch (\Throwable $e) {
+            Log::error('Gagal membuat jadwal KBM bulk', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'payload' => $request->except(['_token']),
+            ]);
+
+            return back()->withInput()->withErrors([
+                'error' => 'Proses pembuatan jadwal gagal diproses oleh sistem. Silakan periksa kembali data input atau hubungi administrator.',
+            ]);
         }
     }
 
     // Fungsi Endpoint API untuk mengecek riwayat sesi secara asinkronus (Realtime UX)
     public function cekSesi(Request $request)
     {
-        $spp = Spp::where('id_murid', $request->id_murid)
-            ->where('id_program', $request->id_program)
+        $validated = $request->validate([
+            'id_murid' => 'required|integer|exists:murids,id_murid',
+            'id_program' => 'required|integer|exists:program_kursus,id_program',
+        ]);
+
+        $spp = Spp::where('id_murid', $validated['id_murid'])
+            ->where('id_program', $validated['id_program'])
             ->latest('id_spp')
             ->first();
 

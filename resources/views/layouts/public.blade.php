@@ -3,11 +3,33 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@yield('title', 'Beranda') - Croma Music</title>
 		<meta
 			name="description"
-			content="Croma Music - Sekolah musik modern dengan jadwal fleksibel di Jabodetabek."
+			content="@yield('meta_description', 'Croma Music - Sekolah musik modern dengan jadwal fleksibel dan pengajar profesional di Jabodetabek.')"
 		/>
-		<title>@yield('title', 'Croma Music | Sekolah Musik Modern')</title>
+		<meta name="keywords" content="les musik, sekolah musik, les piano, les gitar, les drum, les vokal, croma music, kursus musik" />
+		<meta name="author" content="Croma Music" />
+		<link rel="canonical" href="{{ url()->current() }}" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/jpeg" href="{{ asset('images/croma_logo.jpg') }}" />
+		<link rel="shortcut icon" href="{{ asset('images/croma_logo.jpg') }}" />
+		<link rel="apple-touch-icon" href="{{ asset('images/croma_logo.jpg') }}" />
+
+		<!-- OpenGraph Metadata -->
+		<meta property="og:site_name" content="Croma Music" />
+		<meta property="og:title" content="@hasSection('title')@yield('title') - Croma Music@else Beranda - Croma Music @endif" />
+		<meta property="og:description" content="@yield('meta_description', 'Croma Music - Sekolah musik modern dengan kurikulum terstruktur dan jadwal fleksibel.')" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="{{ url()->current() }}" />
+		<meta property="og:image" content="{{ asset('images/croma_logo.jpg') }}" />
+
+		<!-- Twitter Card Metadata -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="@hasSection('title')@yield('title') - Croma Music@else Beranda - Croma Music @endif" />
+		<meta name="twitter:description" content="@yield('meta_description', 'Croma Music - Sekolah musik modern dengan kurikulum terstruktur dan jadwal fleksibel.')" />
+		<meta name="twitter:image" content="{{ asset('images/croma_logo.jpg') }}" />
 
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -114,13 +136,11 @@
 					<div class="footer-contact">
 						<h4>Hubungi Kami</h4>
 						<p>
-							{{-- TODO: Replace # with real WhatsApp link e.g. https://wa.me/628XXXXXXXXXX --}}
 							<a href="#" target="_blank" rel="noopener noreferrer">
 								<i class="fa-brands fa-whatsapp"></i> 0812-3456-7890
 							</a>
 						</p>
 						<p>
-							{{-- TODO: Replace # with real Instagram URL e.g. https://instagram.com/cromamusic.id --}}
 							<a href="#" target="_blank" rel="noopener noreferrer">
 								<i class="fa-brands fa-instagram"></i> @cromamusic.id
 							</a>
@@ -131,7 +151,6 @@
 							</a>
 						</p>
 						<p>
-							{{-- TODO: Replace # with real Google Maps URL --}}
 							<a href="#" target="_blank" rel="noopener noreferrer">
 								<i class="fa-solid fa-location-dot"></i> Bekasi, Jawa Barat
 							</a>

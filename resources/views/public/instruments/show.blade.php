@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Kursus ' . $instrument['title'] . ' — Croma Music')
+@section('title', 'Kursus ' . $instrument['title'])
 
 @section('content')
 <section class="instrument-detail-hero section bg-navy">
@@ -19,9 +19,9 @@
                 <span class="eyebrow-light">{{ $instrument['family'] }}</span>
             </div>
             <h1>Kursus {{ $instrument['title'] }} Modern</h1>
-            <p class="hero-subtext">Program privat komprehensif • Genre: {{ $instrument['genres'] }} • Tingkat: {{ $instrument['levels'] }}</p>
-            <div class="hero-cta-group">
-                <a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20dengan%20kursus%20{{ urlencode($instrument['title']) }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            <p class="hero-subtext">Semua Tingkat Kemahiran</p>
+            <div class="hero-cta-group margin-top-sm">
+                <a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20dengan%20kursus%20{{ urlencode($instrument['title']) }}%20(Rp{{ number_format($instrument['price'], 0, ',', '.') }}/bulan)" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
                     <i class="fa-brands fa-whatsapp"></i> Daftar Trial Gratis {{ $instrument['title'] }}
                 </a>
             </div>
@@ -31,7 +31,7 @@
 
 <section class="section">
     <div class="container">
-        <div class="grid-2 detail-grid">
+        <div class="detail-grid">
             <div class="detail-block">
                 <div class="section-header align-left">
                     <h2>Alur Belajar & Kurikulum</h2>
@@ -48,11 +48,10 @@
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                         </summary>
                         <div class="curriculum-content">
-                            <p>Pengenalan anatomi instrumen, posisi tubuh ideal, postur jari/tangan, serta membaca notasi & ritme dasar.</p>
-                            <ul class="curriculum-topics margin-top-xs">
-                                <li><i class="fa-solid fa-check text-gold"></i> Pengenalan teknik dasar & postur jari</li>
+                            <ul class="curriculum-topics">
+                                <li><i class="fa-solid fa-check text-gold"></i> Pengenalan teknik dasar, posisi tubuh, & postur jari</li>
                                 <li><i class="fa-solid fa-check text-gold"></i> Membaca notasi balok & ritme sederhana</li>
-                                <li><i class="fa-solid fa-check text-gold"></i> Memainkan 2-3 lagu beginner populer</li>
+                                <li><i class="fa-solid fa-check text-gold"></i> Praktik memainkan 2–3 lagu dasar populer</li>
                             </ul>
                         </div>
                     </details>
@@ -66,11 +65,10 @@
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                         </summary>
                         <div class="curriculum-content">
-                            <p>Penguasaan tangga nada, eksplorasi variasi akor & artikulasi, serta memainkan lagu populer pilihanmu.</p>
-                            <ul class="curriculum-topics margin-top-xs">
-                                <li><i class="fa-solid fa-check text-gold"></i> Tangga nada mayor & minor lengkap</li>
-                                <li><i class="fa-solid fa-check text-gold"></i> Artikulasi, dinamika, & phrasing lagu</li>
-                                <li><i class="fa-solid fa-check text-gold"></i> Eksplorasi genre pop, jazz, & rock</li>
+                            <ul class="curriculum-topics">
+                                <li><i class="fa-solid fa-check text-gold"></i> Penguasaan tangga nada mayor & minor lengkap</li>
+                                <li><i class="fa-solid fa-check text-gold"></i> Artikulasi, dinamika, & phrasing ekspresif</li>
+                                <li><i class="fa-solid fa-check text-gold"></i> Eksplorasi repertoar & variasi aransemen lagu</li>
                             </ul>
                         </div>
                     </details>
@@ -84,11 +82,10 @@
                             <i class="fa-solid fa-chevron-down summary-icon"></i>
                         </summary>
                         <div class="curriculum-content">
-                            <p>Improvisasi solo, latihan pendengaran (ear training) mendalam, serta persiapan ujian performa panggung.</p>
-                            <ul class="curriculum-topics margin-top-xs">
-                                <li><i class="fa-solid fa-check text-gold"></i> Teknik improvisasi solo & ear training</li>
-                                <li><i class="fa-solid fa-check text-gold"></i> Aransemen lagu kompleks & teknik panggung</li>
-                                <li><i class="fa-solid fa-check text-gold"></i> Persiapan ujian sertifikasi / performa recital</li>
+                            <ul class="curriculum-topics">
+                                <li><i class="fa-solid fa-check text-gold"></i> Teknik improvisasi solo & ear training mendalam</li>
+                                <li><i class="fa-solid fa-check text-gold"></i> Aransemen lagu kompleks & teknik performa panggung</li>
+                                <li><i class="fa-solid fa-check text-gold"></i> Persiapan ujian sertifikasi & resital musik</li>
                             </ul>
                         </div>
                     </details>
@@ -97,11 +94,18 @@
 
             <div class="detail-block">
                 <div class="card requirement-card">
-                    <h3><i class="fa-solid fa-clipboard-list"></i> Persyaratan Peralatan</h3>
+                    <h3><i class="fa-solid fa-file-lines"></i> Detail Program & Biaya</h3>
+                    <div style="margin: 0.75rem 0">
+                        <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); font-variant-numeric: tabular-nums;">
+                            Rp {{ number_format($instrument['price'], 0, ',', '.') }}
+                        </span>
+                        <span style="color: var(--text-light); font-size: 0.85rem;"> / bulan (4 pertemuan)</span>
+                    </div>
                     <ul class="check-list">
-                        <li><i class="fa-solid fa-check text-gold"></i> Memiliki akses ke instrumen {{ $instrument['title'] }} standar untuk latihan mandiri di rumah.</li>
-                        <li><i class="fa-solid fa-check text-gold"></i> Untuk program Onsite, instrumen utama telah disediakan lengkap di studio Croma Music.</li>
-                        <li><i class="fa-solid fa-check text-gold"></i> Buku materi & lembar partitur digital disediakan langsung oleh mentor.</li>
+                        <li><i class="fa-solid fa-check text-gold"></i> <strong>4 Sesi Privat per Bulan</strong> (1 sesi per minggu, durasi 45–60 menit).</li>
+                        <li><i class="fa-solid fa-check text-gold"></i> <strong>Metode Belajar (Onsite &amp; Home Visit)</strong>: Pilihan belajar di studio Croma Music atau tutor datang ke rumah Anda.</li>
+                        <li><i class="fa-solid fa-check text-gold"></i> <strong>Persyaratan Latihan</strong>: Memiliki akses ke instrumen {{ $instrument['title'] }} standar untuk latihan mandiri di rumah.</li>
+                        <li><i class="fa-solid fa-check text-gold"></i> <strong>Evaluasi & Sertifikasi</strong>: Evaluasi berkala perkembangan bulanan dan sertifikasi level bertahap.</li>
                     </ul>
                 </div>
             </div>
@@ -109,25 +113,27 @@
     </div>
 </section>
 
-<section class="section bg-light">
+<section class="section bg-light" style="padding-top: 4.5rem; padding-bottom: 4.5rem;">
     <div class="container">
         <div class="section-header">
             <h2>Mentor {{ $instrument['title'] }}</h2>
             <p class="subtitle-text">Pengajar tersertifikasi yang siap membimbing latihanmu.</p>
         </div>
 
-        <div class="grid-3 program-flex">
+        <div class="grid-4 program-flex" id="mentor-instrument-grid">
             @foreach($mentors as $mentor)
-                <div class="card tutor-card">
+                <div class="card tutor-card" data-category="{{ $mentor['category'] }}">
                     <div class="tutor-img-wrapper">
-                        <img src="{{ asset('images/croma_logo.jpg') }}" alt="Foto {{ $mentor['name'] }}" loading="lazy" />
+                        <div class="tutor-avatar-placeholder" aria-label="Foto {{ $mentor['name'] }}" role="img">
+                            {{ strtoupper(substr($mentor['name'], 0, 1)) }}
+                        </div>
                     </div>
                     <div class="card-body">
                         <h4>{{ $mentor['name'] }}</h4>
                         <span class="badge-text">{{ $mentor['badge'] }}</span>
-                        <div class="mentor-action margin-top-sm">
+                        <div class="card-action-wrap margin-top-sm">
                             <a href="{{ route('mentors.show', $mentor['slug']) }}" class="btn btn-outline-dark btn-sm full-width">
-                                lihat Profil <i class="fa-solid fa-arrow-right"></i>
+                                Lihat Profil <i class="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>

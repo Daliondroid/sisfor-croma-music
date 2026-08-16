@@ -16,7 +16,7 @@ class DashboardController extends Controller
             ->firstOrFail();
 
         // Jadwal mengajar hari ini
-        $jadwalHariIni = Jadwal::with(['spp.murid', 'spp.programKursus'])
+        $jadwalHariIni = Jadwal::with(['spp.murid', 'spp.programKursus', 'progresMurid'])
             ->where('id_guru', $guru->id_guru)
             ->where('is_active', true)
             ->whereDate('tanggal', today())

@@ -14,7 +14,7 @@ class ProfilController extends Controller
 {
     public function edit()
     {
-        /** @var User $user */ // Bagian ini ditambahkan
+        /** @var User $user */
         $user = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 
@@ -23,7 +23,7 @@ class ProfilController extends Controller
 
     public function update(Request $request)
     {
-        /** @var User $user */ // Bagian ini ditambahkan
+        /** @var User $user */
         $user = Auth::user();
         $admin = Admin::where('id_user', $user->id_user)->firstOrFail();
 

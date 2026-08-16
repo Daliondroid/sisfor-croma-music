@@ -2,15 +2,7 @@
 @section('title', 'Buat Laporan Bulanan')
 @section('page-title', 'Laporan Bulanan')
 
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('guru.dashboard') }}"            class="nav-item {{ request()->routeIs('guru.dashboard')       ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('guru.jadwal.index') }}"         class="nav-item {{ request()->routeIs('guru.jadwal*')         ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('guru.absensi.index') }}"        class="nav-item {{ request()->routeIs('guru.absensi*')        ? 'active' : '' }}"><i class="fa-solid fa-chart-bar"></i> Data Absensi</a>
-    <a href="{{ route('guru.presensi.index') }}"       class="nav-item {{ request()->routeIs('guru.presensi*')       ? 'active' : '' }}"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
-    <a href="{{ route('guru.progres.index') }}"        class="nav-item {{ request()->routeIs('guru.progres*')        ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan KBM</a>
-    <a href="{{ route('guru.monthly-report.index') }}" class="nav-item {{ request()->routeIs('guru.monthly-report*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Laporan Bulanan</a>
-@endsection
+@section('sidebar-menu') @include('guru.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
@@ -18,30 +10,35 @@
         <h2>{{ $report ? 'Edit' : 'Buat' }} Laporan Bulanan</h2>
         <div class="breadcrumb">Guru / Laporan Bulanan / <span>{{ $report ? 'Edit' : 'Buat' }}</span></div>
     </div>
-    <a href="{{ route('guru.monthly-report.index', ['bulan' => $bulan]) }}" class="btn btn-outline btn-sm">
-        <i class="fa-solid fa-arrow-left"></i> Kembali
-    </a>
 </div>
 
-{{-- Ringkasan Sesi --}}
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(9.375rem,1fr));gap:1rem;margin-bottom:1.5rem">
-    <div class="card" style="padding:1rem 1.5rem;text-align:center">
-        <div style="font-size:1.8rem;font-weight:700;color:var(--primary-blue)">{{ $totalSesi }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Total Sesi</div>
-    </div>
-    <div class="card" style="padding:1rem 1.5rem;text-align:center">
-        <div style="font-size:1.8rem;font-weight:700;color:#16a34a">{{ $totalHadir }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Hadir</div>
-    </div>
-    <div class="card" style="padding:1rem 1.5rem;text-align:center">
-        <div style="font-size:1.8rem;font-weight:700;color:{{ $persen >= 80 ? '#16a34a' : ($persen >= 60 ? '#d97706' : '#dc2626') }}">
-            {{ $persen }}%
+{{-- Open KPI Strips --}}
+<div class="stats-grid" style="margin-bottom:1.5rem">
+    <div class="stat-card">
+        <div>
+            <div class="stat-value" style="font-variant-numeric:tabular-nums">{{ $totalSesi }}</div>
+            <div class="stat-label">Total Sesi</div>
         </div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Kehadiran</div>
     </div>
-    <div class="card" style="padding:1rem 1.5rem;text-align:center">
-        <div style="font-size:1.8rem;font-weight:700;color:var(--primary-blue)">{{ $skorOtomatis }}</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">Skor Otomatis</div>
+    <div class="stat-card">
+        <div>
+            <div class="stat-value" style="font-variant-numeric:tabular-nums">{{ $totalHadir }}</div>
+            <div class="stat-label">Hadir</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <div class="stat-value" style="font-variant-numeric:tabular-nums">
+                {{ $persen }}%
+            </div>
+            <div class="stat-label">Kehadiran</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <div class="stat-value" style="font-variant-numeric:tabular-nums">{{ $skorOtomatis }}</div>
+            <div class="stat-label">Skor Otomatis</div>
+        </div>
     </div>
 </div>
 
@@ -51,8 +48,7 @@
     <div class="card">
         <div class="card-header">
             <h3>
-                <i class="fa-solid fa-file-pen" style="color:var(--primary-blue);margin-right:0.5rem"></i>
-                Form Laporan — {{ $spp->murid->nama_murid ?? '-' }}
+                Form Laporan &mdash; {{ $spp->murid->nama_murid ?? '-' }}
                 <span style="font-weight:400;color:var(--text-light);font-size:.85rem">
                     · {{ \Carbon\Carbon::createFromFormat('Y-m', $bulan)->translatedFormat('F Y') }}
                 </span>
@@ -60,7 +56,7 @@
         </div>
         <div class="card-body">
             @if($errors->any())
-                <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
+                <div class="alert alert-danger">{{ $errors->first() }}</div>
             @endif
 
             <form method="POST" action="{{ route('guru.monthly-report.store') }}">
@@ -101,10 +97,12 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    {{ $report ? 'Perbarui Laporan' : 'Simpan Laporan' }}
-                </button>
+                <div style="display:flex;gap:0.75rem;margin-top:0.5rem">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        {{ $report ? 'Perbarui Laporan' : 'Simpan Laporan' }}
+                    </button>
+                    <a href="{{ route('guru.monthly-report.index', ['bulan' => $bulan]) }}" class="btn btn-outline btn-sm">Kembali</a>
+                </div>
             </form>
         </div>
     </div>
@@ -112,7 +110,7 @@
     {{-- Ringkasan Sesi --}}
     <div class="card">
         <div class="card-header">
-            <h3><i class="fa-solid fa-list-check" style="color:var(--primary-blue);margin-right:0.5rem"></i>Rekap Sesi</h3>
+            <h3>Rekap Sesi</h3>
         </div>
         <div style="padding:0;max-height:31.25rem;overflow-y:auto">
             @forelse($jadwals as $j)
@@ -125,20 +123,20 @@
                 };
             @endphp
             <div style="padding:1rem 1rem;border-bottom:1px solid #f3f4f6;display:flex;gap:1rem;align-items:center">
-                <div style="width:2rem;height:2rem;border-radius:50%;background:var(--primary-blue);color:#fff;
+                <div style="width:2rem;height:2rem;border-radius:0.25rem;background:var(--primary-navy);color:#fff;
                             display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0">
                     {{ $j->sesi_ke }}
                 </div>
                 <div style="flex:1;min-width:0">
-                    <div style="font-size:.8rem;font-weight:600">{{ $j->tanggal->translatedFormat('d M Y') }}</div>
-                    <div style="font-size:.72rem;color:var(--text-light)">{{ substr($j->jam_mulai, 0, 5) }}</div>
+                    <div style="font-size:.8rem;font-weight:600;color:var(--text-dark)">{{ $j->tanggal->translatedFormat('d M Y') }}</div>
+                    <div style="font-size:.72rem;color:var(--text-light);font-variant-numeric:tabular-nums">{{ substr($j->jam_mulai, 0, 5) }}</div>
                     @if($j->progresMurid)
-                        <div style="font-size:.72rem;color:var(--primary-blue);margin-top:0.125rem">
+                        <div style="font-size:.72rem;color:var(--text-dark);margin-top:0.125rem">
                             {{ Str::limit($j->progresMurid->materi_diajarkan, 40) }}
                         </div>
                     @endif
                 </div>
-                <span style="font-size:.72rem;font-weight:700;color:{{ $color }}">{{ $sm ?? '?' }}</span>
+                <span style="font-size:.72rem;font-weight:700;color:{{ $color }}">{{ strtoupper($sm ?? 'BELUM') }}</span>
             </div>
             @empty
                 <div style="padding:1.5rem;text-align:center;color:var(--text-light);font-size:.85rem">Tidak ada sesi.</div>

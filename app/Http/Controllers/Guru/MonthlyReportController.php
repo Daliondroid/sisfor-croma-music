@@ -8,6 +8,7 @@ use App\Models\Jadwal;
 use App\Models\MonthlyReport;
 use App\Models\Spp;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,41 +24,35 @@ class MonthlyReportController extends Controller
     {
         $guru = Guru::where('id_user', Auth::id())->firstOrFail();
         $bulan = $request->bulan ?? now()->format('Y-m');
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
-        [$tahun, $bln] = explode('-', $bulan);
-
-        // Ambil semua SPP (murid) yang diajar guru di bulan ini
-        $sppIds = Jadwal::where('id_guru', $guru->id_guru)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+        // Batch load all jadwals and monthly reports for the teacher in this period (0 N+1)
+        $allJadwals = Jadwal::where('id_guru', $guru->id_guru)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->where('is_active', true)
-            ->pluck('id_spp')
-            ->unique();
+            ->get()
+            ->groupBy('id_spp');
+
+        $sppIds = $allJadwals->keys();
+
+        $allReports = MonthlyReport::whereIn('id_spp', $sppIds)
+            ->whereBetween('periode_bulan', [$startDate, $endDate])
+            ->get()
+            ->keyBy('id_spp');
 
         $spps = Spp::with(['murid', 'programKursus'])
             ->whereIn('id_spp', $sppIds)
             ->get()
-            ->map(function (Spp $spp) use ($guru, $tahun, $bln) {
-                // Rekap jadwal bulan ini
-                $jadwals = Jadwal::where('id_guru', $guru->id_guru)
-                    ->where('id_spp', $spp->id_spp)
-                    ->whereYear('tanggal', $tahun)
-                    ->whereMonth('tanggal', $bln)
-                    ->where('is_active', true)
-                    ->get();
-
+            ->map(function (Spp $spp) use ($allJadwals, $allReports) {
+                $jadwals = $allJadwals->get($spp->id_spp, collect());
                 $stats = Jadwal::calculateAttendanceStats($jadwals);
 
                 $spp->total_sesi = $stats['total_sesi'];
                 $spp->hadir_murid = $stats['hadir'];
                 $spp->hadir_guru = $jadwals->where('status_kehadiran_guru', 'Hadir')->count();
                 $spp->persen = $stats['persen_hadir'];
-
-                // Cek apakah report sudah dibuat
-                $spp->report = MonthlyReport::where('id_spp', $spp->id_spp)
-                    ->whereYear('periode_bulan', $tahun)
-                    ->whereMonth('periode_bulan', $bln)
-                    ->first();
+                $spp->report = $allReports->get($spp->id_spp);
 
                 return $spp;
             });

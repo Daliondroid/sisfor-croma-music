@@ -1,21 +1,23 @@
 @extends('layouts.public')
 
-@section('title', 'Croma Music | Sekolah Musik Modern')
+@section('title', 'Beranda')
 
 @push('preload')
-<link rel="preload" as="image" href="{{ asset('images/TIM05080-1140-x-570.png') }}" fetchpriority="high">
+<link rel="preload" as="image" href="{{ asset('images/hero-banner.avif') }}" fetchpriority="high">
 @endpush
 
 @php
 $programs = [
-    ['title' => 'Piano', 'desc' => 'Klasik, Pop, & Jazz', 'img' => 'images/piano.avif'],
-    ['title' => 'Gitar', 'desc' => 'Akustik & Elektrik', 'img' => 'images/guitar.avif'],
-    ['title' => 'Drum', 'desc' => 'Rhythm & Percussion', 'img' => 'images/drums.avif'],
-    ['title' => 'Vokal', 'desc' => 'Teknik & Performance', 'img' => 'images/vocals.avif'],
-    ['title' => 'Keyboard', 'desc' => 'Synthesizer & Arranger', 'img' => 'images/keyboards.avif'],
-    ['title' => 'Bass', 'desc' => 'Groove & Slap Technique', 'img' => 'images/bass.avif'],
-    ['title' => 'Flute', 'desc' => 'Klasik & Orkestra', 'img' => 'images/flute.avif'],
-    ['title' => 'Saxophone', 'desc' => 'Jazz & Pop Brass', 'img' => 'images/sax.avif'],
+    ['title' => 'Piano', 'slug' => 'piano', 'desc' => 'Klasik, Pop, & Jazz', 'price' => 600000, 'img' => 'images/piano.avif'],
+    ['title' => 'Vokal', 'slug' => 'vokal', 'desc' => 'Teknik & Performance', 'price' => 600000, 'img' => 'images/vocals.avif'],
+    ['title' => 'Gitar', 'slug' => 'gitar', 'desc' => 'Akustik & Elektrik', 'price' => 600000, 'img' => 'images/guitar.avif'],
+    ['title' => 'Keyboard', 'slug' => 'keyboard', 'desc' => 'Synthesizer & Arranger', 'price' => 600000, 'img' => 'images/keyboards.avif'],
+    ['title' => 'Drum', 'slug' => 'drum', 'desc' => 'Rhythm & Percussion', 'price' => 650000, 'img' => 'images/drums.avif'],
+    ['title' => 'Bass', 'slug' => 'bass', 'desc' => 'Groove & Slap Technique', 'price' => 650000, 'img' => 'images/bass.avif'],
+    ['title' => 'Saxophone', 'slug' => 'saxophone', 'desc' => 'Jazz & Pop Brass', 'price' => 650000, 'img' => 'images/sax.avif'],
+    ['title' => 'Flute', 'slug' => 'flute', 'desc' => 'Klasik & Orkestra', 'price' => 700000, 'img' => 'images/flute.avif'],
+    ['title' => 'Trumpet', 'slug' => 'trumpet', 'desc' => 'Jazz & Orkestra Tiup', 'price' => 700000, 'img' => 'images/sax.avif'],
+    ['title' => 'Instrumen Lainnya', 'slug' => 'lainnya', 'desc' => 'Request Custom', 'price' => 700000, 'img' => 'images/others.avif'],
 ];
 
 $featuredMentors = [
@@ -29,10 +31,9 @@ $featuredMentors = [
 @section('content')
 <!-- 1. Hero Gateway Section -->
 <section id="home" class="hero">
-	<div
-		class="hero-bg-lower"
-		style="background-image: url('{{ asset('images/TIM05080-1140-x-570.png') }}');"
-	></div>
+	<div class="hero-bg-lower">
+		<img src="{{ asset('images/hero-banner.avif') }}" alt="Siswa Croma Music" class="hero-img-photo" />
+	</div>
 	<div class="hero-bg-upper"></div>
 	<div class="hero-navy-column">
 		<div class="hero-content">
@@ -52,7 +53,7 @@ $featuredMentors = [
 				>
 					<i class="fa-brands fa-whatsapp"></i> Daftar Free Trial
 				</a>
-				<a href="#program" class="btn btn-outline" aria-label="Lihat program kursus">
+				<a href="#about" class="btn btn-outline" aria-label="Lihat program kursus">
 					Lihat Program <i class="fa-solid fa-chevron-down"></i>
 				</a>
 			</div>
@@ -63,27 +64,22 @@ $featuredMentors = [
 <!-- 2. Keunggulan & Cara Belajar Section -->
 <section id="about" class="section bg-light">
 	<div class="container">
-		<div class="section-header text-center">
-			<h2>Keunggulan & Cara Belajar</h2>
-			<p>Pengalaman belajar musik fleksibel, profesional, dan terstruktur.</p>
-		</div>
-
-		<div class="grid-3 feature-flex">
-			<div class="card feature-card">
+		<div class="features-column-layout">
+			<div class="feature-col">
 				<div class="icon-box">
 					<i class="fa-solid fa-house-laptop"></i>
 				</div>
 				<h3>Onsite & Home Visit</h3>
 				<p>Belajar di studio kami yang nyaman atau guru profesional kami datang langsung ke rumah Anda.</p>
 			</div>
-			<div class="card feature-card">
+			<div class="feature-col">
 				<div class="icon-box">
 					<i class="fa-regular fa-clock"></i>
 				</div>
 				<h3>Jadwal Fleksibel</h3>
 				<p>Kesibukan bukan halangan. Atur dan reschedule jadwal latihan musikmu dengan mudah melalui sistem kami.</p>
 			</div>
-			<div class="card feature-card">
+			<div class="feature-col">
 				<div class="icon-box">
 					<i class="fa-solid fa-user-tie"></i>
 				</div>
@@ -99,12 +95,12 @@ $featuredMentors = [
 	<div class="container">
 		<div class="section-header text-center">
 			<h2>Program Unggulan</h2>
-			<p>Pilih instrumen favoritmu dan mulai perjalanan musikmu bersama pengajar profesional.</p>
+			<p>Pilih instrumen favoritmu dan mulai perjalanan musikmu bersama pengajar profesional (Onsite & Home Visit).</p>
 		</div>
 
 		<div class="program-grid-4">
 			@foreach($programs as $program)
-				<div class="card program-card">
+				<a href="{{ route('instruments.show', $program['slug']) }}" class="card program-card" style="text-decoration:none">
 					<div class="program-img-wrap">
 						<img
 							src="{{ asset($program['img']) }}"
@@ -115,9 +111,8 @@ $featuredMentors = [
 					</div>
 					<div class="card-overlay">
 						<h3>{{ $program['title'] }}</h3>
-						<p>{{ $program['desc'] }}</p>
 					</div>
-				</div>
+				</a>
 			@endforeach
 		</div>
 
@@ -168,7 +163,6 @@ $featuredMentors = [
 			@foreach($featuredMentors as $mentor)
 				<div class="card tutor-card">
 					<div class="tutor-img-wrapper">
-						{{-- TODO: Replace placeholder below with real mentor photo <img> when client provides assets --}}
 						<div class="tutor-avatar-placeholder" aria-label="Foto {{ $mentor['name'] }}" role="img">
 							{{ strtoupper(substr($mentor['name'], 0, 1)) }}
 						</div>

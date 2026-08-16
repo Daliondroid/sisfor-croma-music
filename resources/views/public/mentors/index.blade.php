@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Direktori Mentor — Croma Music')
+@section('title', 'Direktori Mentor')
 @section('header-class', 'header-light')
 
 @section('content')
@@ -35,7 +35,6 @@
                     data-featured="{{ $mentor['featured'] ? 'true' : 'false' }}"
                 >
                     <div class="tutor-img-wrapper">
-						{{-- TODO: Replace placeholder below with real mentor photo <img> when client provides assets --}}
 						<div class="tutor-avatar-placeholder" aria-label="Foto {{ $mentor['name'] }}" role="img">
 							{{ strtoupper(substr($mentor['name'], 0, 1)) }}
 						</div>
@@ -55,62 +54,6 @@
     </div>
 </section>
 
-<section id="pricing" class="section bg-light">
-	<div class="container">
-		<div class="section-header text-center">
-			<h2>Pilihan Paket Kursus</h2>
-			<p class="subtitle-text">Pilih metode pembelajaran yang paling sesuai dengan kebutuhanmu.</p>
-		</div>
-
-		<div class="grid-2 pricing-grid">
-			<!-- TODO: Update pricing figures when finalized -->
-			<div class="card pricing-card">
-				<div class="pricing-header">
-					<div class="pricing-icon"><i class="fa-solid fa-building-columns"></i></div>
-					<h3>Program Onsite</h3>
-					<p class="pricing-subtitle">Belajar langsung di studio Croma Music</p>
-				</div>
-				<div class="pricing-price">
-					<span class="currency">Mulai dari</span>
-					<span class="amount">Rp —.——</span>
-					<span class="period">/ sesi</span>
-				</div>
-				<ul class="pricing-benefits">
-					<li><i class="fa-solid fa-check text-gold"></i> Fasilitas studio & instrumen lengkap</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Pendampingan 1-on-1 mentor pengajar</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Jadwal latihan mingguan tetap</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Akses modul & partitur digital</li>
-				</ul>
-				<a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20tanya%20paket%20Onsite" target="_blank" rel="noopener noreferrer" class="btn btn-primary full-width">
-					Konsultasi Paket Onsite
-				</a>
-			</div>
-
-			<!-- TODO: Update pricing figures when finalized -->
-			<div class="card pricing-card">
-				<div class="pricing-header">
-					<div class="pricing-icon"><i class="fa-solid fa-house-chimney-user"></i></div>
-					<h3>Program Home Visit</h3>
-					<p class="pricing-subtitle">Mentor datang langsung to rumahmu</p>
-				</div>
-				<div class="pricing-price">
-					<span class="currency">Mulai dari</span>
-					<span class="amount">Rp —.——</span>
-					<span class="period">/ sesi</span>
-				</div>
-				<ul class="pricing-benefits">
-					<li><i class="fa-solid fa-check text-gold"></i> Hemat waktu tanpa perlu perjalanan</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Kenyamanan latihan di rumah sendiri</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Pendampingan 1-on-1 privat</li>
-					<li><i class="fa-solid fa-check text-gold"></i> Bebas atur jadwal reschedule</li>
-				</ul>
-				<a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20tertarik%20tanya%20paket%20Home%20Visit" target="_blank" rel="noopener noreferrer" class="btn btn-primary full-width">
-					Konsultasi Home Visit
-				</a>
-			</div>
-		</div>
-	</div>
-</section>
 
 <section id="faq" class="section">
 	<div class="container">

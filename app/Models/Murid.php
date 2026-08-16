@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -82,10 +83,11 @@ class Murid extends Model
     public function sppBulanIni(?string $bulan = null): ?Spp
     {
         $bulan = $bulan ?? now()->format('Y-m');
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
         return $this->spps()
-            ->whereYear('periode_tagihan', substr($bulan, 0, 4))
-            ->whereMonth('periode_tagihan', substr($bulan, 5, 2))
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->first();
     }
 }

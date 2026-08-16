@@ -17,10 +17,12 @@ class DashboardController extends Controller
         $sppBulanIni = $murid->sppBulanIni();
         $reportTerakhir = $murid->monthlyReports()->latest()->first();
 
+        $startDate = now()->startOfMonth()->toDateString();
+        $endDate = now()->endOfMonth()->toDateString();
+
         // Mengambil riwayat jadwal pelajaran yang sudah diisi presensinya pada bulan ini
         $presensiBulanIni = $murid->jadwals()
-            ->whereYear('tanggal', now()->year)
-            ->whereMonth('tanggal', now()->month)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->whereNotNull('status_kehadiran_murid')
             ->with('progresMurid')
             ->orderBy('tanggal', 'desc')

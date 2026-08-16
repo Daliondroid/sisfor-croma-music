@@ -1,12 +1,9 @@
 @extends('layouts.app')
 @section('title', 'SPP Saya')
 @section('page-title', 'SPP Saya')
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('murid.dashboard') }}" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('murid.jadwal.index') }}" class="nav-item {{ request()->routeIs('murid.jadwal*') ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*') ? 'active' : '' }}"><i class="fa-solid fa-chart-line"></i> Laporan Bulanan</a>
-    <a href="{{ route('murid.spp.index') }}" class="nav-item active"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>@endsection
+
+@section('sidebar-menu') @include('murid.partials.sidebar') @endsection
+
 @push('styles')
 <style>
     /* ── SPP Card List ── */
@@ -18,60 +15,34 @@
 
     .spp-card {
         background: var(--card-bg);
-        border-radius: var(--radius);
-        border: 0.09375rem solid var(--topbar-border);
+        border-radius: 0.25rem;
+        border: 1px solid var(--topbar-border);
         overflow: hidden;
-        transition: box-shadow .2s;
     }
-    .spp-card:hover { box-shadow: var(--shadow-md); }
-
-    /* Border accent per status */
-    .spp-card.status-lunas     { border-color: #86efac; }
-    .spp-card.status-menunggu  { border-color: #93c5fd; }
-    .spp-card.status-belum     { border-color: #fca5a5; }
 
     /* ── Card Header ── */
     .spp-card-header {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        padding: 1rem 1.5rem 1rem;
+        padding: 1.25rem 1.5rem 1rem;
         gap: 1rem;
     }
     .spp-period {
         font-size: 1.05rem;
         font-weight: 700;
+        color: var(--text-dark);
         margin-bottom: 0.25rem;
     }
     .spp-meta {
         font-size: .82rem;
         color: var(--text-light);
+        font-variant-numeric: tabular-nums;
     }
     .spp-meta strong { color: var(--text-dark); font-weight: 600; }
 
-    /* Status Pills */
-    .status-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: .75rem;
-        font-weight: 700;
-        padding: 0.25rem 1rem;
-        border-radius: 62.4375rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-        letter-spacing: 0.01875rem;
-    }
-    .pill-lunas    { background: #dcfce7; color: #15803d; }
-    .pill-menunggu { background: #dbeafe; color: #1d4ed8; }
-    .pill-belum    { background: #fee2e2; color: #b91c1c; }
-
-    [data-theme="dark"] .pill-lunas    { background: #14312a; color: #4ade80; }
-    [data-theme="dark"] .pill-menunggu { background: #1e3a5f; color: #60a5fa; }
-    [data-theme="dark"] .pill-belum    { background: #3d1515; color: #f87171; }
-
     /* ── Card Body ── */
-    .spp-card-body { padding: 0 1.5rem 1rem; }
+    .spp-card-body { padding: 0 1.5rem 1.25rem; }
 
     /* Divider sebelum body */
     .spp-divider {
@@ -89,15 +60,9 @@
         color: #15803d;
         background: #f0fdf4;
         border: 1px solid #bbf7d0;
-        border-radius: 0.5rem;
-        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        padding: 0.75rem 1rem;
     }
-    [data-theme="dark"] .confirm-row {
-        background: #14312a;
-        border-color: #166534;
-        color: #4ade80;
-    }
-    .confirm-row i { font-size: 1rem; }
 
     /* ── Status Menunggu: info row ── */
     .waiting-row {
@@ -106,53 +71,40 @@
         gap: 0.25rem;
         background: #eff6ff;
         border: 1px solid #bfdbfe;
-        border-radius: 0.5rem;
-        padding: 1rem 1rem;
+        border-radius: 0.25rem;
+        padding: 0.75rem 1rem;
         margin-bottom: 1rem;
     }
-    [data-theme="dark"] .waiting-row {
-        background: #1e3a5f;
-        border-color: #1e40af;
-    }
     .waiting-title {
+        font-size: .83rem;
+        font-weight: 700;
+        color: #1e3a8a;
+    }
+    .waiting-sub {
+        font-size: .78rem;
+        color: var(--text-light);
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: .83rem;
-        font-weight: 600;
-        color: #1d4ed8;
     }
-    [data-theme="dark"] .waiting-title { color: #60a5fa; }
-    .waiting-sub {
-        font-size: .78rem;
-        color: #3b82f6;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding-left: 1.5rem;
-    }
-    [data-theme="dark"] .waiting-sub { color: #93c5fd; }
-    .waiting-sub a { color: #1d4ed8; font-weight: 600; }
-    [data-theme="dark"] .waiting-sub a { color: #60a5fa; }
+    .waiting-sub a { color: var(--primary-navy); font-weight: 600; text-decoration: underline; }
 
     /* ── Upload Box ── */
     .upload-box {
-        border: 1px solid var(--input-border);
-        border-radius: 0.5rem;
+        border: 1px solid var(--topbar-border);
+        border-radius: 0.25rem;
         overflow: hidden;
     }
     .upload-box-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
         padding: 0.5rem 1rem;
         background: var(--bg-light);
-        border-bottom: 1px solid var(--input-border);
-        font-size: .82rem;
-        font-weight: 600;
+        border-bottom: 1px solid var(--topbar-border);
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
         color: var(--text-dark);
     }
-    .upload-box-header i { color: var(--primary-blue); }
     .upload-box-body { padding: 1rem; }
     .upload-field-grid {
         display: grid;
@@ -163,34 +115,12 @@
     .upload-field-label {
         display: block;
         font-size: .72rem;
-        font-weight: 600;
+        font-weight: 700;
         color: var(--text-light);
         text-transform: uppercase;
-        letter-spacing: 0.03125rem;
+        letter-spacing: 0.04em;
         margin-bottom: 0.25rem;
     }
-
-    /* Tombol kirim per status */
-    .btn-send-primary {
-        background: #d97706;
-        color: #fffbeb;
-        border: none;
-    }
-    .btn-send-primary:hover { background: #b45309; color: #fffbeb; }
-    .btn-send-secondary {
-        background: var(--primary-blue);
-        color: #fff;
-        border: none;
-    }
-    .btn-send-secondary:hover { background: var(--primary-dark); color: #fff; }
-
-    /* Empty state */
-    .spp-empty {
-        text-align: center;
-        padding: 3rem;
-        color: var(--text-light);
-    }
-    .spp-empty i { font-size: 2.2rem; opacity: .25; display: block; margin-bottom: 1rem; }
 </style>
 @endpush
 
@@ -227,16 +157,16 @@
             </div>
 
             @if($isLunas)
-                <span class="status-pill pill-lunas">
-                    <i class="fa-solid fa-circle-check"></i> Lunas
+                <span class="badge badge-success">
+                    LUNAS
                 </span>
             @elseif($hasBukti)
-                <span class="status-pill pill-menunggu">
-                    <i class="fa-solid fa-clock"></i> Menunggu Konfirmasi
+                <span class="badge badge-info">
+                    MENUNGGU KONFIRMASI
                 </span>
             @else
-                <span class="status-pill pill-belum">
-                    <i class="fa-solid fa-circle-exclamation"></i> Belum Upload Bukti
+                <span class="badge badge-danger">
+                    BELUM UPLOAD BUKTI
                 </span>
             @endif
         </div>
@@ -250,10 +180,9 @@
             {{-- LUNAS: tampilkan info konfirmasi saja --}}
             @if($isLunas)
                 <div class="confirm-row">
-                    <i class="fa-solid fa-circle-check"></i>
                     <span>
                         Dikonfirmasi admin pada
-                        <strong>{{ $spp->transaksi?->tanggal_konfirmasi?->translatedFormat('d F Y') ?? '—' }}</strong>
+                        <strong style="font-variant-numeric:tabular-nums">{{ $spp->transaksi?->tanggal_konfirmasi?->translatedFormat('d F Y') ?? '—' }}</strong>
                     </span>
                     @if($spp->transaksi?->catatan_admin)
                         &nbsp;·&nbsp; <em>{{ $spp->transaksi->catatan_admin }}</em>
@@ -264,23 +193,20 @@
             @elseif($hasBukti)
                 <div class="waiting-row">
                     <div class="waiting-title">
-                        <i class="fa-solid fa-file-arrow-up"></i>
                         Bukti transfer sudah dikirim
                     </div>
                     <div class="waiting-sub">
-                        <i class="fa-regular fa-calendar"></i>
-                        Dikirim
-                        {{ $spp->transaksi->created_at->translatedFormat('d F Y') }}
-                        &nbsp;·&nbsp;
-                        <a href="{{ asset('storage/' . $spp->transaksi->file_bukti_transfer) }}" target="_blank">
-                            Lihat bukti →
+                        <span>Dikirim {{ $spp->transaksi->created_at->translatedFormat('d F Y') }}</span>
+                        <span>·</span>
+                        <a href="{{ route('murid.spp.view-bukti', $spp) }}" target="_blank">
+                            Lihat Bukti
                         </a>
                     </div>
                 </div>
 
                 <div class="upload-box">
                     <div class="upload-box-header">
-                        <i class="fa-solid fa-rotate-right"></i> Kirim Ulang Bukti
+                        Kirim Ulang Bukti
                     </div>
                     <div class="upload-box-body">
                         <form method="POST" action="{{ route('murid.spp.bukti', $spp) }}" enctype="multipart/form-data">
@@ -302,8 +228,8 @@
                                 <input type="date" name="tanggal_bayar" class="form-control"
                                        value="{{ now()->format('Y-m-d') }}" required/>
                             </div>
-                            <button type="submit" class="btn btn-sm btn-send-secondary">
-                                <i class="fa-solid fa-paper-plane"></i> Kirim Ulang
+                            <button type="submit" class="btn btn-outline btn-sm">
+                                Kirim Ulang
                             </button>
                         </form>
                     </div>
@@ -313,7 +239,7 @@
             @else
                 <div class="upload-box">
                     <div class="upload-box-header">
-                        <i class="fa-solid fa-upload"></i> Upload Bukti Transfer
+                        Upload Bukti Transfer
                     </div>
                     <div class="upload-box-body">
                         <form method="POST" action="{{ route('murid.spp.bukti', $spp) }}" enctype="multipart/form-data">
@@ -335,8 +261,8 @@
                                 <input type="date" name="tanggal_bayar" class="form-control"
                                        value="{{ now()->format('Y-m-d') }}" required/>
                             </div>
-                            <button type="submit" class="btn btn-sm btn-send-primary">
-                                <i class="fa-solid fa-paper-plane"></i> Kirim Bukti
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                Kirim Bukti
                             </button>
                         </form>
                     </div>
@@ -349,9 +275,6 @@
     @empty
         <div class="card">
             <div class="empty-state">
-                <div class="empty-state-icon">
-                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="16" width="48" height="56" rx="4" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M16 32h48" stroke="var(--primary-blue)" stroke-width="2"/><circle cx="40" cy="48" r="8" stroke="var(--primary-blue)" stroke-width="2"/><path d="M40 44v8" stroke="var(--primary-blue)" stroke-width="2"/><path d="M38 46h4" stroke="var(--primary-blue)" stroke-width="2"/></svg>
-                </div>
                 <div class="empty-state-title">Tidak ada tagihan SPP.</div>
                 <div class="empty-state-description">Belum ada tagihan SPP untuk saat ini.</div>
             </div>

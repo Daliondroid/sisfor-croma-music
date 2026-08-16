@@ -3,21 +3,7 @@
 @section('title', 'Jadwal Kelas Saya')
 @section('page-title', 'Jadwal Kelas')
 
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('murid.dashboard') }}" class="nav-item {{ request()->routeIs('murid.dashboard') ? 'active' : '' }}">
-        <i class="fa-solid fa-gauge"></i> Dashboard
-    </a>
-    <a href="{{ route('murid.jadwal.index') }}" class="nav-item {{ request()->routeIs('murid.jadwal*') ? 'active' : '' }}">
-        <i class="fa-solid fa-calendar-days"></i> Jadwal Kelas
-    </a>
-    <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*') ? 'active' : '' }}">
-        <i class="fa-solid fa-book-open"></i> Laporan Bulanan
-    </a>
-    <a href="{{ route('murid.spp.index') }}" class="nav-item {{ request()->routeIs('murid.spp*') ? 'active' : '' }}">
-        <i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya
-    </a>
-@endsection
+@section('sidebar-menu') @include('murid.partials.sidebar') @endsection
 
 @push('styles')
 <style>
@@ -33,64 +19,36 @@
 .filter-pills { display: flex; gap: 0.25rem; flex-wrap: wrap; }
 .filter-pill {
     font-size: .72rem;
-    font-weight: 600;
-    padding: 0.25rem 1rem;
-    border-radius: 1.25rem;
-    border: 0.09375rem solid var(--input-border);
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--topbar-border);
     background: transparent;
     color: var(--text-light);
     text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     transition: .15s;
     white-space: nowrap;
 }
 .filter-pill.active {
-    background: var(--text-dark);
-    color: var(--bg-white);
-    border-color: var(--text-dark);
+    background: var(--primary-navy);
+    color: #fff;
+    border-color: var(--primary-navy);
 }
 .filter-pill:hover:not(.active) { border-color: var(--text-dark); color: var(--text-dark); }
 
-/* ─── Month picker ──────────────────────────────────── */
-.month-picker-wrap {
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-.month-picker-label {
-    font-size: .75rem;
-    font-weight: 600;
-    color: var(--text-light);
-    white-space: nowrap;
-}
-.month-picker-input {
-    font-family: inherit;
-    font-size: .8rem;
-    font-weight: 600;
-    padding: 0.25rem 1rem;
-    border: 0.09375rem solid var(--input-border);
-    border-radius: 0.5rem;
-    background: var(--card-bg);
-    color: var(--text-dark);
-    cursor: pointer;
-    transition: .15s;
-}
-.month-picker-input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 1px var(--primary-blue);
-}
-
 /* ─── Section header (Senin, Selasa, …) ────────────── */
-.day-section { margin-bottom: 0.5rem; }
+.day-section { margin-bottom: 0.75rem; }
 .day-section-header {
-    font-size: .8rem;
-    font-weight: 600;
+    font-size: .75rem;
+    font-weight: 700;
     color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     padding: 0.5rem 1rem;
     background: var(--bg-light);
-    border-radius: 0.625rem 0.625rem 0 0;
+    border-radius: 0.25rem 0.25rem 0 0;
     border: 1px solid var(--topbar-border);
     border-bottom: none;
 }
@@ -102,7 +60,7 @@
     background: var(--card-bg);
     transition: background .15s;
 }
-.session-item:last-child { border-radius: 0 0 0.625rem 0.625rem; }
+.session-item:last-child { border-radius: 0 0 0.25rem 0.25rem; }
 
 .session-main {
     display: flex;
@@ -116,11 +74,11 @@
 
 /* Left accent bar */
 .session-accent {
-    width: 0.1875rem;
+    width: 3px;
     height: 2.5rem;
-    border-radius: 0.1875rem;
+    border-radius: 0.125rem;
     flex-shrink: 0;
-    background: var(--primary-blue);
+    background: var(--primary-navy);
 }
 .session-accent.confirmed { background: #16a34a; }
 .session-accent.pending   { background: #d97706; }
@@ -135,7 +93,7 @@
     color: var(--text-dark);
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 .session-sub {
@@ -144,56 +102,37 @@
     margin-top: 0.125rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    font-variant-numeric: tabular-nums;
 }
-.session-sub span { display: flex; align-items: center; gap: 0.25rem; }
-
-/* Tipe tag */
-.tipe-tag {
-    font-size: .6rem;
-    font-weight: 700;
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.01875rem;
-}
-.tipe-onsite { background: #dbeafe; color: #1d4ed8; }
-.tipe-home   { background: #fef9c3; color: #a16207; }
-[data-theme="dark"] .tipe-onsite { background: #1e3a5f; color: #60a5fa; }
-[data-theme="dark"] .tipe-home   { background: #3d2e0a; color: #fbbf24; }
 
 /* Status badge */
 .s-badge {
     font-size: .68rem;
     font-weight: 700;
     padding: 0.1875rem 0.5rem;
-    border-radius: 1.25rem;
+    border-radius: 0.25rem;
     white-space: nowrap;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 .s-confirmed { background: #dcfce7; color: #15803d; }
 .s-pending   { background: #fef9c3; color: #a16207; }
 .s-tidak     { background: #fee2e2; color: #b91c1c; }
-.s-future    { background: var(--bg-light); color: var(--text-light); }
-.s-belum     { background: var(--bg-light); color: var(--text-light); }
-[data-theme="dark"] .s-confirmed { background: #14312a; color: #4ade80; }
-[data-theme="dark"] .s-pending   { background: #3d2e0a; color: #fbbf24; }
-[data-theme="dark"] .s-tidak     { background: #3d1515; color: #f87171; }
-[data-theme="dark"] .s-future    { background: #252d3d; color: #94a3b8; }
-[data-theme="dark"] .s-belum     { background: #252d3d; color: #94a3b8; }
+.s-future    { background: var(--bg-light); color: var(--text-light); border: 1px solid var(--topbar-border); }
+.s-belum     { background: var(--bg-light); color: var(--text-light); border: 1px solid var(--topbar-border); }
 
-/* Chevron */
-.sess-chevron {
+/* Indicator */
+.sess-indicator {
     font-size: .75rem;
     color: var(--text-light);
-    transition: transform .2s;
+    font-weight: 700;
     flex-shrink: 0;
 }
-.sess-chevron.open { transform: rotate(180deg); }
 
 /* ─── Session detail (dropdown) ─────────────────────── */
 .session-detail {
@@ -213,17 +152,18 @@
 
 .detail-block {
     background: var(--bg-light);
-    border-radius: 0.5rem;
+    border: 1px solid var(--topbar-border);
+    border-radius: 0.25rem;
     padding: 1rem 1rem;
     font-size: .8rem;
 }
 .detail-block .db-label {
-    font-size: .65rem;
+    font-size: .68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.0375rem;
+    letter-spacing: 0.04em;
     color: var(--text-light);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 .detail-block .db-value {
     color: var(--text-dark);
@@ -233,10 +173,10 @@
 
 /* Progres section */
 .progres-section-title {
-    font-size: .65rem;
+    font-size: .68rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.0375rem;
+    letter-spacing: 0.04em;
     color: var(--text-light);
     margin-bottom: 0.25rem;
     margin-top: 1rem;
@@ -246,7 +186,7 @@
 .materi-box {
     background: var(--card-bg);
     border: 1px solid var(--topbar-border);
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
     padding: 0.5rem 1rem;
     font-size: .82rem;
     line-height: 1.6;
@@ -255,44 +195,27 @@
 
 .catatan-box {
     background: var(--card-bg);
-    border-left: 0.1875rem solid var(--primary-blue);
-    border-radius: 0 0.375rem 0.375rem 0;
+    border: 1px solid var(--topbar-border);
+    border-radius: 0.25rem;
     padding: 0.5rem 1rem;
     font-size: .82rem;
     line-height: 1.6;
     color: var(--text-dark);
 }
 
-/* Foto bukti — thumbnail + lightbox trigger */
+/* Foto bukti — thumbnail */
 .foto-thumb-wrap { margin-top: 0.5rem; position: relative; display: inline-block; }
 .foto-thumb {
     width: 7.5rem;
     height: 5rem;
     object-fit: cover;
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
     border: 1px solid var(--topbar-border);
     cursor: pointer;
     transition: opacity .15s;
     display: block;
 }
 .foto-thumb:hover { opacity: .85; }
-.foto-thumb-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,.3);
-    border-radius: 0.375rem;
-    color: #fff;
-    font-size: .7rem;
-    font-weight: 700;
-    gap: 0.25rem;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .15s;
-}
-.foto-thumb-wrap:hover .foto-thumb-overlay { opacity: 1; }
 
 /* ─── Lightbox ──────────────────────────────────────── */
 .lightbox-backdrop {
@@ -310,8 +233,7 @@
     max-width: 90vw;
     max-height: 88vh;
     object-fit: contain;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow-md);
+    border-radius: 0.25rem;
 }
 .lightbox-close {
     position: absolute;
@@ -322,7 +244,7 @@
     cursor: pointer;
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 50%;
+    border-radius: 0.25rem;
     background: rgba(255,255,255,.15);
     display: flex;
     align-items: center;
@@ -337,10 +259,10 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     font-size: .8rem;
     font-weight: 700;
-    background: var(--primary-blue);
+    background: var(--primary-navy);
     color: #fff;
     border: none;
     cursor: pointer;
@@ -348,17 +270,7 @@
     margin-top: 1rem;
     transition: background .15s;
 }
-.btn-isi-presensi:hover { background: var(--primary-dark); }
-
-/* ─── Empty state ───────────────────────────────────── */
-.empty-state {
-    text-align: center;
-    padding: 3rem 1.5rem;
-    color: var(--text-light);
-    border: 1px solid var(--topbar-border);
-    border-radius: 0.75rem;
-    background: var(--card-bg);
-}
+.btn-isi-presensi:hover { opacity: 0.9; }
 
 /* ─── Confirm modal ─────────────────────────────────── */
 .confirm-backdrop {
@@ -369,24 +281,16 @@
 .confirm-backdrop.open { display: flex; }
 .confirm-box {
     background: var(--card-bg);
-    border-radius: 0.875rem;
-    padding: 2rem; width: 25rem; max-width: 92vw;
-    box-shadow: var(--shadow-md);
+    border-radius: 0.25rem;
+    padding: 1.5rem; width: 25rem; max-width: 92vw;
     border: 1px solid var(--topbar-border);
 }
-.confirm-icon {
-    width: 3rem; height: 3rem; border-radius: 0.625rem;
-    background: #eff6ff; display: flex; align-items: center;
-    justify-content: center; margin-bottom: 1rem;
-}
-.confirm-icon i { color: var(--primary-blue); font-size: 1.2rem; }
 .confirm-detail {
-    background: var(--bg-light); border-radius: 0.5rem;
+    background: var(--bg-light); border-radius: 0.25rem;
     padding: 1rem 1rem; margin: 1rem 0;
-    font-size: .82rem; line-height: 1.9;
+    font-size: .82rem; line-height: 1.8;
     border: 1px solid var(--topbar-border);
 }
-.confirm-detail i { width: 1rem; color: var(--primary-blue); }
 .confirm-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
 </style>
 @endpush
@@ -423,16 +327,13 @@
                class="filter-pill {{ $filter === $fk ? 'active' : '' }}">{{ $fl }}</a>
         @endforeach
     </div>
-    <span style="font-size:.72rem;color:var(--text-light)">{{ $jadwalsFiltered->count() }} sesi</span>
+    <span style="font-size:.72rem;color:var(--text-light);font-variant-numeric:tabular-nums">{{ $jadwalsFiltered->count() }} sesi</span>
 </div>
 
 {{-- ── DAFTAR JADWAL ── --}}
 <div id="jadwal-list">
 @if($jadwalsFiltered->isEmpty())
     <div class="empty-state">
-        <div class="empty-state-icon">
-            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="56" height="48" rx="6" stroke="var(--primary-blue)" stroke-width="2" fill="var(--sidebar-active-bg)"/><path d="M12 32h56" stroke="var(--primary-blue)" stroke-width="2"/><rect x="24" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><rect x="52" y="8" width="4" height="20" rx="2" fill="var(--primary-blue)"/><circle cx="30" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="40" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="50" cy="44" r="3" fill="var(--primary-blue)" opacity=".5"/><circle cx="30" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="40" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/><circle cx="50" cy="56" r="3" fill="var(--primary-blue)" opacity=".3"/></svg>
-        </div>
         <div class="empty-state-title">Belum ada jadwal ditemukan.</div>
         <div class="empty-state-description">Tidak ada jadwal yang sesuai dengan filter/pencarian Anda.</div>
     </div>
@@ -446,10 +347,10 @@
             $dt = Carbon::parse($dateKey);
             $isToday = $dt->isToday();
             $hariLabel = $namaHari[$dt->dayOfWeek] . ', ' . $dt->day . ' ' . $namaBulanPanjang[$dt->month - 1];
-            if ($isToday) $hariLabel .= ' — Hari ini';
+            if ($isToday) $hariLabel .= ' — Hari Ini';
         @endphp
 
-        <div class="day-section" style="margin-bottom:1rem">
+        <div class="day-section">
             <div class="day-section-header">{{ $hariLabel }}</div>
 
             @foreach($daySessions->sortBy('jam_mulai') as $j)
@@ -478,38 +379,38 @@
                         <div class="session-body">
                             <div class="session-title">
                                 {{ $j->spp?->programKursus?->nama_program ?? 'Program Musik' }}
-                                <span class="tipe-tag {{ $tipe === 'Onsite' ? 'tipe-onsite' : 'tipe-home' }}">
-                                    {{ $tipe === 'Onsite' ? 'Onsite' : 'Home' }}
+                                <span class="badge {{ $tipe === 'Onsite' ? 'badge-info' : 'badge-warning' }}">
+                                    {{ strtoupper($tipe) }}
                                 </span>
                                 @if($j->status_jadwal !== 'Sesuai Jadwal')
-                                    <span class="tipe-tag" style="background:#fee2e2;color:#b91c1c">{{ $j->status_jadwal }}</span>
+                                    <span class="badge badge-danger">{{ strtoupper($j->status_jadwal) }}</span>
                                 @endif
                             </div>
                             <div class="session-sub">
-                                <span><i class="fa-solid fa-hashtag"></i> Sesi ke-{{ $j->sesi_ke }}</span>
-                                <span><i class="fa-regular fa-clock"></i> {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}</span>
-                                <span><i class="fa-solid fa-chalkboard-user"></i> {{ $j->guru->nama_guru }}</span>
+                                <span>Sesi ke-{{ $j->sesi_ke }}</span>
+                                <span>{{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}</span>
+                                <span>{{ $j->guru->nama_guru }}</span>
                             </div>
                         </div>
 
                         {{-- Status badge --}}
                         @if($isHadir && $guruKonfirm)
-                            <span class="s-badge s-confirmed"><i class="fa-solid fa-circle-check"></i> Terkonfirmasi</span>
+                            <span class="s-badge s-confirmed">Terkonfirmasi</span>
                         @elseif($isHadir && !$guruKonfirm)
-                            <span class="s-badge s-pending"><i class="fa-solid fa-clock"></i> Menunggu Guru</span>
+                            <span class="s-badge s-pending">Menunggu Guru</span>
                         @elseif($isTidak)
-                            <span class="s-badge s-tidak"><i class="fa-solid fa-circle-xmark"></i> Tidak Hadir</span>
+                            <span class="s-badge s-tidak">Tidak Hadir</span>
                         @elseif($isFuture)
-                            <span class="s-badge s-future"><i class="fa-regular fa-calendar"></i> Akan Datang</span>
+                            <span class="s-badge s-future">Akan Datang</span>
                         @elseif($bisaPresensi)
-                            <span class="s-badge" style="background:#eff6ff;color:var(--primary-blue);border:1px solid #bfdbfe">
-                                <i class="fa-solid fa-hand-point-up"></i> Isi Presensi
+                            <span class="s-badge" style="background:#eff6ff;color:var(--primary-navy);border:1px solid #bfdbfe">
+                                Isi Presensi
                             </span>
                         @else
-                            <span class="s-badge s-belum"><i class="fa-regular fa-circle"></i> Belum Diisi</span>
+                            <span class="s-badge s-belum">Belum Diisi</span>
                         @endif
 
-                        <i class="fa-solid fa-chevron-down sess-chevron" id="chev-{{ $sessId }}"></i>
+                        <span class="sess-indicator" id="chev-{{ $sessId }}">▾</span>
                     </div>
 
                     {{-- Detail (dropdown) --}}
@@ -518,32 +419,20 @@
                             {{-- Info Sesi --}}
                             <div class="detail-block">
                                 <div class="db-label">Info Sesi</div>
-                                <div class="db-value">
-                                    <div><i class="fa-regular fa-calendar" style="width:1rem;color:var(--primary-blue)"></i>
-                                        {{ $j->tanggal->translatedFormat('l, d F Y') }}
-                                    </div>
-                                    <div><i class="fa-regular fa-clock" style="width:1rem;color:var(--primary-blue)"></i>
-                                        {{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}
-                                    </div>
-                                    <div><i class="fa-solid fa-hashtag" style="width:1rem;color:var(--primary-blue)"></i>
-                                        Sesi ke-{{ $j->sesi_ke }}
-                                    </div>
+                                <div class="db-value" style="font-variant-numeric:tabular-nums">
+                                    <div>{{ $j->tanggal->translatedFormat('l, d F Y') }}</div>
+                                    <div>{{ substr($j->jam_mulai,0,5) }}–{{ substr($j->jam_selesai,0,5) }}</div>
+                                    <div>Sesi ke-{{ $j->sesi_ke }}</div>
                                 </div>
                             </div>
 
                             {{-- Guru --}}
                             <div class="detail-block">
-                                <div class="db-label">Guru</div>
+                                <div class="db-label">Guru & Program</div>
                                 <div class="db-value">
-                                    <div><i class="fa-solid fa-chalkboard-user" style="width:1rem;color:var(--primary-blue)"></i>
-                                        {{ $j->guru->nama_guru }}
-                                    </div>
-                                    <div style="margin-top:0.25rem"><i class="fa-solid fa-music" style="width:1rem;color:var(--primary-blue)"></i>
-                                        {{ $j->spp?->programKursus?->nama_program ?? '—' }}
-                                    </div>
-                                    <div style="margin-top:0.25rem"><i class="fa-solid fa-location-dot" style="width:1rem;color:var(--primary-blue)"></i>
-                                        {{ $tipe }}
-                                    </div>
+                                    <div style="font-weight:600">{{ $j->guru->nama_guru }}</div>
+                                    <div>{{ $j->spp?->programKursus?->nama_program ?? '—' }}</div>
+                                    <div>{{ $tipe }}</div>
                                 </div>
                             </div>
 
@@ -551,7 +440,7 @@
                             @if($progres)
                                 <div class="detail-block full">
                                     <div class="db-label">
-                                        <i class="fa-solid fa-book-open" style="margin-right:0.25rem"></i>Materi &amp; Progres
+                                        Materi &amp; Progres
                                     </div>
                                     <div class="db-value">
 
@@ -574,9 +463,6 @@
                                                  onclick="bukaLightbox('{{ asset('storage/' . $progres->url_foto) }}')">
                                                 <img src="{{ asset('storage/' . $progres->url_foto) }}"
                                                      alt="Foto progres" class="foto-thumb">
-                                                <div class="foto-thumb-overlay">
-                                                    <i class="fa-solid fa-expand"></i> Lihat
-                                                </div>
                                             </div>
                                         @endif
 
@@ -584,7 +470,7 @@
                                 </div>
                             @else
                                 <div class="detail-block full" style="color:var(--text-light);font-size:.8rem">
-                                    <div class="db-label"><i class="fa-solid fa-book-open" style="margin-right:0.25rem"></i>Materi &amp; Progres</div>
+                                    <div class="db-label">Materi &amp; Progres</div>
                                     <div class="db-value" style="color:var(--text-light);font-style:italic">
                                         Belum ada catatan materi dari guru untuk sesi ini.
                                     </div>
@@ -602,7 +488,7 @@
                                     '{{ $j->spp?->programKursus?->nama_program ?? 'Program Musik' }}',
                                     '{{ $j->guru->nama_guru }}'
                                 )">
-                                <i class="fa-solid fa-clipboard-check"></i> Isi Presensi
+                                Isi Presensi
                             </button>
                         @endif
                     </div>
@@ -616,7 +502,7 @@
 {{-- ── LIGHTBOX ── --}}
 <div class="lightbox-backdrop" id="lightbox-backdrop" onclick="tutupLightbox(event)">
     <span class="lightbox-close" onclick="tutupLightbox(null, true)">
-        <i class="fa-solid fa-xmark"></i>
+        ✕
     </span>
     <img src="" alt="Foto progres" class="lightbox-img" id="lightbox-img">
 </div>
@@ -624,23 +510,21 @@
 {{-- ── MODAL KONFIRMASI PRESENSI ── --}}
 <div class="confirm-backdrop" id="confirm-backdrop">
     <div class="confirm-box">
-        <div class="confirm-icon"><i class="fa-solid fa-clipboard-check"></i></div>
-        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem">Isi Presensi Kehadiran</h3>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem;color:var(--text-dark)">Isi Presensi Kehadiran</h3>
         <p style="font-size:.82rem;color:var(--text-light)">Konfirmasi bahwa kamu hadir pada sesi berikut:</p>
         <div class="confirm-detail" id="confirm-detail"></div>
         <p style="font-size:.72rem;color:var(--text-light)">
-            <i class="fa-solid fa-circle-info" style="color:var(--primary-blue)"></i>
             Pengajuan ini akan diteruskan ke guru untuk dikonfirmasi.
         </p>
         <div class="confirm-actions">
             <button class="btn btn-outline btn-sm" onclick="tutupKonfirmasi()">
-                <i class="fa-solid fa-xmark"></i> Batal
+                Batal
             </button>
             <form method="POST" action="{{ route('murid.presensi.store') }}" id="confirm-form">
                 @csrf
                 <input type="hidden" name="id_jadwal" id="confirm-id-jadwal"/>
                 <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-check"></i> Ya, Saya Hadir
+                    Ya, Saya Hadir
                 </button>
             </form>
         </div>
@@ -656,7 +540,9 @@ function toggleSess(id) {
     const detail = document.getElementById(id);
     const chev   = document.getElementById('chev-' + id);
     detail.classList.toggle('open');
-    chev.classList.toggle('open');
+    if (chev) {
+        chev.textContent = detail.classList.contains('open') ? '▴' : '▾';
+    }
 }
 
 /* ── Lightbox ── */
@@ -682,10 +568,10 @@ document.addEventListener('keydown', function(e) {
 function bukaKonfirmasi(idJadwal, tanggal, waktu, program, guru) {
     document.getElementById('confirm-id-jadwal').value = idJadwal;
     document.getElementById('confirm-detail').innerHTML =
-        `<div><i class="fa-solid fa-calendar"></i> <strong>${tanggal}</strong></div>` +
-        `<div><i class="fa-regular fa-clock"></i> ${waktu}</div>` +
-        `<div><i class="fa-solid fa-music"></i> ${program}</div>` +
-        `<div><i class="fa-solid fa-chalkboard-user"></i> ${guru}</div>`;
+        `<div><strong>${tanggal}</strong></div>` +
+        `<div style="font-variant-numeric:tabular-nums">${waktu}</div>` +
+        `<div>${program}</div>` +
+        `<div>Guru: ${guru}</div>`;
     document.getElementById('confirm-backdrop').classList.add('open');
 }
 function tutupKonfirmasi() {
@@ -701,7 +587,6 @@ document.getElementById('month-picker').addEventListener('change', function() {
     if (!bulan) return;
     const url = new URL(window.location.href);
     url.searchParams.set('bulan', bulan);
-    // pertahankan filter yang aktif
     window.location.href = url.toString();
 });
 </script>

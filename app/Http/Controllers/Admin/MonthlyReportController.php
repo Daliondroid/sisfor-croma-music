@@ -7,7 +7,9 @@ use App\Models\Jadwal;
 use App\Models\MonthlyReport;
 use App\Models\Murid;
 use App\Models\Spp;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MonthlyReportController extends Controller
 {
@@ -17,27 +19,25 @@ class MonthlyReportController extends Controller
     public function index(Request $request)
     {
         $bulan = $request->bulan ?? now()->format('Y-m');
-        $tahun = substr($bulan, 0, 4);
-        $bln = substr($bulan, 5, 2);
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
 
         $murids = Murid::where('status_aktif', true)
             ->with([
                 'user',
-                'monthlyReports' => fn ($q) => $q
-                    ->whereYear('periode_bulan', $tahun)
-                    ->whereMonth('periode_bulan', $bln),
+                'monthlyReports' => fn ($q) => $q->whereBetween('periode_bulan', [$startDate, $endDate]),
             ])
             ->get();
 
         $sppsGrouped = Spp::whereIn('id_murid', $murids->pluck('id_murid'))
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->get()
             ->groupBy('id_murid');
 
         $allSppIds = $sppsGrouped->flatten()->pluck('id_spp');
         $jadwalsGrouped = Jadwal::where('is_active', true)
             ->whereIn('id_spp', $allSppIds)
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->get()
             ->groupBy('id_spp');
 
@@ -68,48 +68,49 @@ class MonthlyReportController extends Controller
     {
         $request->validate(['bulan' => 'required|date_format:Y-m']);
 
-        $tahun = substr($request->bulan, 0, 4);
-        $bln = substr($request->bulan, 5, 2);
+        $startDate = Carbon::parse($request->bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($request->bulan.'-01')->endOfMonth()->toDateString();
         $murids = Murid::where('status_aktif', true)->get();
 
         $spps = Spp::whereIn('id_murid', $murids->pluck('id_murid'))
-            ->whereYear('periode_tagihan', $tahun)
-            ->whereMonth('periode_tagihan', $bln)
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->get()
             ->keyBy('id_murid');
 
         $jadwalsGrouped = Jadwal::where('is_active', true)
             ->whereIn('id_spp', $spps->pluck('id_spp'))
-            ->whereYear('tanggal', $tahun)
-            ->whereMonth('tanggal', $bln)
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->get()
             ->groupBy('id_spp');
 
-        $count = 0;
+        $count = DB::transaction(function () use ($murids, $spps, $jadwalsGrouped, $request) {
+            $createdCount = 0;
+            foreach ($murids as $murid) {
+                $spp = $spps->get($murid->id_murid);
+                if (! $spp) {
+                    continue;
+                }
 
-        foreach ($murids as $murid) {
-            $spp = $spps->get($murid->id_murid);
-            if (! $spp) {
-                continue;
+                $jadwals = $jadwalsGrouped->get($spp->id_spp, collect());
+                $stats = Jadwal::calculateAttendanceStats($jadwals);
+                $skor = MonthlyReport::calculateScore($stats['persen_hadir']);
+
+                MonthlyReport::updateOrCreate(
+                    [
+                        'id_spp' => $spp->id_spp,
+                        'periode_bulan' => $request->bulan.'-01',
+                    ],
+                    [
+                        'skor' => $skor,
+                        'evaluasi_bulanan' => "Kehadiran {$stats['persen_hadir']}% ({$stats['hadir']}/{$stats['total_sesi']} sesi).",
+                    ]
+                );
+
+                $createdCount++;
             }
 
-            $jadwals = $jadwalsGrouped->get($spp->id_spp, collect());
-            $stats = Jadwal::calculateAttendanceStats($jadwals);
-            $skor = MonthlyReport::calculateScore($stats['persen_hadir']);
-
-            MonthlyReport::updateOrCreate(
-                [
-                    'id_spp' => $spp->id_spp,
-                    'periode_bulan' => $request->bulan.'-01',
-                ],
-                [
-                    'skor' => $skor,
-                    'evaluasi_bulanan' => "Kehadiran {$stats['persen_hadir']}% ({$stats['hadir']}/{$stats['total_sesi']} sesi).",
-                ]
-            );
-
-            $count++;
-        }
+            return $createdCount;
+        });
 
         return back()->with('success', "Monthly report untuk {$count} murid berhasil di-generate ({$request->bulan}).");
     }
@@ -119,29 +120,32 @@ class MonthlyReportController extends Controller
      */
     public function show(Murid $murid, string $bulan)
     {
-        $spp = Spp::where('id_murid', $murid->id_murid)
-            ->whereYear('periode_tagihan', substr($bulan, 0, 4))
-            ->whereMonth('periode_tagihan', substr($bulan, 5, 2))
+        $startDate = Carbon::parse($bulan.'-01')->startOfMonth()->toDateString();
+        $endDate = Carbon::parse($bulan.'-01')->endOfMonth()->toDateString();
+
+        $spp = Spp::with('programKursus')
+            ->where('id_murid', $murid->id_murid)
+            ->whereBetween('periode_tagihan', [$startDate, $endDate])
             ->first();
 
         $report = $spp
             ? MonthlyReport::where('id_spp', $spp->id_spp)
-                ->whereYear('periode_bulan', substr($bulan, 0, 4))
-                ->whereMonth('periode_bulan', substr($bulan, 5, 2))
-                ->firstOrFail()
+                ->whereBetween('periode_bulan', [$startDate, $endDate])
+                ->first()
             : null;
 
         // Jadwal + progres murid bulan ini
-        $jadwals = Jadwal::with(['guru', 'progresMurid'])
+        $jadwals = Jadwal::with(['guru', 'progresMurid', 'spp.programKursus'])
             ->where('is_active', true)
-            ->when($spp, fn ($q) => $q->where('id_spp', $spp->id_spp))
-            ->whereYear('tanggal', substr($bulan, 0, 4))
-            ->whereMonth('tanggal', substr($bulan, 5, 2))
+            ->whereHas('spp', fn ($q) => $q->where('id_murid', $murid->id_murid))
+            ->whereBetween('tanggal', [$startDate, $endDate])
             ->orderBy('tanggal')
             ->orderBy('jam_mulai')
             ->get();
 
-        return view('admin.monthly_report.show', compact('murid', 'report', 'jadwals', 'bulan', 'spp'));
+        $stats = Jadwal::calculateAttendanceStats($jadwals);
+
+        return view('admin.monthly_report.show', compact('murid', 'report', 'jadwals', 'bulan', 'spp', 'stats'));
     }
 
     /**

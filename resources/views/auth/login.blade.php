@@ -3,9 +3,14 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Masuk — Croma Music System</title>
-		
-		<!-- Google Fonts Stack: Outfit (Headings) + Plus Jakarta Sans (Body) -->
+		<title>Login - CROMIS</title>
+		<meta name="description" content="Masuk ke portal CROMIS - Sistem Informasi Akademik & Manajemen Kursus Croma Music" />
+		<meta name="robots" content="noindex, nofollow" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/jpeg" href="{{ asset('images/croma_logo.jpg') }}" />
+		<link rel="shortcut icon" href="{{ asset('images/croma_logo.jpg') }}" />
+		<link rel="apple-touch-icon" href="{{ asset('images/croma_logo.jpg') }}" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link

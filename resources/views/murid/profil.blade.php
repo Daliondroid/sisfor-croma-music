@@ -1,13 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Profil Saya')
 @section('page-title', 'Profil Saya')
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('murid.dashboard') }}" class="nav-item {{ request()->routeIs('murid.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('murid.jadwal.index') }}" class="nav-item {{ request()->routeIs('murid.jadwal*') ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('murid.laporan.index') }}" class="nav-item {{ request()->routeIs('murid.laporan*') ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan Bulanan</a>
-    <a href="{{ route('murid.spp.index') }}"  class="nav-item {{ request()->routeIs('murid.spp*')      ? 'active' : '' }}"><i class="fa-solid fa-file-invoice-dollar"></i> SPP Saya</a>
-@endsection
+
+@section('sidebar-menu') @include('murid.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
@@ -25,45 +20,45 @@
             @if($murid->user->foto_profil ?? false)
                 <img src="{{ asset('storage/' . $murid->user->foto_profil) }}"
                      style="width:6rem;height:6rem;border-radius:50%;object-fit:cover;
-                            border:0.1875rem solid var(--primary-blue);margin:0 auto;display:block">
+                            border:3px solid var(--primary-navy);margin:0 auto;display:block">
             @else
-                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-blue);
+                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-navy);
                             display:flex;align-items:center;justify-content:center;
                             font-size:2.2rem;font-weight:700;color:#fff;margin:0 auto">
                     {{ strtoupper(substr($murid->nama_murid, 0, 1)) }}
                 </div>
             @endif
         </div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.25rem">{{ $murid->nama_murid }}</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.25rem;color:var(--text-dark)">{{ $murid->nama_murid }}</div>
         <div style="font-size:.8rem;color:var(--text-light);margin-bottom:1rem">{{ $murid->user->email }}</div>
-        <span class="badge badge-success" style="font-size:.75rem;padding:0.25rem 1rem">
-            <i class="fa-solid fa-user-graduate" style="margin-right:0.25rem"></i>Murid
+        <span class="badge badge-success" style="font-size:.75rem;padding:0.25rem 0.75rem">
+            MURID
         </span>
 
         <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.5rem 0">
 
         <div style="text-align:left">
             <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;
-                        letter-spacing:0.05rem;font-weight:600;margin-bottom:0.5rem">Info Pribadi</div>
-            <div style="display:flex;flex-direction:column;gap:0.5rem">
+                        letter-spacing:0.04em;font-weight:700;margin-bottom:0.75rem">Info Pribadi</div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem">
                 @if($murid->tanggal_lahir)
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-cake-candles" style="width:1rem;color:var(--text-light)"></i>
-                    <span>{{ $murid->tanggal_lahir->translatedFormat('d M Y') }}</span>
+                <div style="display:flex;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Tanggal Lahir</span>
+                    <span style="font-weight:600;color:var(--text-dark);font-variant-numeric:tabular-nums">{{ $murid->tanggal_lahir->translatedFormat('d M Y') }}</span>
                 </div>
                 @endif
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-phone" style="width:1rem;color:var(--text-light)"></i>
-                    <span>{{ $murid->nomor_hp ?? '-' }}</span>
+                <div style="display:flex;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Nomor HP</span>
+                    <span style="font-weight:600;color:var(--text-dark);font-variant-numeric:tabular-nums">{{ $murid->nomor_hp ?? '-' }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-user-group" style="width:1rem;color:var(--text-light)"></i>
-                    <span>{{ $murid->nama_orang_tua ?? '-' }}</span>
+                <div style="display:flex;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Orang Tua</span>
+                    <span style="font-weight:600;color:var(--text-dark)">{{ $murid->nama_orang_tua ?? '-' }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-circle" style="width:1rem;color:{{ $murid->status_aktif ? '#16a34a' : '#dc2626' }};font-size:.5rem"></i>
-                    <span style="color:{{ $murid->status_aktif ? '#16a34a' : '#dc2626' }};font-weight:600">
-                        {{ $murid->status_aktif ? 'Aktif' : 'Non-aktif' }}
+                <div style="display:flex;justify-content:space-between;font-size:.82rem">
+                    <span style="color:var(--text-light)">Status Akun</span>
+                    <span class="badge {{ $murid->status_aktif ? 'badge-success' : 'badge-danger' }}">
+                        {{ $murid->status_aktif ? 'AKTIF' : 'NON-AKTIF' }}
                     </span>
                 </div>
             </div>
@@ -73,7 +68,7 @@
         <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1rem 0">
         <div style="text-align:left">
             <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;
-                        letter-spacing:0.05rem;font-weight:600;margin-bottom:0.25rem">Alamat</div>
+                        letter-spacing:0.04em;font-weight:700;margin-bottom:0.25rem">Alamat</div>
             <div style="font-size:.82rem;line-height:1.6;color:var(--text-dark)">{{ $murid->alamat }}</div>
         </div>
         @endif
@@ -83,16 +78,16 @@
     <div style="display:flex;flex-direction:column;gap:1.5rem">
 
         @if(session('success'))
-            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if($errors->any())
-            <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
+            <div class="alert alert-danger">{{ $errors->first() }}</div>
         @endif
 
         {{-- Data Pribadi --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-user" style="color:var(--primary-blue);margin-right:0.5rem"></i>Data Pribadi</h3>
+                <h3>Data Pribadi</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('murid.profil.update') }}">
@@ -123,8 +118,8 @@
                             <textarea name="alamat" class="form-control" rows="3">{{ old('alamat', $murid->alamat) }}</textarea>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Simpan Perubahan
                     </button>
                 </form>
             </div>
@@ -133,7 +128,7 @@
         {{-- Ganti Password --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-lock" style="color:var(--primary-blue);margin-right:0.5rem"></i>Ganti Password</h3>
+                <h3>Ganti Password</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('murid.profil.update') }}">
@@ -157,13 +152,11 @@
                             <input type="password" name="password_confirmation" class="form-control"/>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-outline" style="margin-top:0.25rem">
-                        <i class="fa-solid fa-key"></i> Update Password
+                    <button type="submit" class="btn btn-outline btn-sm">
+                        Update Password
                     </button>
                 </form>
             </div>
-        </div>
-
     </div>
 </div>
 @endsection

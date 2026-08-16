@@ -15,7 +15,40 @@ services:
       - .:/var/www
       - /var/www/vendor
       - app_storage:/var/www/storage
+    healthcheck:
+      test: ["CMD-SHELL", "cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - croma_network
+
+  # -------------------------------------------------------
+  # Background Queue Worker Process
+  # -------------------------------------------------------
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: croma_queue
+    restart: unless-stopped
+    command: ["php", "artisan", "queue:work", "--tries=3", "--timeout=120", "--sleep=3"]
+    env_file:
+      - .env.docker
+    environment:
+      - RUN_MIGRATIONS=false
+    volumes:
+      - .:/var/www
+      - /var/www/vendor
+      - app_storage:/var/www/storage
+    depends_on:
+      app:
+        condition: service_healthy
       db:
         condition: service_healthy
     networks:
@@ -35,8 +68,15 @@ services:
       - .:/var/www:ro
       - /var/www/vendor
       - app_storage:/var/www/storage:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/up || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     networks:
       - croma_network
 
@@ -47,6 +87,7 @@ services:
     image: mysql:8.0
     container_name: croma_db
     restart: unless-stopped
+    command: --max_connections=500 --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: sisfor_croma_music
       MYSQL_USER: croma_user

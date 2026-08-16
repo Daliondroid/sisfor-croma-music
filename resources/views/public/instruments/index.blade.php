@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Katalog Instrumen — Croma Music')
+@section('title', 'Katalog Instrumen')
 @section('header-class', 'header-light')
 
 @section('content')
@@ -44,10 +44,15 @@
                         <img src="{{ asset($program['img']) }}" alt="{{ $program['title'] }}" loading="lazy" />
                     </div>
                     <div class="card-body">
-                        <span class="eyebrow">{{ $program['family'] }}</span>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span class="eyebrow">{{ $program['family'] }}</span>
+                            <span class="badge" style="font-size:0.7rem;padding:0.2rem 0.5rem;background:#f1f5f9;color:#0f172a;border:1px solid #e2e8f0;border-radius:0.25rem">{{ $program['methods'] ?? 'Onsite & Home Visit' }}</span>
+                        </div>
                         <h3>{{ $program['title'] }}</h3>
-                        <p class="genre-text">{{ $program['genres'] }}</p>
-                        <p class="level-text">{{ $program['levels'] }}</p>
+                        <div style="font-size:1.1rem;font-weight:700;color:var(--text-dark);font-variant-numeric:tabular-nums;margin:0.25rem 0">
+                            Rp {{ number_format($program['price'], 0, ',', '.') }} <span style="font-size:0.75rem;font-weight:500;color:var(--text-light)">/ bulan (4 sesi)</span>
+                        </div>
+                        <p class="level-text">Semua Tingkat Kemahiran</p>
                         <div class="card-meta-row margin-top-xs">
                             <span class="mentor-count"><i class="fa-solid fa-user-graduate"></i> {{ $program['mentors_count'] }} Mentor Pendamping</span>
                         </div>

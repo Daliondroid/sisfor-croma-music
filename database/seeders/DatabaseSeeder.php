@@ -18,26 +18,22 @@ class DatabaseSeeder extends Seeder
     {
         DB::transaction(function () {
             // 1. Create Default Program Kursus
-            $piano = ProgramKursus::create([
-                'nama_program' => 'Piano Classic',
-                'deskripsi' => 'Program les piano klasik untuk anak dan remaja',
-                'biaya_kursus' => 600000,
-                'is_active' => true,
-            ]);
+            $programs = [
+                ['nama_program' => 'Piano', 'deskripsi' => 'Program les piano klasik, pop, dan jazz untuk semua usia', 'tipe_les' => 'keduanya', 'biaya_kursus' => 600000],
+                ['nama_program' => 'Vokal', 'deskripsi' => 'Program vokal, teknik pernapasan, dan performance panggung', 'tipe_les' => 'keduanya', 'biaya_kursus' => 600000],
+                ['nama_program' => 'Gitar', 'deskripsi' => 'Program les gitar akustik dan elektrik berbagai genre', 'tipe_les' => 'keduanya', 'biaya_kursus' => 600000],
+                ['nama_program' => 'Keyboard', 'deskripsi' => 'Program synthesizer, arranger, dan keyboard modern', 'tipe_les' => 'keduanya', 'biaya_kursus' => 600000],
+                ['nama_program' => 'Drum', 'deskripsi' => 'Program rhythm, perkusi, dan drum modern', 'tipe_les' => 'keduanya', 'biaya_kursus' => 650000],
+                ['nama_program' => 'Bass', 'deskripsi' => 'Program groove, slap technique, dan bassline foundation', 'tipe_les' => 'keduanya', 'biaya_kursus' => 650000],
+                ['nama_program' => 'Saxophone', 'deskripsi' => 'Program saxophone jazz, pop, dan teknik tiup brass', 'tipe_les' => 'keduanya', 'biaya_kursus' => 650000],
+                ['nama_program' => 'Flute', 'deskripsi' => 'Program flute klasik, teknik tiup, dan repertoar orkestra', 'tipe_les' => 'keduanya', 'biaya_kursus' => 700000],
+                ['nama_program' => 'Trumpet', 'deskripsi' => 'Program trumpet jazz, klasik, dan brass ensemble', 'tipe_les' => 'keduanya', 'biaya_kursus' => 700000],
+                ['nama_program' => 'Instrumen Lainnya', 'deskripsi' => 'Request instrumen khusus: Biola, Cello, Ukulele, dll.', 'tipe_les' => 'keduanya', 'biaya_kursus' => 700000],
+            ];
 
-            $biola = ProgramKursus::create([
-                'nama_program' => 'Biola Starter',
-                'deskripsi' => 'Program les biola dasar',
-                'biaya_kursus' => 650000,
-                'is_active' => true,
-            ]);
-
-            $vokal = ProgramKursus::create([
-                'nama_program' => 'Vokal Pop',
-                'deskripsi' => 'Program vokal dan teknik pernapasan',
-                'biaya_kursus' => 550000,
-                'is_active' => true,
-            ]);
+            foreach ($programs as $progData) {
+                ProgramKursus::create(array_merge($progData, ['is_active' => true]));
+            }
 
             // 2. Create Admin Account
             $userAdmin = User::create([

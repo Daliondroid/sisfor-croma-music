@@ -9,14 +9,21 @@ class PublicController extends Controller
     private function getProgramsData()
     {
         return [
-            ['title' => 'Piano', 'slug' => 'piano', 'desc' => 'Klasik, Pop, & Jazz', 'img' => 'images/piano.avif', 'family' => 'Keys', 'genres' => 'Klasik · Pop · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => ''],
-            ['title' => 'Gitar', 'slug' => 'gitar', 'desc' => 'Akustik & Elektrik', 'img' => 'images/guitar.avif', 'family' => 'Strings', 'genres' => 'Akustik · Elektrik · Rock', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-100'],
-            ['title' => 'Drum', 'slug' => 'drum', 'desc' => 'Rhythm & Percussion', 'img' => 'images/drums.avif', 'family' => 'Percussion', 'genres' => 'Pop · Rock · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-200'],
-            ['title' => 'Vokal', 'slug' => 'vokal', 'desc' => 'Teknik & Performance', 'img' => 'images/vocals.avif', 'family' => 'Vocals', 'genres' => 'Pop · RnB · Klasik', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-300'],
-            ['title' => 'Keyboard', 'slug' => 'keyboard', 'desc' => 'Synthesizer & Arranger', 'img' => 'images/keyboards.avif', 'family' => 'Keys', 'genres' => 'Pop · EDM · Arranger', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => ''],
-            ['title' => 'Bass', 'slug' => 'bass', 'desc' => 'Groove & Slap Technique', 'img' => 'images/bass.avif', 'family' => 'Strings', 'genres' => 'Funk · Rock · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-100'],
-            ['title' => 'Flute', 'slug' => 'flute', 'desc' => 'Klasik & Orkestra', 'img' => 'images/flute.avif', 'family' => 'Brass', 'genres' => 'Klasik · Orchestral', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-200'],
-            ['title' => 'Saxophone', 'slug' => 'saxophone', 'desc' => 'Jazz & Pop Brass', 'img' => 'images/sax.avif', 'family' => 'Brass', 'genres' => 'Jazz · Pop · Blues', 'levels' => 'Beginner · Intermediate · Advanced', 'mentors_count' => 3, 'delay' => 'delay-300'],
+            // Tier 1: Rp 600.000
+            ['title' => 'Piano', 'slug' => 'piano', 'desc' => 'Klasik, Pop, & Jazz', 'price' => 600000, 'img' => 'images/piano.avif', 'family' => 'Keys', 'genres' => 'Klasik · Pop · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => ''],
+            ['title' => 'Vokal', 'slug' => 'vokal', 'desc' => 'Teknik & Performance', 'price' => 600000, 'img' => 'images/vocals.avif', 'family' => 'Vocals', 'genres' => 'Pop · RnB · Klasik', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-100'],
+            ['title' => 'Gitar', 'slug' => 'gitar', 'desc' => 'Akustik & Elektrik', 'price' => 600000, 'img' => 'images/guitar.avif', 'family' => 'Strings', 'genres' => 'Akustik · Elektrik · Rock', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-200'],
+            ['title' => 'Keyboard', 'slug' => 'keyboard', 'desc' => 'Synthesizer & Arranger', 'price' => 600000, 'img' => 'images/keyboards.avif', 'family' => 'Keys', 'genres' => 'Pop · EDM · Arranger', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-300'],
+
+            // Tier 2: Rp 650.000
+            ['title' => 'Drum', 'slug' => 'drum', 'desc' => 'Rhythm & Percussion', 'price' => 650000, 'img' => 'images/drums.avif', 'family' => 'Percussion', 'genres' => 'Pop · Rock · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => ''],
+            ['title' => 'Bass', 'slug' => 'bass', 'desc' => 'Groove & Slap Technique', 'price' => 650000, 'img' => 'images/bass.avif', 'family' => 'Strings', 'genres' => 'Funk · Rock · Jazz', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-100'],
+            ['title' => 'Saxophone', 'slug' => 'saxophone', 'desc' => 'Jazz & Pop Brass', 'price' => 650000, 'img' => 'images/sax.avif', 'family' => 'Brass', 'genres' => 'Jazz · Pop · Blues', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-200'],
+
+            // Tier 3: Rp 700.000
+            ['title' => 'Flute', 'slug' => 'flute', 'desc' => 'Klasik & Orkestra', 'price' => 700000, 'img' => 'images/flute.avif', 'family' => 'Brass', 'genres' => 'Klasik · Orchestral', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-300'],
+            ['title' => 'Trumpet', 'slug' => 'trumpet', 'desc' => 'Jazz & Orkestra Tiup', 'price' => 700000, 'img' => 'images/sax.avif', 'family' => 'Brass', 'genres' => 'Jazz · Klasik · Pop', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 2, 'delay' => ''],
+            ['title' => 'Instrumen Lainnya', 'slug' => 'lainnya', 'desc' => 'Request Instrumen Custom', 'price' => 700000, 'img' => 'images/others.avif', 'family' => 'Custom', 'genres' => 'Biola · Cello · Ukulele · Dll', 'levels' => 'Beginner · Intermediate · Advanced', 'methods' => 'Onsite & Home Visit', 'mentors_count' => 3, 'delay' => 'delay-100'],
         ];
     }
 
@@ -47,6 +54,10 @@ class PublicController extends Controller
             ['name' => 'Kak Aldo', 'slug' => 'kak-aldo', 'badge' => 'Saxophonist', 'category' => 'saxophone', 'featured' => true, 'experience' => '9+ Tahun', 'delay' => 'delay-100'],
             ['name' => 'Kak Fira', 'slug' => 'kak-fira', 'badge' => 'Alto Sax', 'category' => 'saxophone', 'featured' => false, 'experience' => '4+ Tahun', 'delay' => 'delay-200'],
             ['name' => 'Kak Denny', 'slug' => 'kak-denny', 'badge' => 'Tenor Sax', 'category' => 'saxophone', 'featured' => false, 'experience' => '8+ Tahun', 'delay' => 'delay-300'],
+            ['name' => 'Kak Fajar', 'slug' => 'kak-fajar', 'badge' => 'Trumpet Specialist', 'category' => 'trumpet', 'featured' => false, 'experience' => '6+ Tahun', 'delay' => 'delay-100'],
+            ['name' => 'Kak Hendra', 'slug' => 'kak-hendra', 'badge' => 'Brass Coach', 'category' => 'trumpet', 'featured' => false, 'experience' => '8+ Tahun', 'delay' => 'delay-200'],
+            ['name' => 'Kak Dimas', 'slug' => 'kak-dimas', 'badge' => 'Multi-Instrumentalist', 'category' => 'lainnya', 'featured' => false, 'experience' => '7+ Tahun', 'delay' => 'delay-100'],
+            ['name' => 'Kak Clara', 'slug' => 'kak-clara', 'badge' => 'Violin & Strings', 'category' => 'lainnya', 'featured' => false, 'experience' => '6+ Tahun', 'delay' => 'delay-200'],
         ];
     }
 

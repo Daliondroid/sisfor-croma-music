@@ -49,6 +49,7 @@ test_results.txt
 *.tmp
 /.agents/
 /.gemini/
+/.unoptimized-media/
 
 # IDE & Editor Directories
 /.idea/

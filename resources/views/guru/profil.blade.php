@@ -2,15 +2,7 @@
 @section('title', 'Profil Saya')
 @section('page-title', 'Profil Saya')
 
-@section('sidebar-menu')
-    <div class="nav-section-label">Menu</div>
-    <a href="{{ route('guru.dashboard') }}"            class="nav-item {{ request()->routeIs('guru.dashboard')       ? 'active' : '' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-    <a href="{{ route('guru.jadwal.index') }}"         class="nav-item {{ request()->routeIs('guru.jadwal*')         ? 'active' : '' }}"><i class="fa-solid fa-calendar-days"></i> Jadwal Kelas</a>
-    <a href="{{ route('guru.absensi.index') }}"        class="nav-item {{ request()->routeIs('guru.absensi*')        ? 'active' : '' }}"><i class="fa-solid fa-chart-bar"></i> Data Absensi</a>
-    <a href="{{ route('guru.presensi.index') }}"       class="nav-item {{ request()->routeIs('guru.presensi*')       ? 'active' : '' }}"><i class="fa-solid fa-clipboard-check"></i> Input Presensi</a>
-    <a href="{{ route('guru.progres.index') }}"        class="nav-item {{ request()->routeIs('guru.progres*')        ? 'active' : '' }}"><i class="fa-solid fa-book-open"></i> Laporan KBM</a>
-    <a href="{{ route('guru.monthly-report.index') }}" class="nav-item {{ request()->routeIs('guru.monthly-report*') ? 'active' : '' }}"><i class="fa-solid fa-file-lines"></i> Laporan Bulanan</a>
-@endsection
+@section('sidebar-menu') @include('guru.partials.sidebar') @endsection
 
 @section('content')
 <div class="page-header">
@@ -28,47 +20,47 @@
             @if($guru->user->foto_profil)
                 <img src="{{ asset('storage/' . $guru->user->foto_profil) }}"
                      style="width:6rem;height:6rem;border-radius:50%;object-fit:cover;
-                            border:0.1875rem solid var(--primary-blue);margin:0 auto;display:block">
+                            border:2px solid var(--topbar-border);margin:0 auto;display:block">
             @else
-                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-blue);
+                <div style="width:6rem;height:6rem;border-radius:50%;background:var(--primary-navy);
                             display:flex;align-items:center;justify-content:center;
                             font-size:2.2rem;font-weight:700;color:#fff;margin:0 auto">
                     {{ strtoupper(substr($guru->nama_guru, 0, 1)) }}
                 </div>
             @endif
         </div>
-        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.25rem">{{ $guru->nama_guru }}</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--text-dark);margin-bottom:0.25rem">{{ $guru->nama_guru }}</div>
         <div style="font-size:.8rem;color:var(--text-light);margin-bottom:0.5rem">{{ $guru->user->email }}</div>
 
         @if($guru->spesialisasis->count())
             <div style="display:flex;flex-wrap:wrap;gap:0.25rem;justify-content:center;margin-bottom:1rem">
                 @foreach($guru->spesialisasis as $s)
-                    <span class="badge badge-info" style="font-size:.7rem">{{ $s->nama_spesialisasi }}</span>
+                    <span class="badge badge-info">{{ $s->nama_spesialisasi }}</span>
                 @endforeach
             </div>
         @endif
 
-        <span class="badge badge-warning" style="font-size:.75rem;padding:0.25rem 1rem">
-            <i class="fa-solid fa-chalkboard-user" style="margin-right:0.25rem"></i>Guru
+        <span class="badge badge-warning" style="padding:0.25rem 1rem">
+            GURU
         </span>
 
         <hr style="border:none;border-top:1px solid var(--topbar-border);margin:1.5rem 0">
 
         <div style="text-align:left">
             <div style="font-size:.72rem;color:var(--text-light);text-transform:uppercase;
-                        letter-spacing:0.05rem;font-weight:600;margin-bottom:0.5rem">Info Akun</div>
+                        letter-spacing:0.04em;font-weight:700;margin-bottom:0.75rem">Info Akun</div>
             <div style="display:flex;flex-direction:column;gap:0.5rem">
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-phone" style="width:1rem;color:var(--text-light)"></i>
-                    <span>{{ $guru->nomor_hp ?? '-' }}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
+                    <span style="color:var(--text-light)">No. HP</span>
+                    <span style="font-weight:600;color:var(--text-dark);font-variant-numeric:tabular-nums">{{ $guru->nomor_hp ?? '-' }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-calendar-plus" style="width:1rem;color:var(--text-light)"></i>
-                    <span>Bergabung {{ $guru->created_at->translatedFormat('M Y') }}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
+                    <span style="color:var(--text-light)">Bergabung</span>
+                    <span style="font-weight:600;color:var(--text-dark)">{{ $guru->created_at->translatedFormat('M Y') }}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:0.5rem;font-size:.82rem">
-                    <i class="fa-solid fa-circle" style="width:1rem;color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-size:.5rem"></i>
-                    <span style="color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-weight:600">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:.82rem">
+                    <span style="color:var(--text-light)">Status</span>
+                    <span style="color:{{ $guru->status_aktif ? '#16a34a' : '#dc2626' }};font-weight:700">
                         {{ $guru->status_aktif ? 'Aktif' : 'Non-aktif' }}
                     </span>
                 </div>
@@ -80,16 +72,16 @@
     <div style="display:flex;flex-direction:column;gap:1.5rem">
 
         @if(session('success'))
-            <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> {{ session('success') }}</div>
+            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if($errors->any())
-            <div class="alert alert-danger"><i class="fa-solid fa-circle-xmark"></i> {{ $errors->first() }}</div>
+            <div class="alert alert-danger">{{ $errors->first() }}</div>
         @endif
 
         {{-- Data Profil --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-user" style="color:var(--primary-blue);margin-right:0.5rem"></i>Data Profil</h3>
+                <h3>Data Profil</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.profil.update') }}" enctype="multipart/form-data">
@@ -118,8 +110,8 @@
                             <div style="font-size:.72rem;color:var(--text-light);margin-top:0.25rem">JPG/PNG, maks 2MB</div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Simpan Perubahan
                     </button>
                 </form>
             </div>
@@ -128,7 +120,7 @@
         {{-- Ganti Password --}}
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-lock" style="color:var(--primary-blue);margin-right:0.5rem"></i>Ganti Password</h3>
+                <h3>Ganti Password</h3>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.profil.update') }}" enctype="multipart/form-data">
@@ -151,8 +143,8 @@
                             <input type="password" name="password_confirmation" class="form-control"/>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-outline" style="margin-top:0.25rem">
-                        <i class="fa-solid fa-key"></i> Update Password
+                    <button type="submit" class="btn btn-outline btn-sm" style="margin-top:0.25rem">
+                        Update Password
                     </button>
                 </form>
             </div>
